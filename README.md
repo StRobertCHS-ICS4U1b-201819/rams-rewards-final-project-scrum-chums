@@ -1,6 +1,8 @@
 # Product Catalog
 
 ## Ram Rewards Student App (RRSA) User Stories
+* 1 person
+
 This mobile app will be used by students.  Students will be able to:
 * View amount of rewards points earned
 * View their basic info such as Name, homeroom, student id
@@ -8,6 +10,8 @@ This mobile app will be used by students.  Students will be able to:
 * View a history of rewards activity (individual events where rewards points are earned)
 
 ## Ram Rewards Teacher Admin App (RRTAA) User Stories
+* 2 people
+
 This mobile app will be used by teacher and administrators to distribute rewards points to students. Teachers/Administrators will be able to:  
 * Choose from a list of rewards activities (activities will have predetermined point values) to rewards points for (i.e Coding Club meeting, attend a basketball game, attend a dance.
 * Reward points to a student by using the camera to scan a barcode from the student id card or the barcode from the RRSA
@@ -17,6 +21,8 @@ This mobile app will be used by teacher and administrators to distribute rewards
 * Sends and recieves necessary data from/to the RR Web Administraton Console
 
 ## RR Web Administration Console User Stories
+* 2 people
+
 Website for Rams Rewards administrators.  RR Admins will be able to:
 * Define the list of rewards activities along with their point values.
 * Manage list of student accounts (add accounts, remove accounts, edit info)

@@ -1,6 +1,6 @@
 # Product Catalog
 
-## Ram Rewards Student App (RRSA) User Stories
+## Ram Rewards Student App (RRSA) User Stories - Kivy
 * Eryka
 
 This mobile app will be used by students.  Students will be able to:
@@ -9,7 +9,7 @@ This mobile app will be used by students.  Students will be able to:
 * Swipe to reveal their student ID barcode (with barcode underneath)
 * View a history of rewards activity (individual events where rewards points are earned)
 
-## Ram Rewards Teacher Admin App (RRTAA) User Stories
+## Ram Rewards Teacher Admin App (RRTAA) User Stories - Kivy
 * Carson, Grace
 
 This mobile app will be used by teacher and administrators to distribute rewards points to students. Teachers/Administrators will be able to:  
@@ -20,7 +20,7 @@ This mobile app will be used by teacher and administrators to distribute rewards
 * Choose a rewards activity to view student activity by date.  (i.e Coding Club activity for Nov 12th).
 * Sends and recieves necessary data from/to the RR Web Administraton Console
 
-## RR Web Administration Console User Stories
+## RR Web Administration Console User Stories - Django
 * Chen Feng, Erin
 
 Website for Rams Rewards administrators.  RR Admins will be able to:

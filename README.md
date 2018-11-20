@@ -23,12 +23,14 @@ This mobile app will be used by teacher and administrators to distribute rewards
 ## RR Web Administration (Radmin) Console User Stories - Django
 * Chen Feng, Erin
 
+#### Scrum Backlog:
+- [ ] List of reward activities and points
+
 Website for Rams Rewards administrators.  RR Admins will be able to:
 * Define the list of rewards activities along with their point values.
 * Manage list of student accounts (add accounts, remove accounts, edit info)
 * View history of rewards activity.
 * View charts of rewards activity (by date, by activity)
-
 
 
 

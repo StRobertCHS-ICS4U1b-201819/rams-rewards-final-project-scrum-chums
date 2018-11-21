@@ -24,6 +24,7 @@ This mobile app will be used by teacher and administrators to distribute rewards
 * ChenFeng, Erin
 
 ### Scrum Backlog:
+- [ ] Install Kivy / Setup Django
 - [ ] Get website running 
 - [ ] List of reward activities and points
 

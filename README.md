@@ -43,7 +43,7 @@ Website for Rams Rewards administrators.  RR Admins will be able to:
 * it has model for making activities with a name and a score value
 * the view will display all activities with their name and score on one line with no separation lol
 * it actually looks like **HOT** garbage and is the result of over an hour of developing in command prompt and notepad ++
-#####Django sucks
+#### Django sucks
 - chenfengzhang
 
 ###### Good Meme

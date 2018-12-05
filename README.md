@@ -29,14 +29,23 @@ This mobile app will be used by teacher and administrators to distribute rewards
 
 ### Scrum Backlog:
 - [ ] Install Kivy / Setup Django
-- [ ] Get website running 
-- [ ] List of reward activities and points
+- [x] Get website running 
+- [x] List of reward activities and points
 
 Website for Rams Rewards administrators.  RR Admins will be able to:
 * Define the list of rewards activities along with their point values.
 * Manage list of student accounts (add accounts, remove accounts, edit info)
 * View history of rewards activity.
 * View charts of rewards activity (by date, by activity)
+
+### Django server news:
+radmin folder has a directory robsite that has working build for django webapp 
+it has model for making activities with a name and a score value
+the view will display all activities with their name and score on one line with no separation lol
+it actually looks like **HOT** garbage and is the result of over an hour of developing in command prompt and notepad ++
+Django sucks
+* chenfengzhang
+
 ###### Good Meme
 ![Django Daikazoku](https://media.discordapp.net/attachments/509538412877971468/512448005807276032/nagisa_django.gif)
 

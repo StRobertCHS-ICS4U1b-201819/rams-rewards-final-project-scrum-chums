@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Activities</h1>
+  <ul>
+    {% for activity in activity_list %}
+      <li>
+        {{activity.__str__()}}
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

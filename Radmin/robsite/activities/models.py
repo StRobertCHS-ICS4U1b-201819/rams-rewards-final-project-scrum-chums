@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 class Activity(models.Model):
     activity_name = models.CharField(max_length = 200)
@@ -21,7 +22,10 @@ class OneTimeActivity(Activity):
     activity_date = models.DateField()
 	
     def get_date(self):
-        return self.date
+        return self.activity_date
+		
+    def is_past(self):
+        return date.today() > self.activity_date
 	
     def __str__(self):
         return " ".join((self.activity_name, str(self.activity_score), str(self.activity_date)))

@@ -6,7 +6,7 @@ color: red
 }
 h2 {
 font-family: "Tahoma";
-font-size: 100px
+font-size: 50px
 }
 h3 {font-family: "Tahoma"}
 </style>
@@ -29,7 +29,7 @@ h3 {font-family: "Tahoma"}
 
 <h3>One Time Activities:</h3>
 
-{% if activity_list %}
+{% if onetime_list %}
     <ul>
     {% for activity in onetime_list %}
         <li>
@@ -42,6 +42,33 @@ h3 {font-family: "Tahoma"}
 {% else %}
     <p>No One Time Activities</p>
 {% endif %}
-
+<h3>Upcoming Activities</h3>
+{% if upcoming_list %}
+    <ul>
+    {% for activity in upcoming_list %}
+        <li>
+		<span>
+            {{activity.activity_name}}<a> - </a>{{activity.activity_date}}
+		</span>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Upcoming Activities</p>
+{% endif %}
+<h3>Past Activities</h3>
+{% if past_list %}
+    <ul>
+    {% for activity in past_list %}
+        <li>
+		<span>
+            {{activity.activity_name}}<a> - </a>{{activity.activity_date}}
+		</span>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Past Activities</p>
+{% endif %}
 <br>
 <img src="https://camo.githubusercontent.com/682557443720cb4a0c551bb952b43e9171b3b152/68747470733a2f2f6d656469612e646973636f72646170702e6e65742f6174746163686d656e74732f3530393533383431323837373937313436382f3531323434383030353830373237363033322f6e61676973615f646a616e676f2e676966" alt="Django Daikazoku">

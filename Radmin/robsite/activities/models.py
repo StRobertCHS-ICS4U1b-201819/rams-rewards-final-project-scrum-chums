@@ -17,3 +17,11 @@ class Activity(models.Model):
         return " ".join((self.activity_name, str(self.activity_score)))
 	
 	
+class OneTimeActivity(Activity):
+    activity_date = models.DateField()
+	
+    def get_date(self):
+        return self.date
+	
+    def __str__(self):
+        return " ".join((self.activity_name, str(self.activity_score), str(self.activity_date)))

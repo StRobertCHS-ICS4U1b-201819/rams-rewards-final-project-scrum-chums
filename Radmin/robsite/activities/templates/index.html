@@ -1,6 +1,18 @@
-
-<h1>DJANGO SUCKS</h1>
-<h3>List of Activities:</h3>
+<style>
+h1 {
+font-family: "Arial Black";
+font-size: 150px;
+color: red
+}
+h2 {
+font-family: "Tahoma";
+font-size: 100px
+}
+h3 {font-family: "Tahoma"}
+</style>
+<h1 font="Times">DJANGO SUCKS</h1>
+<h2>RAMS REWARDS SITE</h2>
+<h3>All Activities:</h3>
 {% if activity_list %}
     <ul>
     {% for activity in activity_list %}
@@ -15,5 +27,21 @@
     <p>No Activities</p>
 {% endif %}
 
+<h3>One Time Activities:</h3>
+
+{% if activity_list %}
+    <ul>
+    {% for activity in onetime_list %}
+        <li>
+		<span>
+            {{activity.activity_name}}<a> - </a>{{activity.activity_score}}<a> </a>Points<a> - </a>{{activity.activity_date}}
+		</span>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No One Time Activities</p>
+{% endif %}
+
 <br>
-<img src="https://cdn.discordapp.com/attachments/509538412877971468/512448005807276032/nagisa_django.gif" alt="Django Daikazoku">
+<img src="https://camo.githubusercontent.com/682557443720cb4a0c551bb952b43e9171b3b152/68747470733a2f2f6d656469612e646973636f72646170702e6e65742f6174746163686d656e74732f3530393533383431323837373937313436382f3531323434383030353830373237363033322f6e61676973615f646a616e676f2e676966" alt="Django Daikazoku">

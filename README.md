@@ -43,7 +43,7 @@ Website for Rams Rewards administrators.  RR Admins will be able to:
 ![Blessed Image](https://cdn.discordapp.com/attachments/509538544457351193/520047185400692736/blessed_image.png)
 * radmin folder has a directory robsite that has working build for django webapp 
 * it has model for making activities with a name and a score value
-* ~~the view will display all activities with their name and score on one line with no separation lol
+* ~~the view will display all activities with their name and score on one line with no separation lol~~
 * the view actually has a display that is readable and doesn't burn out eyes
 * ~~it actually looks like **HOT** garbage and is~~ still doesn't look good and the result of over ~~an hour~~ 2 hours of developing in command prompt and notepad++
 #### Django still sucks

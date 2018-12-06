@@ -1,0 +1,19 @@
+
+<h1>DJANGO SUCKS</h1>
+<h3>List of Activities:</h3>
+{% if activity_list %}
+    <ul>
+    {% for activity in activity_list %}
+        <li>
+		<span>
+            {{activity.activity_name}}<a> - </a>{{activity.activity_score}}<a> </a>Points
+		</span>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Activities</p>
+{% endif %}
+
+<br>
+<img src="https://cdn.discordapp.com/attachments/509538412877971468/512448005807276032/nagisa_django.gif" alt="Django Daikazoku">

@@ -47,5 +47,6 @@ class StudentDBApp(App):
     def build(self):
         return StudentDB()
 
+
 dbApp = StudentDBApp()
 dbApp.run()

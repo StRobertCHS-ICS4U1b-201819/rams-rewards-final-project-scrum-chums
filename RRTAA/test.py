@@ -6,7 +6,8 @@ from kivy.uix.widget import Widget
 from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
-from kivy.graphics import Color,Rectangle
+from kivy.graphics import Color, Rectangle
+
 
 class MainScreen(GridLayout):
     def __init__(self, **kwargs):

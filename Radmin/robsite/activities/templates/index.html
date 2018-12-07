@@ -2,15 +2,41 @@
 h1 {
 font-family: "Arial Black";
 font-size: 150px;
-color: red
+color: red;
 }
+
 h2 {
 font-family: "Tahoma";
-font-size: 50px
+font-size: 50px;
 }
-h3 {font-family: "Tahoma"}
+
+.list_head {
+font-family: "Tahoma";
+font-size: 20px;
+}
+
+.one{
+display: inline-block;
+border: 2px solid black;
+vertical-align: top;
+padding-left: 15px;
+padding-right: 15px;
+background-color: #99ccff;
+}
 </style>
-<h1 font="Times">DJANGO SUCKS</h1>
+
+<script>
+function hide(x) {
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+} 
+
+</script>
+
+<h1 onclick="hide(this) "font="Times">DJANGO SUCKS</h1>
 <h2>RAMS REWARDS SITE</h2>
 <h3>All Activities:</h3>
 {% if activity_list %}
@@ -26,11 +52,12 @@ h3 {font-family: "Tahoma"}
 {% else %}
     <p>No Activities</p>
 {% endif %}
+<div>
 
-<h3>One Time Activities:</h3>
-
+<div>
+<p class="list_head" onclick="hide(this.parentElement.childNodes[3])">One Time Activities:</p>
 {% if onetime_list %}
-    <ul>
+    <ul id="onetime">
     {% for activity in onetime_list %}
         <li>
 		<span>
@@ -42,9 +69,12 @@ h3 {font-family: "Tahoma"}
 {% else %}
     <p>No One Time Activities</p>
 {% endif %}
-<h3>Upcoming Activities</h3>
+</div>
+
+<div class="one">
+<p class="list_head" onclick="hide(this.parentElement.childNodes[3])">Upcoming Activities</p>
 {% if upcoming_list %}
-    <ul>
+    <ul id="upcoming">
     {% for activity in upcoming_list %}
         <li>
 		<span>
@@ -56,9 +86,12 @@ h3 {font-family: "Tahoma"}
 {% else %}
     <p>No Upcoming Activities</p>
 {% endif %}
-<h3>Past Activities</h3>
+</div>
+
+<div class="one">
+<p class="list_head" onclick="hide(this.parentElement.childNodes[3])">Past Activities</p>
 {% if past_list %}
-    <ul>
+    <ul id="past">
     {% for activity in past_list %}
         <li>
 		<span>
@@ -70,5 +103,8 @@ h3 {font-family: "Tahoma"}
 {% else %}
     <p>No Past Activities</p>
 {% endif %}
+</div>
+
+</div>
 <br>
 <img src="https://camo.githubusercontent.com/682557443720cb4a0c551bb952b43e9171b3b152/68747470733a2f2f6d656469612e646973636f72646170702e6e65742f6174746163686d656e74732f3530393533383431323837373937313436382f3531323434383030353830373237363033322f6e61676973615f646a616e676f2e676966" alt="Django Daikazoku">

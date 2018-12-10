@@ -24,7 +24,14 @@ Builder.load_string("""
 
 <CustLabel@Label>
     color: 0, 0, 0, 1
-
+    
+<TabbedPanelStrip>
+    canvas:
+        Color:
+            rgba: (0, 1, 0, 1) # green
+        Rectangle:
+            size: self.size
+            pos: self.pos
 <ScreenOne>:
     orientation: "vertical"
     padding: 10
@@ -44,8 +51,8 @@ Builder.load_string("""
             size_hint: .15, 0.1
 
             Spinner:
-                text: "Student List"
-                values: ["Grade 12", "Grade 11", "Grade 10", "Grade 9"]
+                text: "Clubs"
+                values: ["Coding Club", "Mural Club", "Psychology Club", "Robotics"]
                 id: spinner_id
                 on_text: root.spinner_clicked(spinner_id.text)
 
@@ -71,12 +78,12 @@ Builder.load_string("""
 
                 # to put anything inside your tab
                 TabbedPanelItem:
-                    text: "Student List"
+                    text: "Activities"
                     Label:
                         text: "This is where students go"
 
                 TabbedPanelItem:
-                    text: "Reward Code"
+                    text: "Student List"
                     Label:
                         text: " i  d o n ' t  k n o w"
 
@@ -90,8 +97,8 @@ Builder.load_string("""
             size_hint: .15, 0.1
 
             Spinner:
-                text: "Student List"
-                values: ["Grade 12", "Grade 11", "Grade 10", "Grade 9"]
+                text: "Clubs"
+                values: ["Coding Club", "Mural Club", "Psychology Club", "Robotics"]
                 id: spinner_id
                 on_text: root.spinner_clicked(spinner_id.text)     
                 
@@ -114,12 +121,12 @@ Builder.load_string("""
 
                 # to put anything inside your tab
                 TabbedPanelItem:
-                    text: "Student List"
+                    text: "Activities"
                     Label:
                         text: "A list of students"
 
                 TabbedPanelItem:
-                    text: "Reward Code"
+                    text: "Student List"
                     Label:
                         text: "REWARD US"
   
@@ -132,10 +139,10 @@ Builder.load_string("""
             size_hint: .15, 0.1
 
             Spinner:
-                text: "Student List"
-                values: ["Grade 12", "Grade 11", "Grade 10", "Grade 9"]
+                text: "Clubs"
+                values: ["Coding Club", "Mural Club", "Psychology Club", "Robotics"]
                 id: spinner_id
-                on_text: root.spinner_clicked(spinner_id.text)    
+                on_text: root.spinner_clicked(spinner_id.text)   
                 
 <ScreenFour>:
     orientation: "vertical"
@@ -156,12 +163,12 @@ Builder.load_string("""
 
                 # to put anything inside your tab
                 TabbedPanelItem:
-                    text: "Student List"
+                    text: "Activities"
                     Label:
                         text: "People"
 
                 TabbedPanelItem:
-                    text: "Reward"
+                    text: "Student List"
                     Label:
                         text: "Tabs are fun"
 
@@ -174,15 +181,20 @@ Builder.load_string("""
             size_hint: .15, 0.1
 
             Spinner:
-                text: "Student List"
-                values: ["Grade 12", "Grade 11", "Grade 10", "Grade 9"]
+                text: "Clubs"
+                values: ["Coding Club", "Mural Club", "Psychology Club", "Robotics"]
                 id: spinner_id
                 on_text: root.spinner_clicked(spinner_id.text)
                 
 <ScreenFive>:
     orientation: "vertical"
+    first_name_text_input: first_name
+    last_name_text_input: last_name
+    grade12_list: grade12s_list_view
     padding: 10
     spacing: 10
+
+    
     
     BoxLayout:
         orientation: "horizontal"
@@ -198,15 +210,40 @@ Builder.load_string("""
 
                 # to put anything inside your tab
                 TabbedPanelItem:
-                    text: "Student List"
+                    text: "Activities"
                     Label:
                         text: "Where did they go?"
 
                 TabbedPanelItem:
-                    text: "OH YEA ACTIVITIES"
-                    Label:
-                        text: "please help"
-   
+                
+                    
+                    text: "Student List"
+                    
+                    BoxLayout:
+                        size_hint_y: None
+                        height: "40dp"
+                
+                        Label:
+                            text: "First name"
+                        TextInput:
+                            id: first_name
+                        Label:
+                            text: "Last name"
+                        TextInput:
+                            id: last_name
+            
+                BoxLayout:
+                    Button:
+                        on_touch_down: root.submit_student()
+                    Button:
+                        on_press: root.delete_student()
+                    Button:
+                        on_press: root.replace_student()
+            
+                ListView:
+                    id: grade12s_list_view
+                    adapter:
+                        ListAdapter(data= ["Grace Leung"], cls= main.StudentListButton)
     BoxLayout:
         orientation: "horizontal"
         size_hint_x: .15
@@ -216,23 +253,27 @@ Builder.load_string("""
             size_hint: .15, 0.1
 
             Spinner:
-                text: "Student List"
-                values: ["Grade 12", "Grade 11", "Grade 10", "Grade 9"]
+                text: "Clubs"
+                values: ["Coding Club", "Mural Club", "Psychology Club", "Robotics"]
                 id: spinner_id
-                on_text: root.spinner_clicked(spinner_id.text)      
+                on_text: root.spinner_clicked(spinner_id.text)    
 """)
+
+
+class StudentListButton(ListItemButton):
+    pass
 
 class ScreenTwo(Screen):
     def spinner_clicked(self, value):
-        if value == "Grade 9":
+        if value == "Coding Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_two"
-        elif value == "Grade 10":
+        elif value == "Mural Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_three"
-        elif value == "Grade 11":
+        elif value == "Psychology Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_four"
@@ -243,15 +284,15 @@ class ScreenTwo(Screen):
 
 class ScreenThree(Screen):
     def spinner_clicked(self, value):
-        if value == "Grade 9":
+        if value == "Coding Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_two"
-        elif value == "Grade 10":
+        elif value == "Mural Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_three"
-        elif value == "Grade 11":
+        elif value == "Psychology Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_four"
@@ -261,16 +302,17 @@ class ScreenThree(Screen):
             screen_manager.current = "screen_five"
 
 class ScreenFour(Screen):
+
     def spinner_clicked(self, value):
-        if value == "Grade 9":
+        if value == "Coding Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_two"
-        elif value == "Grade 10":
+        elif value == "Mural Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_three"
-        elif value == "Grade 11":
+        elif value == "Psychology Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_four"
@@ -279,17 +321,43 @@ class ScreenFour(Screen):
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_five"
 
+
+
 class ScreenFive(Screen):
+
+    first_name_text_input = ObjectProperty()
+    last_name_text_input = ObjectProperty()
+    grade12_list = ObjectProperty()
+
+    def submit_student(self):
+        student_name = self.first_name_text_input.text + " " + self.last_name_text_input.text
+        self.grade12_list.adapter.data.extend([student_name])
+        self.grade12_list._trigger_reset_populate()
+
+    def delete_student(self):
+        if self.grade12_list.adapter.selection:
+            selection = self.grade12_list.adapter.selection[0].text
+            self.grade12_list.adapter.data.remove(selection)
+            self.grade12_list._trigger_reset_populate()
+
+    def replace_student(self):
+        if self.grade12_list.adapter.selection:
+            selection = self.grade12_list.adapter.selection[0].text
+            self.grade12_list.adapter.data.remove(selection)
+            student_name = self.first_name_text_input.text + " " + self.last_name_text_input.text
+            self.grade12_list.adapter.data.extend([student_name])
+            self.grade12_list._trigger_reset_populate()
+
     def spinner_clicked(self, value):
-        if value == "Grade 9":
+        if value == "Coding Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_two"
-        elif value == "Grade 10":
+        elif value == "Mural Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_three"
-        elif value == "Grade 11":
+        elif value == "Psychology Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_four"
@@ -297,18 +365,19 @@ class ScreenFive(Screen):
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_five"
+
 
 class ScreenOne(Screen):
     def spinner_clicked(self, value):
-        if value == "Grade 9":
+        if value == "Coding Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_two"
-        elif value == "Grade 10":
+        elif value == "Mural Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_three"
-        elif value == "Grade 11":
+        elif value == "Psychology Club":
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_four"

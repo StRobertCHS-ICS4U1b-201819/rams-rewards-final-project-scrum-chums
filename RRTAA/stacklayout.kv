@@ -1,0 +1,38 @@
+# arrange widgets vertically or horizontally as they best fit
+# can drag the window to resize it and see how it will rearrange itself accordingly
+
+<StackLayout>:
+    orientation: "lr-tb" # means left to right and top to bottom, etc.
+    spacing: 10
+    padding: 10
+
+    Button:
+        text: "what"
+        size_hint: None, .15 # takes up 15% of available space
+        width: 100
+
+    Button:
+        text: "if"
+        size_hint: None, .15
+        width: 120
+
+    Button:
+        text: "i"
+        size_hint: None, .15
+        width: 140
+
+    Button:
+        text: "told"
+        size_hint: None, .15
+        width: 160
+
+    Button:
+        text: "you"
+        size_hint: None, .15
+        width: 180
+
+    Button:
+        text: "that the world was gonna end"
+        size_hint: .95, .55
+        width: 400
+

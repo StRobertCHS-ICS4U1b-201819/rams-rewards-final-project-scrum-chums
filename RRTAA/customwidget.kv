@@ -1,0 +1,20 @@
+<CustButton@Button>:
+    font_size: 32
+    color: 0, 0, 0, 1 # In RBG then alpha
+    size: 150, 50
+    background_normal: '' # state of button when not pressed, quotes indicate white
+    background_down: 'why.png.png' # color for when button is pressed
+    background_color: .88, .88, .88, 1 # for background normal
+
+<CustomWidget>:
+    CustButton:
+        text: "there"
+        pos: root.x, 200 # exact positioning (x and y), starts on lower left hand corner, root.x is most left
+
+    CustButton:
+        text: "michael"
+        pos: 200, root.y # exact positioning (x and y), starts on lower left hand corner, root.x is most left
+
+    CustButton:
+        text: "hi"
+        pos: 200, 400 # exact positioning (x and y), starts on lower left hand corner, root.x is most left

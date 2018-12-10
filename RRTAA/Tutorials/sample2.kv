@@ -1,0 +1,146 @@
+# Naming of kivy files need to match python files and functions from python must match kivy file
+#: import CheckBox kivy.uix.checkbox
+
+<CustLabel@Label>
+    color: 0, 0, 0, 1
+
+<CustomPopup>:
+    size_hint: .5, .5
+    auto_dismiss: False
+    title: "Darkness?"
+    Button:
+        text: "Close"
+        on_press: root.dismiss()
+
+SampBoxLayout:
+
+<SampBoxLayout>:
+    orientation: "vertical"
+    padding: 10
+    spacing: 10
+
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint_x: .22
+
+        CustLabel:
+            text: "Are you good?"
+            size_hint_x: .80
+        CheckBox:
+            # checking if it is active and returning the value
+            on_active: root.checkbox_18_clicked(self, self.active)
+            size_hint_x: .55
+
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint_x: .55
+
+        CustLabel:
+            text: "Favorite Color"
+            size_hint_x: .265
+        CheckBox:
+            group: "fav_color"
+            value: root.blue
+            size_hint_x: .05
+        CustLabel:
+            text: "Blue"
+            size_hint_x: .15
+        CheckBox:
+            group: "fav_color"
+            value: root.red
+            size_hint_x: .05
+        CustLabel:
+            text: "Blood"
+            size_hint_x: .15
+        CheckBox:
+            group: "fav_color"
+            value: root.green
+            size_hint_x: .05
+        CustLabel:
+            text: "Money"
+            size_hint_x: .15
+    BoxLayout:
+        orientation: "horizontal"
+        height: 30
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_x: .25
+
+            CustLabel:
+                # value changes from value of slider
+                text: str(slider_id.value)
+
+            # give it an id so we can change the value for the custom label based on changes from our slider
+            Slider:
+                id: slider_id
+                min: -100
+                max: 100
+                value: 0
+                # stops it from going to fractions
+                step: 1
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_x: .25
+
+            CustLabel:
+                text: "On / Off"
+
+            Switch:
+                id: switch_id
+                on_active: root.switch_on(self, self.active)
+    BoxLayout:
+        orientation: "horizontal"
+        height: 30
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_x: .25
+
+            Button:
+                text: "Open Popup"
+                on_press: root.open_popup()
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_x: .25
+
+            Spinner:
+                text: "First"
+                values: ["hi", "hello", "world"]
+                id: spinner_id
+                # in brackets is what is passed back to the python file
+                on_text: root.spinner_clicked(spinner_id.text)
+
+    BoxLayout:
+        orientation: "horizontal"
+        height: 30
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_x: .25
+
+            TabbedPanel:
+                # nothing will be highlighted
+                do_default_tab: False
+
+                # to put anything inside your tab
+                TabbedPanelItem:
+                    text: "fun"
+                    Label:
+                        text: "content of fun"
+
+                TabbedPanelItem:
+                    text: "the abyss"
+                    Label:
+                        text: "featuring the void"
+
+                TabbedPanelItem:
+                    text: "where"
+                    Label:
+                        text: "are the wild things"
+
+
+
+

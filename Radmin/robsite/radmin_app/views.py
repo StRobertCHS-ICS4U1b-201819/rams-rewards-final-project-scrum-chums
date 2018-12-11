@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic.list import ListView
 from django.template import Context, loader
-from .models import Activity, OneTimeActivity
+from .models import Activity, OneTimeActivity, RepeatedActivity
 from datetime import date
 
 #class ActivityListView(ListView):

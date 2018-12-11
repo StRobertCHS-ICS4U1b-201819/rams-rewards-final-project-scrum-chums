@@ -40,7 +40,7 @@ class OneTimeActivity(Activity):
     def __str__(self):
         return " ".join((self.activity_name, str(self.activity_score), str(self.activity_date)))
 
-		
+
 class Student(models.Model):
     GRADE_CHOICES = (("9", "9"), ("10", "10"), ("11", "11"), ("12", "12"))
     student_name = models.CharField(max_length = 200)
@@ -52,3 +52,4 @@ class Student(models.Model):
 		
     def __str__(self):
         return " ".join((self.student_name, self.student_grade, str(self.student_score)))
+

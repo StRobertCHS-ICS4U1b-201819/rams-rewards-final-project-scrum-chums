@@ -3,6 +3,7 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
+from kivy.uix.button import Label
 from kivy.lang import Builder
 from kivy.properties import ObjectProperty
 from kivy.uix.listview import ListItemButton
@@ -11,7 +12,7 @@ from kivy.uix.popup import Popup
 
 
 Builder.load_string("""
-#: import main m
+#: import main newTesting
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
 <CustLabel@Label>
@@ -125,7 +126,7 @@ Builder.load_string("""
                     ListView:
                         id: grade12s_list_view
                         adapter:
-                            ListAdapter(data= ["Grace Leung"], cls= main.StudentListButton)
+                            ListAdapter(data= ["Grace Leung 123"], cls= main.StudentListButton)
 
 
 """)
@@ -175,7 +176,7 @@ class StudentDB(BoxLayout):
 
 
     def submit_student(self):
-        student_name = self.first_name_text_input.text + " " + self.last_name_text_input.text
+        student_name = self.first_name_text_input.text + " " + self.last_name_text_input.text + " " + self.student_id_text_input.text
 
         self.grade12_list.adapter.data.extend([student_name])
         self.grade12_list._trigger_reset_populate()
@@ -189,7 +190,14 @@ class StudentDB(BoxLayout):
     def delete_student(self):
         if self.grade12_list.adapter.selection:
             selection = self.grade12_list.adapter.selection[0].text
-            popup = Popup(title= selection,
+            x = selection.split()
+            name = x[0] + " " + x[1]
+            idd = x[2]
+            content = GridLayout(cols=1)
+            content.add_widget(Label(text="Student Name: " + name))
+            content.add_widget(Label(text= "Student ID: " + idd))
+            popup = Popup(title= name,
+                          content=content,
                           size_hint=(None, None), size=(400, 400))
             popup.open()
 

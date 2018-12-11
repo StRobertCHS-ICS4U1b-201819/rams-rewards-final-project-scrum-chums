@@ -1,0 +1,19 @@
+# arrange widgets in a horizontal or vertical box
+# None for first parameter of size hint would just use rest of space
+
+<BoxLayout>:
+    orientation: "horizontal" # defined as horizontal or vertical
+    spacing: 10 # distance between widgets
+    padding: 10 # distance between widget and outer window
+
+    Button:
+        text: "bear"
+        size_hint: .7, .5 # first gives percentage of space taken of its equally divided portion and percentage how tall or wide it will be
+
+    Button:
+        text: "beats"
+        size_hint: .7, .8
+
+    Button:
+        text: "BATTLESTAR GALACTICA"
+        size_hint: 1, 1

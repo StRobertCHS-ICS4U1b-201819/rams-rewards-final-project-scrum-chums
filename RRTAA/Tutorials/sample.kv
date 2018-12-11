@@ -1,0 +1,34 @@
+# FOR MAKING A TOOLBAR
+<SampleGridLayout>
+    rows: 2
+
+    BoxLayout:
+        size_hint_y: None
+        height: 30
+        spacing: 10
+
+        # to make toolbar white
+        canvas:
+            Color:
+                # rgb-alpha. last parameters defines transparency, numbers = 0-1, 100 means 100 of rgb colour
+                rgba: 1, 1, 1, 1
+            Rectangle:
+            # fill up all space
+                pos: self.pos
+                size: self.size
+
+        Button:
+            background_normal: 'why.png.png'
+            background_down: 'why.png_dn.png'
+            size_hint_x: None
+            width: 30
+        Button:
+            background_normal: 'why.png.png'
+            background_down: 'why.png_dn.png'
+            size_hint_x: None
+            width: 30
+        Button:
+            background_normal: 'why.png.png'
+            background_down: 'why.png_dn.png'
+            size_hint_x: None
+            width: 30

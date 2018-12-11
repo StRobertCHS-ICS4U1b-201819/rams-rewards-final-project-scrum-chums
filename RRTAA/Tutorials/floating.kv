@@ -1,0 +1,31 @@
+# floating app positions its size object as a percentage of window size
+
+<CustButton@Button>:
+    font_size: 32
+    color: 99, 104, 32, 1
+    size: 150, 50
+    background_normal: ''
+    background_down: 'why.png.png'
+    background_color: 99, 104, 32, 1
+    size_hint: .3, .3 # this shows 40% of window width and 30% of window height
+
+<FloatLayout>:
+    CustButton:
+        text: "hello"
+        pos_hint: {"x": 0, "top": 1} # represent position with x, y, left, right, top, bottom, center or center x and center y
+
+    CustButton:
+        text: "darkness"
+        pos_hint: {"right": 1, "top": 1}
+
+    CustButton:
+        text: "my"
+        pos_hint: {"center_x": .5, "center_y": .5}
+
+    CustButton:
+        text: "old"
+        pos_hint: {"left": 1, "bottom": 0}
+
+    CustButton:
+        text: "friend"
+        pos_hint: {"right": 1, "y": 0}

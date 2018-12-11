@@ -11,7 +11,7 @@ class Code(object):
             rand = random.randrange(0, 9999999)
             if rand not in self.usedCodes:
                 self.usedCodes.append(rand)
-        print(rand)
+        return rand
 
 class Student(object):
     def __init__(self, firstName, lastName, id, homeroom):

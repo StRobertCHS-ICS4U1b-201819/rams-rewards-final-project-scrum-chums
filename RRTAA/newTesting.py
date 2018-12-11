@@ -10,6 +10,7 @@ from kivy.uix.listview import ListItemButton
 from kivy.core.window import Window
 from kivy.uix.popup import Popup
 
+import random
 
 Builder.load_string("""
 #: import main newTesting
@@ -97,9 +98,13 @@ Builder.load_string("""
         size_hint_y: None
         height: "40dp"
         Button:
-            text: "View"
+            text: "View Student"
             size_hint_x: 10
-            on_press: root.delete_student()
+            on_press: root.view_student()
+        Button:
+            text: "View Activity"
+            size_hint_x: 10
+            on_press: root.view_activity()
             
     BoxLayout:
         orientation: "horizontal"
@@ -163,6 +168,19 @@ class SampBoxLayout(BoxLayout):
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_five"
 
+class Code(object):
+
+    def __init__(self):
+        self.usedCodes = []
+
+    def get_new_code(self):
+        rand = random.randrange(0, 9999999)
+        while rand not in self.usedCodes:
+            rand = random.randrange(0, 9999999)
+            if rand not in self.usedCodes:
+                self.usedCodes.append(rand)
+        return rand
+
 class StudentDB(BoxLayout):
 
     first_name_text_input = ObjectProperty()
@@ -187,7 +205,7 @@ class StudentDB(BoxLayout):
         self.reward_list.adapter.data.extend([activity])
         self.reward_list._trigger_reset_populate()
 
-    def delete_student(self):
+    def view_student(self):
         if self.grade12_list.adapter.selection:
             selection = self.grade12_list.adapter.selection[0].text
             x = selection.split()
@@ -197,6 +215,20 @@ class StudentDB(BoxLayout):
             content.add_widget(Label(text="Student Name: " + name))
             content.add_widget(Label(text= "Student ID: " + idd))
             popup = Popup(title= name,
+                          content=content,
+                          size_hint=(None, None), size=(400, 400))
+            popup.open()
+    def view_activity(self):
+        if self.reward_list.adapter.selection:
+            selection = self.reward_list.adapter.selection[0].text
+            ran = Code()
+            s = ran.get_new_code()
+            content = GridLayout(cols=1)
+            content.add_widget(Label(text="Activity Name: " + selection))
+            content.add_widget(Label(text="Amount of Points: " + selection))
+            content.add_widget(Label(text="Rewards Code: " + str(s)))
+            content.add_widget(Button(text='Reward Points', size_hint_y=None, height=40))
+            popup = Popup(title= selection,
                           content=content,
                           size_hint=(None, None), size=(400, 400))
             popup.open()

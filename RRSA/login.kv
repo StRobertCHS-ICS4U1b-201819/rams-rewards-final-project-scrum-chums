@@ -1,0 +1,43 @@
+#: import main student
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+#: import ListItemButton kivy.uix.listview.ListItemButton
+
+<CustButton@Button>:
+    font_size: 32
+    size: 150, 50
+    color: 0, 0, 0, 1
+    background_normal: ''
+
+    background_color: 0, 1, 0, 0.4
+
+    size_hint: .3, .1
+
+<CustLabel@Label>:
+    font_size: 30
+    color: 0, 0, 0, 1
+
+Login:
+
+<Login>:
+
+
+
+
+    FloatLayout:
+        CustLabel:
+            text: "Username"
+            pos_hint: {"center_x": .5, "center_y": .7}
+
+        CustLabel:
+            text: "Password"
+            pos_hint: {"center_x": .5, "center_y": .5}
+
+        CustButton:
+            text: "Submit"
+            pos_hint: {"center_x": .5, "center_y": .3}
+            on_press: root.submit()
+
+
+
+
+

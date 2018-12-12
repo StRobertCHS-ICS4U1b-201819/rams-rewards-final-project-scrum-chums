@@ -144,7 +144,7 @@ Builder.load_string("""
                     ListView:
                         id: grade12ss_list_view
                         adapter:
-                            ListAdapter(data= root.grade12_list, cls= main.ListItemButton)
+                            ListAdapter(data= root.names, cls= main.ListItemButton)
                 TabbedPanelItem:
                     text: "Scanner"
                     
@@ -229,11 +229,14 @@ class BaseTabs(GridLayout):
     reward_list = ObjectProperty()
     grade12s_list = ObjectProperty()
 
-    grade12_list = ListProperty()
+    grade12_list = ObjectProperty()
+    names = ListProperty()
 
     def __init__(self, listt, **kwargs):
         super(BaseTabs, self).__init__(**kwargs)
         self.grade12_list = listt
+        for i in self.grade12_list:
+            self.names.append(i.get_student_name())
 
     def view_activity(self):
         if self.reward_list.adapter.selection:
@@ -293,15 +296,33 @@ class GeneralScreen(Screen):
         sidebar = SideBar()
         self.add_widget(sidebar)
         student_list = []
-        student = Student("eryka", "shi shun", 12, "12E")
-        student3 = Student("erin", "chin", 12, "12E")
-        student_list.append(student)
-        student_list.append(student3)
+        student = Student("Chen Fen", "Zhang", 12, "12E")
+        student1 = Student("Jason", "Ng", 12, "12E")
+        student2 = Student("Alex", "Negoe", 12, "12E")
+        student3 = Student("Carson", "Tang", 12, "11E")
+        student4 = Student("Natalie", "Tam", 12, "12E")
+        student5 = Student("Derek", "Shat", 12, "12E")
+        student6 = Student("Erin", "Chin", 12, "11E")
+        student7 = Student("Eryka", "Shi-Shun", 12, "12E")
+        student8 = Student("Kun", "Lee", 12, "12E")
+        student9 = Student("Grace", "Leung", 12, "12E")
+        student10 = Student("Shawn", "Nimal", 12, "12E")
+        student11 = Student("Tony", "Ni", 12, "12E")
+        student12 = Student("Thomas", "Maglietta", 12, "12E")
 
-        names = []
-        for i in student_list:
-            names.append(i.get_student_name())
-        layout = BaseTabs(names)
+        student_list.append(student)
+        student_list.append(student1)
+        student_list.append(student2)
+        student_list.append(student3)
+        student_list.append(student4)
+        student_list.append(student5)
+        student_list.append(student6)
+        student_list.append(student7)
+        student_list.append(student8)
+        student_list.append(student9)
+        student_list.append(student10)
+        student_list.append(student11)
+        layout = BaseTabs(student_list)
         self.add_widget(layout)
 
 class ClubOneScreen(Screen):
@@ -310,17 +331,34 @@ class ClubOneScreen(Screen):
         sidebar = SideBar()
         self.add_widget(sidebar)
         student_list = []
-        student = Student("eryka", "shi shun", 12, "12E")
-        student2 = Student("joe", "schmoe", 12, "11E")
-        student3 = Student("erin", "chin", 12, "12E")
+        student = Student("Allen", "Kim", 12, "12E")
+        student1 = Student("Bonnie", "Li", 12, "12E")
+        student2 = Student("Camille", "Law", 12, "12E")
+        student3 = Student("Carson", "Tang", 12, "11E")
+        student4 = Student("Cecil", "Cao", 12, "12E")
+        student5 = Student("Chelsea", "Moon", 12, "12E")
+        student6 = Student("Erin", "Chin", 12, "11E")
+        student7 = Student("Eryka", "Shi-Shun", 12, "12E")
+        student8 = Student("Felix", "Yang", 12, "12E")
+        student9 = Student("Grace", "Leung", 12, "12E")
+        student10 = Student("Joon", "Kim", 12, "12E")
+        student11 = Student("Sarah", "Wang", 12, "12E")
+        student12 = Student("Thomas", "Maglietta", 12, "12E")
+
         student_list.append(student)
+        student_list.append(student1)
         student_list.append(student2)
         student_list.append(student3)
+        student_list.append(student4)
+        student_list.append(student5)
+        student_list.append(student6)
+        student_list.append(student7)
+        student_list.append(student8)
+        student_list.append(student9)
+        student_list.append(student10)
+        student_list.append(student11)
 
-        names = []
-        for i in student_list:
-            names.append(i.get_student_name())
-        layout = BaseTabs(names)
+        layout = BaseTabs(student_list)
         self.add_widget(layout)
 
 class ClubTwoScreen(Screen):
@@ -329,15 +367,14 @@ class ClubTwoScreen(Screen):
         sidebar = SideBar()
         self.add_widget(sidebar)
         student_list = []
-        student = Student("eryka", "shi shun", 12, "12E")
-        student2 = Student("joe", "schmoe", 12, "11E")
+        student = Student("Allen", "Kim", 12, "12E")
+        student1 = Student("Darya", "Pascarel", 12, "11E")
+        student2 = Student("Grace", "Leung", 12, "11E")
         student_list.append(student)
+        student_list.append(student1)
         student_list.append(student2)
 
-        names = []
-        for i in student_list:
-            names.append(i.get_student_name())
-        layout = BaseTabs(names)
+        layout = BaseTabs(student_list)
         self.add_widget(layout)
 
 # Adding screens to the Screen Manager

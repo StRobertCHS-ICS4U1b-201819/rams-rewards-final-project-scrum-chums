@@ -16,7 +16,7 @@ from kivy.uix.button import Button
 from kivy.uix.listview import ListItemButton
 from kivy.uix.popup import Popup
 from kivy.core.window import Window
-from kivy.properties import ObjectProperty, ListProperty
+from kivy.properties import ObjectProperty, ListProperty, VariableListProperty
 
 Builder.load_string("""
 #: import main sry
@@ -50,7 +50,7 @@ Builder.load_string("""
                     text: "Student List"
                     ListView:
                         adapter:
-                            ListAdapter(data= root.stud, selection_mode='single', allow_empty_selection=False,cls= main.ListItemButton)
+                            ListAdapter(data= root.hello, selection_mode='single', allow_empty_selection=False,cls= main.ListItemButton)
                 TabbedPanelItem:
                     text: "Scanner"
 """)
@@ -74,11 +74,14 @@ class Student(object):
         return self.__first_name + " " + self.__last_name
 
 class BaseTabs(BoxLayout):
-    stud = ListProperty()
+    stud = ObjectProperty()
+    hello = ListProperty()
 
     def __init__(self, idea, **kwargs):
         super(BaseTabs, self).__init__(**kwargs)
         self.stud = idea
+        for i in self.stud:
+            self.hello.append(i.get_student_name())
 
     def view_activity(self):
         if self.reward_list.adapter.selection:
@@ -101,11 +104,7 @@ class ClubTwoScreen(Screen):
         stud.append(student3)
         stud.append(student4)
 
-        xx = []
-        for i in stud:
-            xx.append(i.get_student_name())
-
-        layout = BaseTabs(xx)
+        layout = BaseTabs(stud)
         self.add_widget(layout)
 
 class ClubOneScreen(Screen):

@@ -11,9 +11,10 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Label
 from kivy.uix.button import Button
 from kivy.uix.listview import ListItemButton
+from kivy.uix.widget import Widget
 from kivy.uix.popup import Popup
 from kivy.core.window import Window
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, ListProperty
 
 # Setting Screen Manager as a variable
 screen_manager = ScreenManager()
@@ -25,8 +26,30 @@ Builder.load_string("""
 #: import ListItemButton kivy.uix.listview.ListItemButton
 
 <CustLabel@Label>
-    color: 0, 0, 0, 1
-        
+    color: 0, 0, 1, 1
+
+<CustButton@Button>:
+    font_size: 18
+    color: 0, 0, 0, 1 # In RBG then alpha
+    size: 450, 25
+    background_normal: ''
+    background_down: 'why.png.png'
+    background_color: .88, .88, .88, 1
+
+<Start>:
+    CustButton:
+        text: "WELCOME TO MY MESS OF A PROJECT"
+        pos: 255, 530 
+
+<Teacher>:
+    CustButton:
+        text: "Name: Eric Fabroa"
+        pos: 255, 530 
+
+    CustButton:
+        text: "Club Coordination: Coding Club, Robotics"
+        pos: 255, 490
+
 <SideBar>:
     orientation: "vertical"  
     cols: 2
@@ -91,7 +114,7 @@ Builder.load_string("""
       
 <BaseTabs>
     reward_list: rewards_list_view
-    grade12_list: grade12s_list_view
+    grade12s_list: grade12ss_list_view
     
     orientation: "vertical"   
     cols: 2
@@ -115,13 +138,16 @@ Builder.load_string("""
                     ListView:
                         id: rewards_list_view
                         adapter:
-                            ListAdapter(data= [""], cls= main.ListItemButton)
+                            ListAdapter(data= ["Club Attendance.1"], cls= main.ListItemButton)
                 TabbedPanelItem:
                     text: "Student List"
                     ListView:
-                        id: grade12s_list_view
+                        id: grade12ss_list_view
                         adapter:
-                            ListAdapter(data= ["Grace Leung 123"], cls= main.ListItemButton)
+                            ListAdapter(data= root.grade12_list, cls= main.ListItemButton)
+                TabbedPanelItem:
+                    text: "Scanner"
+                    
         BoxLayout:
             size_hint_y: None
             height: "40dp"
@@ -135,6 +161,12 @@ Builder.load_string("""
                 on_press: root.view_student()
                 
 """)
+
+class Start(Widget):
+    pass
+
+class Teacher(Widget):
+    pass
 
 class SideBar(GridLayout):
 
@@ -173,22 +205,47 @@ class Code(object):
                 self.usedCodes.append(rand)
         return rand
 
+class Student(object):
+    def __init__(self, firstName, lastName, id, homeroom):
+        self.__first_name = firstName
+        self.__last_name = lastName
+        self.__id = id
+        self.__homeroom = homeroom
+
+    def get_id(self):
+        print(self.__id)
+
+    def get_student_name(self):
+        return self.__first_name + " " + self.__last_name
+
+    def get_homeroom(self):
+        return self.__homeroom
+
 class BaseTabs(GridLayout):
 
     first_name_text_input = ObjectProperty()
     last_name_text_input = ObjectProperty()
     student_id_text_input = ObjectProperty()
     reward_list = ObjectProperty()
-    grade12_list = ObjectProperty()
+    grade12s_list = ObjectProperty()
+
+    grade12_list = ListProperty()
+
+    def __init__(self, listt, **kwargs):
+        super(BaseTabs, self).__init__(**kwargs)
+        self.grade12_list = listt
 
     def view_activity(self):
         if self.reward_list.adapter.selection:
             selection = self.reward_list.adapter.selection[0].text
+            sel = selection.split('.')
             ran = Code()
             s = ran.get_new_code()
             content = GridLayout(cols=1)
-            content.add_widget(Label(text="Activity Name: " + selection))
-            content.add_widget(Label(text="Amount of Points: " + selection))
+            content.add_widget(Label(text="Activity Name: " + sel[0]))
+            content.add_widget(Label(text="Activity Description: " + "<Describe pls>"))
+            content.add_widget(Label(text="Date Completed: " + "sometime"))
+            content.add_widget(Label(text="Amount of Points: " + sel[1]))
             content.add_widget(Label(text="Rewards Code: " + str(s)))
             content.add_widget(Button(text='Reward Points', size_hint_y=None, height=40))
             popup = Popup(title= selection,
@@ -197,14 +254,17 @@ class BaseTabs(GridLayout):
             popup.open()
 
     def view_student(self):
-        if self.grade12_list.adapter.selection:
-            selection = self.grade12_list.adapter.selection[0].text
+        if self.grade12s_list.adapter.selection:
+            selection = self.grade12s_list.adapter.selection[0].text
             x = selection.split()
             name = x[0] + " " + x[1]
-            idd = x[2]
+            idd = "hi"
             content = GridLayout(cols=1)
             content.add_widget(Label(text="Student Name: " + name))
+            content.add_widget(Label(text="Homeroom: " + "somewhere"))
             content.add_widget(Label(text= "Student ID: " + idd))
+            content.add_widget(Label(text="Accumulated Points: " + str(0)))
+            content.add_widget(Label(text="Clubs Involved: " + "but to what degree"))
             content.add_widget(Button(text='View Rewards History', size_hint_y=None, height=40))
             popup = Popup(title= name,
                           content=content,
@@ -216,8 +276,7 @@ class HomePageScreen(Screen):
         super(HomePageScreen, self).__init__(**kwargs)
         sidebar = SideBar()
         self.add_widget(sidebar)
-        content = GridLayout(cols=1)
-        content.add_widget(Label(text="WELCOME TO DEATH"))
+        content = Start()
         self.add_widget(content)
 
 class ProfileScreen(Screen):
@@ -225,9 +284,7 @@ class ProfileScreen(Screen):
         super(ProfileScreen, self).__init__(**kwargs)
         sidebar = SideBar()
         self.add_widget(sidebar)
-        content = GridLayout(cols=1)
-        content.add_widget(Label(text="Name: Eric Fabroa"))
-        content.add_widget(Label(text="Club Coordination: Coding Club, Robotics"))
+        content = Teacher()
         self.add_widget(content)
 
 class GeneralScreen(Screen):
@@ -235,7 +292,16 @@ class GeneralScreen(Screen):
         super(GeneralScreen, self).__init__(**kwargs)
         sidebar = SideBar()
         self.add_widget(sidebar)
-        layout = BaseTabs()
+        student_list = []
+        student = Student("eryka", "shi shun", 12, "12E")
+        student3 = Student("erin", "chin", 12, "12E")
+        student_list.append(student)
+        student_list.append(student3)
+
+        names = []
+        for i in student_list:
+            names.append(i.get_student_name())
+        layout = BaseTabs(names)
         self.add_widget(layout)
 
 class ClubOneScreen(Screen):
@@ -243,7 +309,18 @@ class ClubOneScreen(Screen):
         super(ClubOneScreen, self).__init__(**kwargs)
         sidebar = SideBar()
         self.add_widget(sidebar)
-        layout = BaseTabs()
+        student_list = []
+        student = Student("eryka", "shi shun", 12, "12E")
+        student2 = Student("joe", "schmoe", 12, "11E")
+        student3 = Student("erin", "chin", 12, "12E")
+        student_list.append(student)
+        student_list.append(student2)
+        student_list.append(student3)
+
+        names = []
+        for i in student_list:
+            names.append(i.get_student_name())
+        layout = BaseTabs(names)
         self.add_widget(layout)
 
 class ClubTwoScreen(Screen):
@@ -251,7 +328,16 @@ class ClubTwoScreen(Screen):
         super(ClubTwoScreen, self).__init__(**kwargs)
         sidebar = SideBar()
         self.add_widget(sidebar)
-        layout = BaseTabs()
+        student_list = []
+        student = Student("eryka", "shi shun", 12, "12E")
+        student2 = Student("joe", "schmoe", 12, "11E")
+        student_list.append(student)
+        student_list.append(student2)
+
+        names = []
+        for i in student_list:
+            names.append(i.get_student_name())
+        layout = BaseTabs(names)
         self.add_widget(layout)
 
 # Adding screens to the Screen Manager
@@ -265,7 +351,7 @@ screen_manager.add_widget(ClubTwoScreen(name= "screen_five"))
 class TeacherApp(App):
 
     def build(self):
-        Window.clearcolor = (0.83, 0.83, 1, 1)
+        Window.clearcolor = (0.3725, 0.6196, 0.6275, 1)
         return screen_manager
 
 TeacherApp().run()

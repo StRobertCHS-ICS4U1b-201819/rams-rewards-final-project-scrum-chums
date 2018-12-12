@@ -30,6 +30,8 @@ Builder.load_string("""
     
 <LoginInput@TextInput>
     size: 150, 50
+    size_hint: .5, .1
+    
 
 
 <Login>:
@@ -39,8 +41,8 @@ Builder.load_string("""
     
     BoxLayout:
         orientation: "vertical"
-        pos_hint_y: .2
-
+        pos_hint_y: .6
+        pos_hint_x: .6
         
         CustLabel:
             text: "Username"
@@ -49,7 +51,7 @@ Builder.load_string("""
             
         LoginInput:
             id: username
-            size_hint: .5, .1
+            
 
         CustLabel:
             text: "Password"
@@ -61,7 +63,6 @@ Builder.load_string("""
         
         Button:
             text: "Submit"
-            pos_hint: {"center_x": .5, "center_y": .3}
             background_color: 0, 2.2, 0, .8
             size_hint: .3, .1
             on_press:

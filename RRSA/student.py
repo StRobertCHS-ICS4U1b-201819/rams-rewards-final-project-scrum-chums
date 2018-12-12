@@ -26,6 +26,7 @@ Builder.load_string("""
 <CustLabel@Label>:
     font_size: 30
     color: 0, 0, 0, 1
+    size_hint: .5, .1
     
 <LoginInput@TextInput>
     size: 150, 50
@@ -36,11 +37,14 @@ Builder.load_string("""
     password_text_input: password
     
     
-    FloatLayout:
+    BoxLayout:
+        orientation: "vertical"
+        pos_hint_y: .2
 
         
         CustLabel:
             text: "Username"
+            
             
             
         LoginInput:
@@ -49,7 +53,7 @@ Builder.load_string("""
 
         CustLabel:
             text: "Password"
-            size_hint: .5, .1
+
             
         LoginInput:
             id: password

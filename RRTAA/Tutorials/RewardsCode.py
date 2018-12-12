@@ -1,5 +1,6 @@
 import random
 
+
 class Code(object):
 
     def __init__(self):

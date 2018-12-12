@@ -1,25 +1,30 @@
-from kivy.uix.screenmanager import ScreenManager, Screen
+# Importing the Kivy application, layouts, and buttons
+import random
 from kivy.app import App
+
+from kivy.lang import Builder
+from kivy.uix.screenmanager import ScreenManager, Screen
+
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.button import Button
+
 from kivy.uix.button import Label
-from kivy.lang import Builder
-from kivy.properties import ObjectProperty
+from kivy.uix.button import Button
 from kivy.uix.listview import ListItemButton
-from kivy.core.window import Window
 from kivy.uix.popup import Popup
+from kivy.core.window import Window
+from kivy.properties import ObjectProperty
 
-import random
-
+# Creating a kivy text file in this window
 Builder.load_string("""
 #: import main newTesting
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
+
 <CustLabel@Label>
     color: 0, 0, 0, 1
 
-<SampBoxLayout>:
+<ClubSelectionBoxLayout>:
     orientation: "vertical"
     padding: 10
     spacing: 10
@@ -147,7 +152,7 @@ class CustomPopup(Popup):
 
 
 
-class SampBoxLayout(BoxLayout):
+class ClubSelectionBoxLayout(BoxLayout):
 
     def spinner_clicked(self, value):
         if value == "Coding Club":
@@ -167,6 +172,22 @@ class SampBoxLayout(BoxLayout):
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.01
             screen_manager.current = "screen_five"
+
+class Student(object):
+    def __init__(self, firstName, lastName, id, homeroom):
+        self.__first_name = firstName
+        self.__last_name = lastName
+        self.__id = id
+        self.__homeroom = homeroom
+
+    def get_id(self):
+        print(self.__id)
+
+    def get_student_name(self):
+        return self.__first_name + " " + self.__last_name
+
+    def get_homeroom(self):
+        return self.__homeroom
 
 class Code(object):
 
@@ -214,6 +235,7 @@ class StudentDB(BoxLayout):
             content = GridLayout(cols=1)
             content.add_widget(Label(text="Student Name: " + name))
             content.add_widget(Label(text= "Student ID: " + idd))
+            content.add_widget(Button(text='View Rewards History', size_hint_y=None, height=40))
             popup = Popup(title= name,
                           content=content,
                           size_hint=(None, None), size=(400, 400))
@@ -240,7 +262,7 @@ class ListScreen(Screen):
         super(ListScreen, self).__init__(**kwargs)
         layout = StudentDB()
         self.add_widget(layout)
-        layout2 = SampBoxLayout()
+        layout2 = ClubSelectionBoxLayout()
         self.add_widget(layout2)
 
 class ListScreen2(Screen):
@@ -249,7 +271,7 @@ class ListScreen2(Screen):
         layout = StudentDB()
         self.add_widget(layout)
 
-        layout2 = SampBoxLayout()
+        layout2 = ClubSelectionBoxLayout()
         self.add_widget(layout2)
 
 
@@ -259,7 +281,7 @@ class ListScreen3(Screen):
         layout = StudentDB()
         self.add_widget(layout)
 
-        layout2 = SampBoxLayout()
+        layout2 = ClubSelectionBoxLayout()
         self.add_widget(layout2)
 
 class ListScreen4(Screen):
@@ -268,7 +290,7 @@ class ListScreen4(Screen):
         layout = StudentDB()
         self.add_widget(layout)
 
-        layout2 = SampBoxLayout()
+        layout2 = ClubSelectionBoxLayout()
         self.add_widget(layout2)
 
 
@@ -279,7 +301,7 @@ class ListScreen5(Screen):
         layout = StudentDB()
         self.add_widget(layout)
 
-        layout2 = SampBoxLayout()
+        layout2 = ClubSelectionBoxLayout()
         self.add_widget(layout2)
 
 screen_manager = ScreenManager()
@@ -290,13 +312,11 @@ screen_manager.add_widget(ListScreen4(name= "screen_four"))
 screen_manager.add_widget(ListScreen5(name= "screen_five"))
 
 
-
-
-class ExampleApp(App):
+class TeacherApp(App):
 
     def build(self):
-        Window.clearcolor = (0.04, 0.1, .6, 1)
+        Window.clearcolor = (0.3725, 0.6196, 0.6275, 1)
         return screen_manager
 
 
-ExampleApp().run()
+TeacherApp().run()

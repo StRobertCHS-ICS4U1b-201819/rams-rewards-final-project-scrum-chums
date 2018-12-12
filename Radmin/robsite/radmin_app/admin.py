@@ -7,3 +7,7 @@ admin.site.register(RepeatedActivity)
 admin.site.register(OneTimeActivity)
 admin.site.register(Student)
 
+#class StudentAdmin(admin.ModelAdmin):
+
+
+

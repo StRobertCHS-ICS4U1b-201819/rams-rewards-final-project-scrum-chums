@@ -138,7 +138,7 @@ Builder.load_string("""
                     ListView:
                         id: rewards_list_view
                         adapter:
-                            ListAdapter(data= ["Club Attendance.1"], cls= main.ListItemButton)
+                            ListAdapter(data= root.rewardNames, cls= main.ListItemButton)
                 TabbedPanelItem:
                     text: "Student List"
                     ListView:
@@ -221,6 +221,29 @@ class Student(object):
     def get_homeroom(self):
         return self.__homeroom
 
+class Rewards(object):
+
+    def __init__(self, activityName, descript, date, amount):
+        self.__activity_name = activityName
+        self.__description = descript
+        self.__date = date
+        self.__points = amount
+
+    def get_activity_name(self):
+        return self.__activity_name
+
+    def get_description(self):
+        return self.__description
+
+    def get_date(self):
+        return self.__date
+
+    def get_points(self):
+        return self.__points
+
+    def __str__(self):
+        return self.__activity_name()
+
 class BaseTabs(GridLayout):
 
     first_name_text_input = ObjectProperty()
@@ -232,23 +255,31 @@ class BaseTabs(GridLayout):
     grade12_list = ObjectProperty()
     names = ListProperty()
 
-    def __init__(self, listt, **kwargs):
+    rewarding_list = ObjectProperty()
+    rewardNames = ListProperty()
+
+    def __init__(self, studList, reList, **kwargs):
         super(BaseTabs, self).__init__(**kwargs)
-        self.grade12_list = listt
+        self.grade12_list = studList
+        self.rewarding_list = reList
         for i in self.grade12_list:
             self.names.append(i.get_student_name())
+        for j in self.rewarding_list:
+            self.rewardNames.append(j.get_activity_name())
+
 
     def view_activity(self):
         if self.reward_list.adapter.selection:
             selection = self.reward_list.adapter.selection[0].text
-            sel = selection.split('.')
             ran = Code()
             s = ran.get_new_code()
             content = GridLayout(cols=1)
-            content.add_widget(Label(text="Activity Name: " + sel[0]))
-            content.add_widget(Label(text="Activity Description: " + "<Describe pls>"))
-            content.add_widget(Label(text="Date Completed: " + "sometime"))
-            content.add_widget(Label(text="Amount of Points: " + sel[1]))
+            content.add_widget(Label(text="Activity Name: " + selection))
+            for i in self.rewarding_list:
+                if i.get_activity_name() == selection:
+                    content.add_widget(Label(text="Activity Description: " + i.get_description()))
+                    content.add_widget(Label(text="Date Completed: " + i.get_date()))
+                    content.add_widget(Label(text="Amount of Points: " + str(i.get_points())))
             content.add_widget(Label(text="Rewards Code: " + str(s)))
             content.add_widget(Button(text='Reward Points', size_hint_y=None, height=40))
             popup = Popup(title= selection,
@@ -259,17 +290,15 @@ class BaseTabs(GridLayout):
     def view_student(self):
         if self.grade12s_list.adapter.selection:
             selection = self.grade12s_list.adapter.selection[0].text
-            x = selection.split()
-            name = x[0] + " " + x[1]
-            idd = "hi"
+
             content = GridLayout(cols=1)
-            content.add_widget(Label(text="Student Name: " + name))
+            content.add_widget(Label(text="Student Name: " + selection))
             content.add_widget(Label(text="Homeroom: " + "somewhere"))
-            content.add_widget(Label(text= "Student ID: " + idd))
+            content.add_widget(Label(text= "Student ID: "))
             content.add_widget(Label(text="Accumulated Points: " + str(0)))
             content.add_widget(Label(text="Clubs Involved: " + "but to what degree"))
             content.add_widget(Button(text='View Rewards History', size_hint_y=None, height=40))
-            popup = Popup(title= name,
+            popup = Popup(title= selection,
                           content=content,
                           size_hint=(None, None), size=(400, 400))
             popup.open()
@@ -322,7 +351,33 @@ class GeneralScreen(Screen):
         student_list.append(student9)
         student_list.append(student10)
         student_list.append(student11)
-        layout = BaseTabs(student_list)
+        student_list.append(student12)
+
+        rewards = []
+        act = Rewards("Ram of The Month", "Does good in life", "Once a month", 20)
+        act1 = Rewards("Participate in Inside Ride", "Riding bikes for cancer and raising money", "Sometime", 100)
+        act2 = Rewards("Attend Hockey Buyout", "Watching teachers play hockey, school spirit", "Sometime", 50)
+        act3 = Rewards("Attend School Dance", "Grade 9 Dance, Semi-formal, Formal", "Sometime", 25)
+        act4 = Rewards("Participate in Christmas Concert", "Singing, Dancing, etc.", "Sometime", 60)
+        act5 = Rewards("Attend Christmas Concert", "Watching students perform", "Sometime", 10)
+        act6 = Rewards("Participate in Expresso Self", "Singing, Dancing, etc.", "Sometime", 60)
+        act7 = Rewards("Attend Expresso Self", "Watching students perform", "Sometime", 10)
+        act8 = Rewards("Winning Kahoots", "Getting Top 5 in cafeteria kahoots", "Sometime", 70)
+        act9 = Rewards("Participate in School Play", "Acting, Singing, Dancing, etc.", "Sometime", 60)
+        act10 = Rewards("Watching School Play", "Watching fun school plays", "Sometime", 10)
+
+        rewards.append(act)
+        rewards.append(act1)
+        rewards.append(act2)
+        rewards.append(act3)
+        rewards.append(act4)
+        rewards.append(act5)
+        rewards.append(act6)
+        rewards.append(act7)
+        rewards.append(act8)
+        rewards.append(act9)
+        rewards.append(act10)
+        layout = BaseTabs(student_list, rewards)
         self.add_widget(layout)
 
 class ClubOneScreen(Screen):
@@ -358,7 +413,10 @@ class ClubOneScreen(Screen):
         student_list.append(student10)
         student_list.append(student11)
 
-        layout = BaseTabs(student_list)
+        rewards = []
+        act = Rewards("Club Attendance", "Attends a weekly club meeting", "Every week", 1)
+        rewards.append(act)
+        layout = BaseTabs(student_list, rewards)
         self.add_widget(layout)
 
 class ClubTwoScreen(Screen):
@@ -374,7 +432,10 @@ class ClubTwoScreen(Screen):
         student_list.append(student1)
         student_list.append(student2)
 
-        layout = BaseTabs(student_list)
+        rewards = []
+        act = Rewards("Club Attendance", "Attends a weekly club meeting", "Every week", 1)
+        rewards.append(act)
+        layout = BaseTabs(student_list, rewards)
         self.add_widget(layout)
 
 # Adding screens to the Screen Manager

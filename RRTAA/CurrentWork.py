@@ -21,7 +21,7 @@ screen_manager = ScreenManager()
 
 # Creating a kivy text file in this window
 Builder.load_string("""
-#: import main oldTesting
+#: import main CurrentWork
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
 

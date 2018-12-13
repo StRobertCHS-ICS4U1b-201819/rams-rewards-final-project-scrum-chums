@@ -10,7 +10,7 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
 from kivy.uix.popup import Popup
-
+from kivy.uix.label import Label
 Builder.load_string("""
 #: import main student
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
@@ -141,14 +141,23 @@ class Login(Screen):
 
 
     def submit(self):
-        screen_manager.current = 'profile'
-
-    def check_username(self):
-        pass
-
-    def check_password(self):
-        pass
-
+        loggedon = False
+        for account in students:
+            if self.username_text_input.text == account.get_user():
+                loggedon = True
+                if self.password_text_input.text == account.get_pass():
+                    screen_manager.current = 'profile'
+                else:
+                    passwPop = Popup(title="Login Error",
+                                     content= Label(text="Wrong password"),
+                                    size_hint=(None, None), size=(400, 200))
+                    passwPop.open()
+        if not loggedon:
+            userPop = Popup(title="Login Error",
+                             content=Label(text="Invalid username"),
+                             size_hint=(None, None), size=(400, 200))
+            userPop.open()
+            
 
 class Profile(Screen):
 
@@ -200,7 +209,7 @@ students.append(Student("Grace L", 8888, "grace", "pass"))
 students.append(Student("Erin C", 9111, "erin", "pass"))
 students.append(Student("Carson T", 8765, "carson", "pass"))
 students.append(Student("Chen Feng Z", 7878, "chenfeng", "pass"))
-
+students.append(Student("admin", 0000, "1", "1"))
 
 
 

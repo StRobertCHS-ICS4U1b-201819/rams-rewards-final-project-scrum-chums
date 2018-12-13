@@ -22,7 +22,7 @@ def index(request):
 	
 
 def student_display(request):
-    student_list = Student.objects.all().order_by("student_score")
+    students = Student.objects.all()#.order_by("student_score")
     template = loader.get_template("students.html")
-    data = {'students': student_list}
+    data = {'student_list': students}
     return HttpResponse(template.render(data))

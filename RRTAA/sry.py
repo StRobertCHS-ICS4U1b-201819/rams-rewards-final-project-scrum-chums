@@ -10,6 +10,7 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.listview import ListView
+from kivy.uix.checkbox import CheckBox
 
 from kivy.uix.button import Label
 from kivy.uix.button import Button
@@ -24,8 +25,13 @@ Builder.load_string("""
 #: import ListItemButton kivy.uix.listview.ListItemButton
 
 <BaseTabs>:
-    reward_list: rewards_list_view
     orientation: "vertical"   
+    padding: 0
+    spacing: 0
+    
+    orientation: "vertical"   
+    cols: 2
+    rows: 1
     padding: 0
     spacing: 0
     
@@ -37,32 +43,25 @@ Builder.load_string("""
         orientation: "vertical"
         size_hint_x: 1
         BoxLayout:
-            orientation: "horizontal"
-            TabbedPanel:
-                do_default_tab: False
-                TabbedPanelItem:
-                    text: "Activities"
-                    ListView:
-                        id: rewards_list_view
-                        adapter:
-                            ListAdapter(data= ["Club Attendance.1"], cls= main.ListItemButton)
-                TabbedPanelItem:
-                    text: "Student List"
-                    ListView:
-                        adapter:
-                            ListAdapter(data= root.hello, selection_mode='single', allow_empty_selection=False,cls= main.ListItemButton)
-                TabbedPanelItem:
-                    text: "Scanner"
+            orientation: "horizontal"   
+            Button:
+                text: "View Activity"
+                size_hint_x: 10
+                on_press: root.view_activity()
+    
 """)
+
+
 class Student(object):
-    def __init__(self, firstName, lastName, id, homeroom):
+    def __init__(self, firstName, lastName, id, homeroom, clubs):
         self.__first_name = firstName
         self.__last_name = lastName
         self.__id = id
         self.__homeroom = homeroom
+        self.__clubsInvolved = clubs
 
     def get_id(self):
-        print(self.__id)
+        return self.__id
 
     def get_student_name(self):
         return self.__first_name + " " + self.__last_name
@@ -70,42 +69,98 @@ class Student(object):
     def get_homeroom(self):
         return self.__homeroom
 
-    def __str__(self):
-        return self.__first_name + " " + self.__last_name
+    def get_clubs(self):
+        return self.__clubsInvolved
 
-class BaseTabs(BoxLayout):
-    stud = ObjectProperty()
-    hello = ListProperty()
+class ChooseStudents(object):
 
-    def __init__(self, idea, **kwargs):
+    def __init__(self, newList):
+
+        self.people = []
+        allStudents = []
+        student = Student("Chen Feng", "Zhang", 12, "12E", "")
+        student1 = Student("Jason", "Ng", 12, "12E", "")
+        student2 = Student("Alex", "Negoe", 12, "12E", "")
+        student3 = Student("Carson", "Tang", 12, "11E", "")
+        student4 = Student("Natalie", "Tam", 12, "12E", "")
+        student5 = Student("Derek", "Shat", 12, "12E", "")
+        student6 = Student("Erin", "Chin", 12, "11E", "")
+        student7 = Student("Eryka", "Shi-Shun", 12, "12E", "")
+        student8 = Student("Kun", "Lee", 12, "12E", "")
+        student9 = Student("Grace", "Leung", 12, "12E", "")
+        student10 = Student("Shawn", "Nimal", 12, "12E", "")
+        student11 = Student("Tony", "Ni", 12, "12E", "")
+        student12 = Student("Thomas", "Maglietta", 12, "12E", "")
+        student13 = Student("Allen", "Kim", 12, "12E", "")
+        student14 = Student("Bonnie", "Li", 12, "12E", "")
+        student15 = Student("Camille", "Law", 12, "12E", "")
+        student16 = Student("Cecil", "Cao", 12, "12E", "")
+        student17 = Student("Chelsea", "Moon", 12, "12E", "")
+        student18 = Student("Felix", "Yang", 12, "12E", "")
+        student19 = Student("Joon", "Kim", 12, "12E", "")
+        student20 = Student("Sarah", "Wang", 12, "12E", "")
+        student21 = Student("Darya", "Pascarel", 12, "11E", "Robotics")
+
+        allStudents.append(student)
+        allStudents.append(student1)
+        allStudents.append(student2)
+        allStudents.append(student3)
+        allStudents.append(student4)
+        allStudents.append(student5)
+        allStudents.append(student6)
+        allStudents.append(student7)
+        allStudents.append(student8)
+        allStudents.append(student9)
+        allStudents.append(student10)
+        allStudents.append(student11)
+        allStudents.append(student12)
+        allStudents.append(student13)
+        allStudents.append(student14)
+        allStudents.append(student15)
+        allStudents.append(student16)
+        allStudents.append(student17)
+        allStudents.append(student18)
+        allStudents.append(student19)
+        allStudents.append(student20)
+        allStudents.append(student21)
+
+        for i in sorted(newList):
+            for j in allStudents:
+                if j.get_student_name() == i:
+                    self.people.append(j)
+
+    def get_newList(self):
+        return self.people
+
+
+class BaseTabs(GridLayout):
+    def __init__(self, **kwargs):
         super(BaseTabs, self).__init__(**kwargs)
-        self.stud = idea
-        for i in self.stud:
-            self.hello.append(i.get_student_name())
+        peeps = ChooseStudents(
+            ["Chen Feng Zhang", "Jason Ng", "Alex Negoe", "Carson Tang", "Natalie Tam", "Derek Shat", "Kun Lee",
+             "Shawn Nimal", "Tony Ni", "Thomas Maglietta"])
+        self.student_list = peeps.get_newList()
+        self.check_ref = {}
 
     def view_activity(self):
-        if self.reward_list.adapter.selection:
-            print("hi")
-    def view_student(self):
-        if self.grade12_list.adapter.selection:
-            print("hi")
+        content = GridLayout(cols=2)
 
-class ClubTwoScreen(Screen):
-    def __init__(self, **kwargs):
-        super(ClubTwoScreen, self).__init__(**kwargs)
-        stud = []
-        student = Student("eryka", "shi shun", 12, "12E")
-        student2 = Student("joe", "schmoe", 12, "11E")
-        student3 = Student("erin", "chin", 12, "12E")
-        student4 = Student("tate", "tate", 12, "9E")
+        x = GridLayout(cols = 2)
+        for i in self.student_list:
+            x.add_widget(Label(text= i.get_student_name()))
+            c = CheckBox()
+            self.check_ref[i.get_student_name()] = c
+            x.add_widget(c)
+        content.add_widget(x)
+        u = Button(text='Reward Points', size_hint_y=None, height=40)
+        u.bind(on_press=self.getcheckboxes_active)
+        content.add_widget(u)
+        popup = Popup(title="help", content=content, size_hint=(None, None), size=(700, 500))
+        popup.open()
 
-        stud.append(student)
-        stud.append(student2)
-        stud.append(student3)
-        stud.append(student4)
-
-        layout = BaseTabs(stud)
-        self.add_widget(layout)
+    def getcheckboxes_active(self, *arg):
+        for idx, wgt in self.check_ref.items():
+            print(wgt.active, idx)
 
 class ClubOneScreen(Screen):
     def __init__(self, **kwargs):
@@ -113,9 +168,10 @@ class ClubOneScreen(Screen):
         layout = BaseTabs()
         self.add_widget(layout)
 
+
 class aaApp(App):
 
     def build(self):
-        return ClubTwoScreen()
+        return ClubOneScreen()
 x = aaApp()
 x.run()

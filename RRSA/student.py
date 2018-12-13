@@ -9,6 +9,7 @@ from kivy.uix.textinput import TextInput
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
+from kivy.uix.popup import Popup
 
 Builder.load_string("""
 #: import main student
@@ -45,6 +46,7 @@ Builder.load_string("""
         
         CustLabel:
             text: "Ram Rewards Student App"
+            color: 0, .5, 0, .9
             pos_hint: {"center_x": 0.5, "center_y": .85}
             font_size: 30
             
@@ -84,12 +86,14 @@ Builder.load_string("""
 <Profile>:
 
     PageLayout:    
+        
         FloatLayout:
                 
             CustButton:
                 text: "Name"
                 pos_hint: {"x": 0, "top": 1}
                 size_hint: 1, .2 
+                on_press: root.hmrm()
             
             CustButton:
                 text: "Points:"
@@ -108,8 +112,13 @@ Builder.load_string("""
                 text: "Settings"
                 pos_hint: {"right": 1, "top": .1}
                 size_hint: .5, .1 
+                
         FloatLayout:
-
+            background_color: 1, 1, 1, 1
+            CustLabel: 
+                text: "Swipe right to interact"
+                font_size: 15
+                pos_hint: {"center_x": .2, "top": .75}
             CustLabel: 
                 text: "Student ID"
                 pos_hint: {"center_x": .3, "top": .7}
@@ -117,7 +126,8 @@ Builder.load_string("""
             CustLabel:
                 text: "123213131"
                 pos_hint: {"center_x": .6, "top": .7}
-            
+    BoxLayout:
+        orientation: "vertical"
 
 """)
 
@@ -140,12 +150,19 @@ class Login(Screen):
         pass
 
 
-
 class Profile(Screen):
 
-    def history(self):
-        pass
+    def hmrm(self):
+        hmrmPop = Popup(title="Homeroom",
+                     size_hint=(None, None),
+                     size=(400, 100))
+        hmrmPop.open()
 
+    def history(self):
+        historyPop = Popup(title = "Points History",
+                     size_hint=(None, None),
+                     size=(400, 400))
+        historyPop.open()
 
 class Student(object):
     def __init__(self, name, studentID, user, password):
@@ -154,6 +171,7 @@ class Student(object):
         self.__user = user
         self.__password = password
         self.__points = 0
+        self.hmrm = "12A"
 
     def get_name(self):
         return self.__name
@@ -169,6 +187,9 @@ class Student(object):
 
     def get_points(self):
         return self.__points
+
+    def add_points(self, points):
+        self.__points += points
 
 
 

@@ -29,7 +29,8 @@ def display(im, decodedObjects):
     cv2.waitKey(0)
 
 if __name__ == '__main__':
-    im = cv2.imread('zbar-test.jpg')
+    # cant read image
+    im = cv2.imread('zbar-test.png', 0)
 
     decodedObjects = decode(im)
     display(im, decodedObjects)

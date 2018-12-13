@@ -1,6 +1,7 @@
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.pagelayout import PageLayout
 from kivy.properties import ObjectProperty
 from kivy.uix.listview import ListItemButton
 from kivy.core.window import Window
@@ -24,20 +25,18 @@ Builder.load_string("""
     font_size: 20
     color: 0, 0, 0, 1
 
-    
 <LoginInput@TextInput>: 
     size_hint_x: None
     size_hint_y: None
     width: 200
     height: 35
     
+    
 <Login>:
-
 
     username_text_input: username
     password_text_input: password
    
-    
     
     FloatLayout:
         orientation: "vertical"
@@ -62,7 +61,6 @@ Builder.load_string("""
             id: username  
             pos_hint: {"center_x": 0.5, "center_y": .6}
             
-            
         CustLabel:
             text: "Password"
             pos_hint: {"center_x": 0.43, "center_y": .5}
@@ -71,7 +69,6 @@ Builder.load_string("""
             id: password
             pos_hint: {"center_x": 0.5, "center_y": .45}
             
-        
         Button:
             text: "Login"  
             background_color: 0, 2.2, 0, .8
@@ -80,36 +77,49 @@ Builder.load_string("""
             width: 200
             height: 50
             pos_hint: {"center_x": 0.5, "center_y": .3}
-            on_press: root.submit()
+            on_press: root.manager.current = 'profile'
                 
 
 
 <Profile>:
 
-    FloatLayout:
+    PageLayout:    
+        FloatLayout:
+                
+            CustButton:
+                text: "Name"
+                pos_hint: {"x": 0, "top": 1}
+                size_hint: 1, .2 
             
-            
-        CustButton:
-            text: "Name"
-            pos_hint: {"x": 0, "top": 1}
-            size_hint: 1, .2 
+            CustButton:
+                text: "Points:"
+                pos_hint: {"x": 0, "top": .8}
+                size_hint: 1, .15 
+                on_press: root.history()
+       
+            CustButton:
+                text: "Logout"
+                pos_hint: {"x": 0, "top": .1}
+                size_hint: .5, .1 
+                background_color: 0, 0, 0, 0.2
+                on_press: root.manager.current = 'login'
+                
+            CustButton:
+                text: "Settings"
+                pos_hint: {"right": 1, "top": .1}
+                size_hint: .5, .1 
+        FloatLayout:
 
-        CustButton:
-            text: ""
-            pos_hint: {"x": 0, "top": .8}
-            size_hint: 1, .2 
-            
-        CustButton:
-            text: "Points:"
-            pos_hint: {"x": 0, "top": .6}
-            size_hint: 1, .2 
-            on_press: root.history()
+            CustLabel: 
+                text: "Student ID"
+                pos_hint: {"center_x": .3, "top": .7}
 
+            CustLabel:
+                text: "123213131"
+                pos_hint: {"center_x": .6, "top": .7}
+            
 
 """)
-
-
-
 
 screen_manager = ScreenManager()
 
@@ -121,7 +131,7 @@ class Login(Screen):
 
 
     def submit(self):
-        root.manager.current = 'profile'
+        pass
 
     def check_username(self):
         pass
@@ -139,17 +149,28 @@ class Profile(Screen):
 
 class Student(object):
     def __init__(self, name, studentID, user, password):
-        self.name = name
-        self.id = studentID
-        self.user = user
-        self.password = password
-        self.points = 0
+        self.__name = name
+        self.__id = studentID
+        self.__user = user
+        self.__password = password
+        self.__points = 0
+
+    def get_name(self):
+        return self.__name
+
+    def get_id(self):
+        return self.__id
 
     def get_user(self):
-        return self.user
+        return self.__user
 
     def get_pass(self):
-        return self.password
+        return self.__password
+
+    def get_points(self):
+        return self.__points
+
+
 
 
 students = []
@@ -158,9 +179,6 @@ students.append(Student("Grace L", 8888, "grace", "pass"))
 students.append(Student("Erin C", 9111, "erin", "pass"))
 students.append(Student("Carson T", 8765, "carson", "pass"))
 students.append(Student("Chen Feng Z", 7878, "chenfeng", "pass"))
-
-
-
 
 
 

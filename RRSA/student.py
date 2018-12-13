@@ -141,34 +141,41 @@ class Login(Screen):
 
 
     def submit(self):
+        global current_user
         loggedon = False
         for account in students:
             if self.username_text_input.text == account.get_user():
                 loggedon = True
                 if self.password_text_input.text == account.get_pass():
                     screen_manager.current = 'profile'
+                    current_user = account
                 else:
                     passwPop = Popup(title="Login Error",
                                      content= Label(text="Wrong password"),
-                                    size_hint=(None, None), size=(400, 200))
+                                     background='atlas://data/images/defaulttheme/button_pressed',
+                                    size_hint=(None, None), size=(400, 150))
                     passwPop.open()
         if not loggedon:
             userPop = Popup(title="Login Error",
                              content=Label(text="Invalid username"),
-                             size_hint=(None, None), size=(400, 200))
+                             background='atlas://data/images/defaulttheme/button_pressed',
+                             size_hint=(None, None), size=(400, 150))
             userPop.open()
-            
+
 
 class Profile(Screen):
 
+
     def hmrm(self):
         hmrmPop = Popup(title="Homeroom",
+                     content = Label(text="Homeroom: " + current_user.get_hmrm() + current_user.get_name()),
                      size_hint=(None, None),
                      size=(400, 100))
         hmrmPop.open()
 
     def history(self):
         historyPop = Popup(title = "Points History",
+                     content = Label(text= "lol"),
                      size_hint=(None, None),
                      size=(400, 400))
         historyPop.open()
@@ -180,13 +187,16 @@ class Student(object):
         self.__user = user
         self.__password = password
         self.__points = 0
-        self.hmrm = "12A"
+        self.__hmrm = "12A"
+        self.__history = []
 
     def get_name(self):
         return self.__name
 
     def get_id(self):
         return self.__id
+    def get_hmrm(self):
+        return self.__hmrm
 
     def get_user(self):
         return self.__user
@@ -200,6 +210,10 @@ class Student(object):
     def add_points(self, points):
         self.__points += points
 
+    def add_history(self, points):
+        self.__history.append(points)
+
+
 
 
 
@@ -210,6 +224,8 @@ students.append(Student("Erin C", 9111, "erin", "pass"))
 students.append(Student("Carson T", 8765, "carson", "pass"))
 students.append(Student("Chen Feng Z", 7878, "chenfeng", "pass"))
 students.append(Student("admin", 0000, "1", "1"))
+empty_acc = Student("empty", None, "", "")
+current_user = empty_acc
 
 
 

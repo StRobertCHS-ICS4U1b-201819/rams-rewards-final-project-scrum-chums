@@ -1,0 +1,23 @@
+{% extends "Radmins/header.html" %}
+
+{% block content %}
+    <h3>{{activitie.title}}</h3>
+	<h5>Worth {{activitie.points}} Pts<h5>
+    <h6>on {{activitie.date}}</h6>
+    {{activitie.body|safe|linebreaks}}
+{% endblock %}
+
+
+<!-- How this works at all :') ? 
+
+" To start, this page extends the header file, which 
+we've already covered. The title is the post.title object.
+We can do this because we passed the model through, 
+and the model is based on the primary key from the URL (magic!)"
+
+So in this case i just put the name of the class from the models.py
+but instead of Activitie i made it all lowercase like activitie and it works? 
+if u uppercase it it wont work man :/
+
+https://pythonprogramming.net/finished-blog-django-python-tutorial/
+-->

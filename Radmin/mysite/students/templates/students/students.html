@@ -1,0 +1,16 @@
+<style>
+p {
+display: inline;
+}
+
+.name {
+font-weight: bold;
+}
+</style>
+
+{% extends "Radmins/header.html" %}
+{% block content %}
+	{% for student in object_list %}
+		<h5><p class='name'>{{ student.student_name }}</p><p> - Grade {{ student.student_grade }}</p><p> - {{ student.student_score }} Points </p></h5>
+	{% endfor %}
+{% endblock %}

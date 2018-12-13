@@ -79,7 +79,7 @@ Builder.load_string("""
             width: 200
             height: 50
             pos_hint: {"center_x": 0.5, "center_y": .3}
-            on_press: root.manager.current = 'profile'
+            on_press: root.submit()
                 
 
 
@@ -141,7 +141,7 @@ class Login(Screen):
 
 
     def submit(self):
-        pass
+        screen_manager.current = 'profile'
 
     def check_username(self):
         pass

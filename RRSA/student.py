@@ -15,58 +15,72 @@ Builder.load_string("""
 #: import ListItemButton kivy.uix.listview.ListItemButton
 
 <CustButton@Button>:
-    font_size: 32
-    size: 150, 50
+    font_size: 25
     color: 0, 0, 0, 1
     background_normal: ''
     background_color: 1, 1, 1, 1
 
-    
-
 <CustLabel@Label>:
-    font_size: 30
+    font_size: 20
     color: 0, 0, 0, 1
-    size_hint: .5, .1
-    
-<LoginInput@TextInput>
-    size: 150, 50
-    size_hint: .5, .1
-    
 
-
+    
+<LoginInput@TextInput>: 
+    size_hint_x: None
+    size_hint_y: None
+    width: 200
+    height: 35
+    
 <Login>:
+
+
     username_text_input: username
     password_text_input: password
+   
     
     
-    BoxLayout:
+    FloatLayout:
         orientation: "vertical"
-        pos_hint_y: .6
-        pos_hint_x: .6
+        pos_hint_y: 1
+        pos_hint_x: 5
+        
+        CustLabel:
+            text: "Ram Rewards Student App"
+            pos_hint: {"center_x": 0.5, "center_y": .85}
+            font_size: 30
+            
+        CustLabel:
+            text: "Welcome!"
+            pos_hint: {"center_x": 0.5, "center_y": .75}
+            font_size: 30
         
         CustLabel:
             text: "Username"
-            
-            
-            
+            pos_hint: {"center_x": 0.43, "center_y": .65}
+                   
         LoginInput:
-            id: username
+            id: username  
+            pos_hint: {"center_x": 0.5, "center_y": .6}
             
-
+            
         CustLabel:
             text: "Password"
-
+            pos_hint: {"center_x": 0.43, "center_y": .5}
             
         LoginInput:
             id: password
+            pos_hint: {"center_x": 0.5, "center_y": .45}
             
         
         Button:
-            text: "Submit"
+            text: "Login"  
             background_color: 0, 2.2, 0, .8
-            size_hint: .3, .1
-            on_press:
-                root.manager.current = 'profile'
+            size_hint_x: None
+            size_hint_y: None
+            width: 200
+            height: 50
+            pos_hint: {"center_x": 0.5, "center_y": .3}
+            on_press: root.submit()
                 
 
 
@@ -75,17 +89,17 @@ Builder.load_string("""
     FloatLayout:
             
             
-        Button:
+        CustButton:
             text: "Name"
             pos_hint: {"x": 0, "top": 1}
             size_hint: 1, .2 
 
-        Button:
+        CustButton:
             text: ""
             pos_hint: {"x": 0, "top": .8}
             size_hint: 1, .2 
             
-        Button:
+        CustButton:
             text: "Points:"
             pos_hint: {"x": 0, "top": .6}
             size_hint: 1, .2 
@@ -107,7 +121,7 @@ class Login(Screen):
 
 
     def submit(self):
-        pass
+        root.manager.current = 'profile'
 
     def check_username(self):
         pass
@@ -123,6 +137,34 @@ class Profile(Screen):
         pass
 
 
+class Student(object):
+    def __init__(self, name, studentID, user, password):
+        self.name = name
+        self.id = studentID
+        self.user = user
+        self.password = password
+        self.points = 0
+
+    def get_user(self):
+        return self.user
+
+    def get_pass(self):
+        return self.password
+
+
+students = []
+students.append(Student("Eryka S", 1234, "eryka", "pass"))
+students.append(Student("Grace L", 8888, "grace", "pass"))
+students.append(Student("Erin C", 9111, "erin", "pass"))
+students.append(Student("Carson T", 8765, "carson", "pass"))
+students.append(Student("Chen Feng Z", 7878, "chenfeng", "pass"))
+
+
+
+
+
+
+
 screen_manager.add_widget(Login(name = "login"))
 screen_manager.add_widget(Profile(name = "profile"))
 
@@ -132,5 +174,5 @@ class LoginApp(App):
         return screen_manager
 
 
-risa = LoginApp()
-risa.run()
+rrsa = LoginApp()
+rrsa.run()

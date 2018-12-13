@@ -7,38 +7,83 @@
     size: 150, 50
     color: 0, 0, 0, 1
     background_normal: ''
-
-    background_color: 0, 1, 0, 0.4
-
-    size_hint: .3, .1
+    background_color: 1, 1, 1, 1
 
 <CustLabel@Label>:
-    font_size: 30
+    font_size: 25
     color: 0, 0, 0, 1
+    size_hint: .5, .1
 
-Login:
+<LoginInput@TextInput>:
+    size_hint_x: None
+    size_hint_y: None
+    width: 200
+    height: 35
 
 <Login>:
 
 
+    username_text_input: username
+    password_text_input: password
+
 
 
     FloatLayout:
+        orientation: "vertical"
+        pos_hint_y: 1
+        pos_hint_x: 5
+
         CustLabel:
             text: "Username"
-            pos_hint: {"center_x": .5, "center_y": .7}
+            pos_hint: {"center_x": 0.5, "center_y": .8}
+
+        LoginInput:
+            id: username
+            pos_hint: {"center_x": 0.5, "center_y": .7}
+
 
         CustLabel:
             text: "Password"
-            pos_hint: {"center_x": .5, "center_y": .5}
+            pos_hint: {"center_x": 0.5, "center_y": .6}
 
-        CustButton:
+        LoginInput:
+            id: password
+            pos_hint: {"center_x": 0.5, "center_y": .5}
+
+
+        Button:
             text: "Submit"
-            pos_hint: {"center_x": .5, "center_y": .3}
+            background_color: 0, 2.2, 0, .8
+            size_hint_x: None
+            size_hint_y: None
+            width: 200
+            height: 50
+            pos_hint: {"center_x": 0.5, "center_y": .35}
             on_press:
                 root.manager.current = 'profile'
 
 
+
+<Profile>:
+
+    FloatLayout:
+
+
+        Button:
+            text: "Name"
+            pos_hint: {"x": 0, "top": 1}
+            size_hint: 1, .2
+
+        Button:
+            text: ""
+            pos_hint: {"x": 0, "top": .8}
+            size_hint: 1, .2
+
+        Button:
+            text: "Points:"
+            pos_hint: {"x": 0, "top": .6}
+            size_hint: 1, .2
+            on_press: root.history()
 
 
 

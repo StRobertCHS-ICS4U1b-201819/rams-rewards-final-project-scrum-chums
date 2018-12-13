@@ -20,7 +20,7 @@ from kivy.core.window import Window
 from kivy.properties import ObjectProperty, ListProperty, VariableListProperty
 
 Builder.load_string("""
-#: import main sry
+#: import main Testing
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
 

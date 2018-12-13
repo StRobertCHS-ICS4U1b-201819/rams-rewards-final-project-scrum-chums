@@ -1,0 +1,6 @@
+{% extends "Radmins/header.html" %}
+{% block content %}
+	{% for activity in object_list %}
+		<h5>{{ activity.date|date:"Y-m-d" }}<a href="/activities/{{activity.id}}">  {{ activity.title }}</a></h5>
+	{% endfor %}
+{% endblock %}

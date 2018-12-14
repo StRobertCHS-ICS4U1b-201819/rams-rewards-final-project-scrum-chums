@@ -1,0 +1,24 @@
+
+
+Profile:
+<Profile>:
+
+    FloatLayout:
+
+
+        CustButton:
+            text: "Name"
+            pos_hint: {"x": 0, "top": 1}
+            size_hint: 1, .2
+
+        CustButton:
+            text: ""
+            pos_hint: {"x": 0, "top": .8}
+            size_hint: 1, .2
+
+        CustButton:
+            text: "Points:"
+            pos_hint: {"x": 0, "top": .6}
+            size_hint: 1, .2
+            on_press: root.history()
+

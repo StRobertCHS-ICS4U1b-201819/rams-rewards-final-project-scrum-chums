@@ -1,0 +1,70 @@
+#: import main student
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+#: import ListItemButton kivy.uix.listview.ListItemButton
+
+<CustButton@Button>:
+    font_size: 25
+    color: 0, 0, 0, 1
+    background_normal: ''
+    background_color: 1, 1, 1, 1
+
+<CustLabel@Label>:
+    font_size: 20
+    color: 0, 0, 0, 1
+
+<LoginInput@TextInput>:
+    size_hint_x: None
+    size_hint_y: None
+    width: 200
+    height: 35
+
+
+
+<Login>:
+
+    username_text_input: username
+    password_text_input: password
+
+
+    FloatLayout:
+        orientation: "vertical"
+        pos_hint_y: 1
+        pos_hint_x: 5
+
+        CustLabel:
+            text: "Ram Rewards Student App"
+            pos_hint: {"center_x": 0.5, "center_y": .85}
+            font_size: 30
+
+        CustLabel:
+            text: "Welcome!"
+            pos_hint: {"center_x": 0.5, "center_y": .75}
+            font_size: 30
+
+        CustLabel:
+            text: "Username"
+            pos_hint: {"center_x": 0.43, "center_y": .65}
+
+        LoginInput:
+            id: username
+            pos_hint: {"center_x": 0.5, "center_y": .6}
+
+        CustLabel:
+            text: "Password"
+            pos_hint: {"center_x": 0.43, "center_y": .5}
+
+        LoginInput:
+            id: password
+            pos_hint: {"center_x": 0.5, "center_y": .45}
+
+
+        Button:
+            text: "Login"
+            background_color: 0, 2.2, 0, .8
+            size_hint_x: None
+            size_hint_y: None
+            width: 200
+            height: 50
+            pos_hint: {"center_x": 0.5, "center_y": .3}
+            on_press: screen_manager.submit()
+

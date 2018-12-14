@@ -19,20 +19,30 @@ This mobile app will be used by teacher and administrators to distribute rewards
 * Choose a student to view their rewards activity history
 * Choose a rewards activity to view student activity by date.  (i.e Coding Club activity for Nov 12th).
 * Sends and recieves necessary data from/to the RR Web Administraton Console
+- [ ] Sidebar
+- [ ] List of activities --> Assign points to members of activity & view students per activity
+- [ ] Barcode Scanner
+- [ ] Sort students by grades --> list of students and search bar --> student profile
 
 ## RR Web Administration (Radmin) Console User Stories - Django
 * ChenFeng, Erin
 
 ### Scrum Backlog:
 - [ ] Install Kivy / Setup Django
-- [ ] Get website running 
-- [ ] List of reward activities and points
+- [x] Get website running 
+- [x] List of reward activities and points
 
 Website for Rams Rewards administrators.  RR Admins will be able to:
 * Define the list of rewards activities along with their point values.
 * Manage list of student accounts (add accounts, remove accounts, edit info)
 * View history of rewards activity.
 * View charts of rewards activity (by date, by activity)
+
+### Django Works
+
+#### Django still sucks
+--- chenfengzhang
+
 ###### Good Meme
 ![Django Daikazoku](https://media.discordapp.net/attachments/509538412877971468/512448005807276032/nagisa_django.gif)
 

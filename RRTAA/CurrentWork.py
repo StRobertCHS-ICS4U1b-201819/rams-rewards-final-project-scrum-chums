@@ -198,23 +198,23 @@ class SideBar(GridLayout):
     def change_screen(self, page):
         if page == "Homepage" and screen_manager.current != "screen_one":
             screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.01
+            screen_manager.transition.duration = 0.001
             screen_manager.current = "screen_one"
         elif page == "Profile" and screen_manager.current != "screen_two":
             screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.01
+            screen_manager.transition.duration = 0.001
             screen_manager.current = "screen_two"
         elif page == "General" and screen_manager.current != "screen_three":
             screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.01
+            screen_manager.transition.duration = 0.001
             screen_manager.current = "screen_three"
         elif page == "Coding" and screen_manager.current != "screen_four":
             screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.01
+            screen_manager.transition.duration = 0.001
             screen_manager.current = "screen_four"
         elif page == "Robotics" and screen_manager.current != "screen_five":
             screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.01
+            screen_manager.transition.duration = 0.001
             screen_manager.current = "screen_five"
 
 
@@ -303,28 +303,30 @@ class ChooseStudents(object):
 
         self.members = []
         self.allStudents = []
-        student = Student("Chen Feng", "Zhang", 12, "12E", "")
-        student1 = Student("Jason", "Ng", 12, "12E", "")
-        student2 = Student("Alex", "Negoe", 12, "12E", "")
-        student3 = Student("Carson", "Tang", 12, "11E", "")
-        student4 = Student("Natalie", "Tam", 12, "12E", "")
-        student5 = Student("Derek", "Shat", 12, "12E", "")
-        student6 = Student("Erin", "Chin", 12, "11E", "")
-        student7 = Student("Eryka", "Shi-Shun", 12, "12E", "")
-        student8 = Student("Kun", "Lee", 12, "12E", "")
-        student9 = Student("Grace", "Leung", 12, "12E", "")
-        student10 = Student("Shawn", "Nimal", 12, "12E", "")
-        student11 = Student("Tony", "Ni", 12, "12E", "")
-        student12 = Student("Thomas", "Maglietta", 12, "12E", "")
-        student13 = Student("Allen", "Kim", 12, "12E", "k")
-        student14 = Student("Bonnie", "Li", 12, "12E", "")
-        student15 = Student("Camille", "Law", 12, "12E", "")
-        student16 = Student("Cecil", "Cao", 12, "12E", "")
-        student17 = Student("Chelsea", "Moon", 12, "12E", "")
-        student18 = Student("Felix", "Yang", 12, "12E", "")
-        student19 = Student("Joon", "Kim", 12, "12E", "")
-        student20 = Student("Sarah", "Wang", 12, "12E", "")
-        student21 = Student("Darya", "Pascarel", 12, "11E", "Robotics")
+        student = Student("Chen Feng", "Zhang", 1, "12E", "")
+        student1 = Student("Jason", "Ng", 2, "12E", "Yearbook")
+        student2 = Student("Alex", "Negoe", 3, "12E", "Coding Club")
+        student3 = Student("Carson", "Tang", 4, "11E", "Coding Club")
+        student4 = Student("Natalie", "Tam", 5, "12E", "")
+        student5 = Student("Derek", "Shat", 6, "12E", "")
+        student6 = Student("Erin", "Chin", 7, "11E", "Psychology Club, Coding Club")
+        student7 = Student("Eryka", "Shi-Shun", 8, "12E", "Psychology Club, Coding Club")
+        student8 = Student("Kun", "Lee", 9, "12E", "")
+        student9 = Student("Grace", "Leung", 10, "12E", "Mural PALS, Psychology Club, Coding Club, Robotics")
+        student10 = Student("Shawn", "Nimal", 11, "12E", "Coding Club")
+        student11 = Student("Tony", "Ni", 12, "12E", "DECA")
+        student12 = Student("Thomas", "Maglietta", 13, "12E", "Coding Club")
+        student13 = Student("Allen", "Kim", 14, "12E", "Yearbook, Robotics, Mural PALS, Coding Club")
+        student14 = Student("Bonnie", "Li", 15, "12E", "Economics Club, Coding Club")
+        student15 = Student("Camille", "Law", 16, "12E", "French, Environmental")
+        student16 = Student("Cecil", "Cao", 17, "12E", "Coding Club")
+        student17 = Student("Chelsea", "Moon", 18, "12E", "Coding Club")
+        student18 = Student("Felix", "Yang", 19, "12E", "Coding Club")
+        student19 = Student("Joon", "Kim", 20, "12E", "Coding Club")
+        student20 = Student("Sarah", "Wang", 21, "12E", "Coding Club")
+        student21 = Student("Darya", "Pascarel", 22, "11E", "Robotics")
+        student22 = Student("Caterina", "Paganelli", 23, "12E", "Band, Psychology Club, Politics, Sad Boi Club")
+
 
         self.allStudents.append(student)
         self.allStudents.append(student1)
@@ -348,6 +350,8 @@ class ChooseStudents(object):
         self.allStudents.append(student19)
         self.allStudents.append(student20)
         self.allStudents.append(student21)
+        self.allStudents.append(student22)
+
 
         for i in sorted(memberList):
             for j in self.allStudents:
@@ -507,13 +511,13 @@ class GeneralScreen(Screen):
 
         # Creates all the members
         members = ChooseStudents(["Chen Feng Zhang", "Jason Ng", "Alex Negoe", "Carson Tang", "Natalie Tam",
-                                "Derek Shat", "Kun Lee", "Shawn Nimal", "Tony Ni", "Thomas Maglietta"])
+                                "Derek Shat", "Kun Lee", "Shawn Nimal", "Tony Ni", "Thomas Maglietta", "Caterina Paganelli"])
         student_list = members.get_newList()
 
         # Creates all the activities
         rewards = []
         act = Rewards("Ram of The Month", "Does good in life", "Once a month", 20)
-        act1 = Rewards("Participate in Inside Ride", "Riding bikes for cancer and raising money", "Sometime", 100)
+        act1 = Rewards("Participate in Inside Ride", "Riding bikes for cancer \n and raising money", "Sometime", 100)
         act2 = Rewards("Attend Hockey Buyout", "Watching teachers play hockey, school spirit", "Sometime", 50)
         act3 = Rewards("Attend School Dance", "Grade 9 Dance, Semi-formal, Formal", "Sometime", 25)
         act4 = Rewards("Participate in Christmas Concert", "Singing, Dancing, etc.", "Sometime", 60)

@@ -44,9 +44,19 @@ Builder.load_string("""
         text: "WELCOME TO MY MESS OF A PROJECT"
         pos: 255, 530 
     CustButton:
-        text: "+ Add New Teacher"
+        text: "Add New Teacher"
         pos: 255, 480
-
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_x: 1
+        BoxLayout:
+            orientation: "horizontal"
+            TabbedPanel:
+                do_default_tab: False
+                TabbedPanelItem:
+                    text: "Add New Teacher"
+                
+             
 
 # CHANGE LATER   
 <TeacherProfile>:
@@ -278,51 +288,51 @@ class Teacher(object):
     Constructor for Teacher
     '''
     def __init__(self, firstName:str, lastName:str, userName:str, password:str):
-        self.firstName = firstName
-        self.lastName = lastName
-        self.userName = userName
-        self.password = password
+        self.__firstName = firstName
+        self.__lastName = lastName
+        self.__userName = userName
+        self.__password = password
 
     def get_firstName(self)->str:
-        return self.firstName
+        return self.__firstName
 
     def get_lastName(self)->str:
-        return self.lastName
+        return self.__lastName
 
     def get_userName(self)->str:
-        return self.userName
+        return self.__userName
 
     def get_password(self)->str:
-        return self.password
+        return self.__password
 
     def set_firstName(self, new_firstName:str):
-        self.firstName = new_firstName
+        self.__firstName = new_firstName
 
     def set_lastName(self, new_lastName:str):
-        self.lastName = new_lastName
+        self.__lastName = new_lastName
 
     def set_userName(self, new_userName:str):
-        self.userName = new_userName
+        self.__userName = new_userName
 
     def set_password(self, new_password:str):
-        self.password = new_password
+        self.__password = new_password
 # AND THIS
 class AccountManager(object):
     '''
     Constructor for accounts of teachers
     '''
     def __init__(self):
-        self.list_teachers = []
+        self.__list_teachers = []
 
     def add_teacher(self, teacher: Teacher):
-        self.list_teachers.append(teacher)
+        self.__list_teachers.append(teacher)
 
     def remove_teacher(self, teacher: Teacher):
-        if teacher in self.list_teachers:
-            self.list_teachers.remove(teacher)
+        if teacher in self.__list_teachers:
+            self.__list_teachers.remove(teacher)
 
     def get_list_teachers(self):
-        return self.list_teachers
+        return self.__list_teachers
 
     def validLogin(self, teacher: Teacher, password: str)->bool:
         return teacher.get_password() == password

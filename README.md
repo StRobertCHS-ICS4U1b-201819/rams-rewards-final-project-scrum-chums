@@ -19,16 +19,18 @@ This mobile app will be used by teacher and administrators to distribute rewards
 * Choose a student to view their rewards activity history
 * Choose a rewards activity to view student activity by date.  (i.e Coding Club activity for Nov 12th).
 * Sends and recieves necessary data from/to the RR Web Administraton Console
-- [ ] Sidebar
-- [ ] List of activities --> Assign points to members of activity & view students per activity
-- [ ] Barcode Scanner
+- [x] Sidebar
+- [x] List of activities --> Assign points to members of activity & view students per activity
+- [x] Barcode/QRCode Scanner
 - [ ] Sort students by grades --> list of students and search bar --> student profile
+#### Scanner works - need to combine with app
+
 
 ## RR Web Administration (Radmin) Console User Stories - Django
 * ChenFeng, Erin
 
 ### Scrum Backlog:
-- [ ] Install Kivy / Setup Django
+- [x] Install Kivy / Setup Django
 - [x] Get website running 
 - [x] List of reward activities and points
 

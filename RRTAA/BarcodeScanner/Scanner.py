@@ -2,8 +2,9 @@ from __future__ import print_function
 import pyzbar.pyzbar as pyzbar
 import numpy as np
 import cv2
+from PIL import Image
 
-#https://www.learnopencv.com/barcode-and-qr-code-scanner-using-zbar-and-opencv/
+# https://www.learnopencv.com/barcode-and-qr-code-scanner-using-zbar-and-opencv/
 
 def decode(im):
     decodedObjects = pyzbar.decode(im)
@@ -29,8 +30,8 @@ def display(im, decodedObjects):
     cv2.waitKey(0)
 
 if __name__ == '__main__':
-    # cant read image
-    im = cv2.imread('zbar-test.png', 0)
+
+    im = cv2.imread('qrcode_test1.jpg', 0)
 
     decodedObjects = decode(im)
     display(im, decodedObjects)

@@ -31,6 +31,7 @@ Builder.load_string("""
     size_hint_y: None
     width: 200
     height: 35
+    multiline: False
     
     
 <Login>:
@@ -83,7 +84,7 @@ Builder.load_string("""
                 
 
 
-<Profile>:
+<Profile>:  
 
     PageLayout:    
         
@@ -164,11 +165,14 @@ class Login(Screen):
 
 
 class Profile(Screen):
-
+    # current_name = current_user.get_name()
+    # current_id = current_user.get_id()
+    # current_points = current_user.get_points()
 
     def hmrm(self):
+
         hmrmPop = Popup(title="Homeroom",
-                     content = Label(text="Homeroom: " + current_user.get_hmrm() + current_user.get_name()),
+                     content = Label(text="Homeroom: " + current_user.get_hmrm()),
                      size_hint=(None, None),
                      size=(400, 100))
         hmrmPop.open()

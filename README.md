@@ -33,6 +33,7 @@ This mobile app will be used by teacher and administrators to distribute rewards
 - [x] Install Kivy / Setup Django
 - [x] Get website running 
 - [x] List of reward activities and points
+- [x] List of students with info
 
 Website for Rams Rewards administrators.  RR Admins will be able to:
 * Define the list of rewards activities along with their point values.

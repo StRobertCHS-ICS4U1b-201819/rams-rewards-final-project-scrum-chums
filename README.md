@@ -40,11 +40,6 @@ Website for Rams Rewards administrators.  RR Admins will be able to:
 * View history of rewards activity.
 * View charts of rewards activity (by date, by activity)
 
-### Django Works
-
-#### Django still sucks
---- chenfengzhang
-
 ###### Good Meme
 ![Django Daikazoku](https://media.discordapp.net/attachments/509538412877971468/512448005807276032/nagisa_django.gif)
 

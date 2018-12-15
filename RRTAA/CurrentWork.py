@@ -1,5 +1,6 @@
 # Importing the Kivy application, layouts, and buttons
 import random
+from RRTAA.BarcodeScanner import Scanner
 from kivy.app import App
 
 from kivy.lang import Builder
@@ -42,8 +43,23 @@ Builder.load_string("""
     CustButton:
         text: "WELCOME TO MY MESS OF A PROJECT"
         pos: 255, 530 
+    CustButton:
+        text: "Add New Teacher"
+        pos: 255, 480
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_x: 1
+        BoxLayout:
+            orientation: "horizontal"
+            TabbedPanel:
+                do_default_tab: False
+                TabbedPanelItem:
+                    text: "Add New Teacher"
+                
+             
 
-<Teacher>:
+# CHANGE LATER   
+<TeacherProfile>:
     CustButton:
         text: "Name: Eric Fabroa"
         pos: 255, 530 
@@ -110,7 +126,7 @@ Builder.load_string("""
             width: 200
             height: 60
             on_press: root.change_screen("Robotics")
-                
+                   
         Button:
             text: "+ Add New Club"
             size_hint_x: None
@@ -122,7 +138,7 @@ Builder.load_string("""
             background_color: 1, 1, 1, 1
             size_hint_x: None
             width: 200
-      
+
 <BaseTabs>
     reward_list: rewards_list_view
     grade12s_list: grade12ss_list_view
@@ -182,7 +198,7 @@ class Start(Widget):
     pass
 
 
-class Teacher(Widget):
+class TeacherProfile(Widget):
     '''
     For adding text to Teacher Profile Screen
     '''
@@ -234,7 +250,7 @@ class Code(object):
                 self.usedCodes.append(newCode)
         return newCode
 
-
+# SHOULD MOVE TO ANOTHER PY FILE
 class Student(object):
     '''
     For creating each student
@@ -265,6 +281,100 @@ class Student(object):
 
     def set_points(self, morePts):
         self.__points += morePts
+
+# THIS TOO
+class Teacher(object):
+    '''
+    Constructor for Teacher
+    '''
+    def __init__(self, firstName:str, lastName:str, userName:str, password:str):
+        self.__firstName = firstName
+        self.__lastName = lastName
+        self.__userName = userName
+        self.__password = password
+
+    def get_firstName(self)->str:
+        return self.__firstName
+
+    def get_lastName(self)->str:
+        return self.__lastName
+
+    def get_userName(self)->str:
+        return self.__userName
+
+    def get_password(self)->str:
+        return self.__password
+
+    def set_firstName(self, new_firstName:str):
+        self.__firstName = new_firstName
+
+    def set_lastName(self, new_lastName:str):
+        self.__lastName = new_lastName
+
+    def set_userName(self, new_userName:str):
+        self.__userName = new_userName
+
+    def set_password(self, new_password:str):
+        self.__password = new_password
+# AND THIS
+class AccountManager(object):
+    '''
+    Constructor for accounts of teachers
+    '''
+    def __init__(self):
+        self.__list_teachers = []
+
+    def add_teacher(self, teacher: Teacher):
+        self.__list_teachers.append(teacher)
+
+    def remove_teacher(self, teacher: Teacher):
+        if teacher in self.__list_teachers:
+            self.__list_teachers.remove(teacher)
+
+    def get_list_teachers(self):
+        return self.__list_teachers
+
+    def validLogin(self, teacher: Teacher, password: str)->bool:
+        return teacher.get_password() == password
+
+    def samePassword(self, password1: str, password2: str):
+        return password1 == password2
+
+    def change_password(self, teacher: Teacher, old_password: str, new_password: str, new_password2: str):
+        if self.samePassword(new_password, new_password2) and self.validLogin(teacher, old_password):
+            teacher.set_password(new_password)
+            # give some confirmation
+            return True
+        else:
+            # give some error
+            return False
+
+    def change_userName(self, teacher: Teacher, new_userName: str, password: str):
+        if self.samePassword(password, teacher.get_password()):
+            teacher.set_userName(new_userName)
+            # give some confirmation
+            return True
+        else:
+            # give some error
+            return False
+
+    def change_lastName(self, teacher: Teacher, new_lastName: str, password: str):
+        if self.samePassword(password, teacher.get_password()):
+            teacher.set_lastName(new_lastName)
+            # give some confirmation
+            return True
+        else:
+            # give some error
+            return False
+
+    def change_firstName(self, teacher: Teacher, new_firstName: str, password: str):
+        if self.samePassword(password, teacher.get_password()):
+            teacher.set_firstName(new_firstName)
+            # give some confirmation
+            return True
+        else:
+            # give some error
+            return False
 
 
 class Rewards(object):
@@ -486,6 +596,17 @@ class BaseTabs(GridLayout):
                           size_hint=(None, None), size=(400, 400))
             popup.open()
 
+class List(GridLayout):
+    teacher_account = ObjectProperty()
+    teacher_list = ListProperty()
+    def __init__(self, teacherList: list, **kwargs):
+        super(List, self).__init__(**kwargs)
+        self.teacherList = teacherList
+        for teacher in self.teacherList:
+            self.teacher_list.append(teacher.get_firstName()+" "+teacher.get_lastName())
+
+    def login(self):
+        pass
 
 class HomePageScreen(Screen):
 
@@ -494,13 +615,18 @@ class HomePageScreen(Screen):
         self.add_widget(SideBar())
         self.add_widget(Start())
 
+        manager = AccountManager()
+        teacherList = manager.get_list_teachers()
+        layout = List(teacherList)
+        self.add_widget(layout)
+
 
 class ProfileScreen(Screen):
 
     def __init__(self, **kwargs):
         super(ProfileScreen, self).__init__(**kwargs)
         self.add_widget(SideBar())
-        self.add_widget(Teacher())
+        self.add_widget(TeacherProfile())
 
 
 class GeneralScreen(Screen):

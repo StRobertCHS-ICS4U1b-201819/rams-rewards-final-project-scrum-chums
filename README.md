@@ -1,5 +1,8 @@
 # Product Catalog
 
+###### When literally every group uses the same template
+![lol](https://media.discordapp.net/attachments/509538544457351193/523682919877967875/django_cpt.png?width=804&height=453)
+
 ## Ram Rewards Student App (RRSA) User Stories - Kivy
 * Eryka
 

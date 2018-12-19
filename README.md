@@ -29,9 +29,6 @@ This mobile app will be used by teacher and administrators to distribute rewards
 ## RR Web Administration (Radmin) Console User Stories - Django
 * ChenFeng, Erin
 
-###### When literally every group uses the same template
-![lol](https://media.discordapp.net/attachments/509538544457351193/523682919877967875/django_cpt.png?width=804&height=453)
-
 ### Scrum Backlog:
 - [x] Install Kivy / Setup Django
 - [x] Get website running 

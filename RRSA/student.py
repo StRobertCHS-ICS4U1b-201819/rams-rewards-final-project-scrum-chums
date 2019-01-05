@@ -179,7 +179,7 @@ class Profile(Screen):
 
     def history(self):
         historyPop = Popup(title = "Points History",
-                     content = Label(text= "lol"),
+                     content = Label(text= "<histpry placeholder>"),
                      size_hint=(None, None),
                      size=(400, 400))
         historyPop.open()

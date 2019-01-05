@@ -1,8 +1,7 @@
 # Importing the Kivy application, layouts, and buttons
 import random
-from RRTAA.BarcodeScanner import Scanner
 from kivy.app import App
-
+from RRTAA.BarcodeScanner import Scanner
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 
@@ -40,23 +39,31 @@ Builder.load_string("""
     background_color: .88, .88, .88, 1
 
 <Start>:
-    CustButton:
-        text: "WELCOME TO MY MESS OF A PROJECT"
-        pos: 255, 530 
-    CustButton:
-        text: "Add New Teacher"
-        pos: 255, 480
+    orientation: "vertical"   
+    cols: 2
+    rows: 1
+    padding: 0
+    spacing: 0
+    
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_x: 0.34
+        
     BoxLayout:
         orientation: "vertical"
         size_hint_x: 1
+        Label:
+            size_hint_y: None
+            height: 80
+            text: "WELCOME! WELCOME! WELCOME! WELCOME! WELCOME! WELCOME!"
         BoxLayout:
             orientation: "horizontal"
             TabbedPanel:
                 do_default_tab: False
                 TabbedPanelItem:
-                    text: "Add New Teacher"
-                
-             
+                    text: "Teachers"
+                    ListView:
+                        text: "Add New Teacher"
 
 # CHANGE LATER   
 <TeacherProfile>:
@@ -160,6 +167,7 @@ Builder.load_string("""
             orientation: "horizontal"
             TabbedPanel:
                 do_default_tab: False
+                tab_width: 120
                 TabbedPanelItem:
                     text: "Activities"
                     ListView:
@@ -190,12 +198,12 @@ Builder.load_string("""
 """)
 
 
-class Start(Widget):
+class Start(GridLayout):
     '''
     For adding text to Homepage Screen
     '''
-
-    pass
+    def __init__(self, **kwargs):
+        super(Start, self).__init__(**kwargs)
 
 
 class TeacherProfile(Widget):
@@ -316,6 +324,7 @@ class Teacher(object):
 
     def set_password(self, new_password:str):
         self.__password = new_password
+
 # AND THIS
 class AccountManager(object):
     '''
@@ -582,18 +591,22 @@ class BaseTabs(GridLayout):
             selection = self.grade12s_list.adapter.selection[0].text
 
             # creating layout for tab
+            co = GridLayout(cols=2)
             content = GridLayout(cols=1)
+            help = GridLayout(cols=1)
             content.add_widget(Label(text="Student Name: " + selection))
             for i in self.grade12_list:
                 if i.get_student_name() == selection:
                     content.add_widget(Label(text="Homeroom: " + i.get_homeroom()))
                     content.add_widget(Label(text="Student ID: " + str(i.get_id())))
                     content.add_widget(Label(text="Accumulated Points: " + str(i.get_points())))
-                    content.add_widget(Label(text="Clubs Involved: " + i.get_clubs()))
-            content.add_widget(Button(text='View Rewards History', size_hint_y=None, height=40))
+                    content.add_widget(Label(text="Clubs Involved: " + "\n" + i.get_clubs()))
+            help.add_widget(Button(text='View Rewards History', size_hint_y=None, height=40))
+            co.add_widget(content)
+            co.add_widget(help)
             popup = Popup(title= selection,
-                          content=content,
-                          size_hint=(None, None), size=(400, 400))
+                          content=co,
+                          size_hint=(None, None), size=(800, 500))
             popup.open()
 
 class List(GridLayout):
@@ -636,7 +649,7 @@ class GeneralScreen(Screen):
         self.add_widget(SideBar())
 
         # Creates all the members
-        members = ChooseStudents(["Chen Feng Zhang", "Jason Ng", "Alex Negoe", "Carson Tang", "Natalie Tam",
+        members = ChooseStudents(["Chen Feng Zhang", "Jason Ng", "Carson Tang", "Natalie Tam",
                                 "Derek Shat", "Kun Lee", "Shawn Nimal", "Tony Ni", "Thomas Maglietta", "Caterina Paganelli"])
         student_list = members.get_newList()
 
@@ -644,13 +657,13 @@ class GeneralScreen(Screen):
         rewards = []
         act = Rewards("Ram of The Month", "Does good in life", "Once a month", 20)
         act1 = Rewards("Participate in Inside Ride", "Riding bikes for cancer \n and raising money", "Sometime", 100)
-        act2 = Rewards("Attend Hockey Buyout", "Watching teachers play hockey, school spirit", "Sometime", 50)
-        act3 = Rewards("Attend School Dance", "Grade 9 Dance, Semi-formal, Formal", "Sometime", 25)
+        act2 = Rewards("Attend Hockey Buyout", "Watching teachers play \n hockey, school spirit", "Sometime", 50)
+        act3 = Rewards("Attend School Dance", "Grade 9 Dance, \n Semi-formal, Formal", "Sometime", 25)
         act4 = Rewards("Participate in Christmas Concert", "Singing, Dancing, etc.", "Sometime", 60)
         act5 = Rewards("Attend Christmas Concert", "Watching students perform", "Sometime", 10)
         act6 = Rewards("Participate in Expresso Self", "Singing, Dancing, etc.", "Sometime", 60)
         act7 = Rewards("Attend Expresso Self", "Watching students perform", "Sometime", 10)
-        act8 = Rewards("Winning Kahoots", "Getting Top 5 in cafeteria kahoots", "Sometime", 70)
+        act8 = Rewards("Winning Kahoots", "Getting Top 5 in \n cafeteria kahoots", "Sometime", 70)
         act9 = Rewards("Participate in School Play", "Acting, Singing, Dancing, etc.", "Sometime", 60)
         act10 = Rewards("Watching School Play", "Watching fun school plays", "Sometime", 10)
         rewards.append(act)

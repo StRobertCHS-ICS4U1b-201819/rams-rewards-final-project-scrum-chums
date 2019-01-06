@@ -40,6 +40,59 @@ Builder.load_string("""
     background_down: 'why.png.png'
     background_color: .88, .88, .88, 1
 
+<LoginInput@TextInput>: 
+    size_hint_x: None
+    size_hint_y: None
+    width: 200
+    height: 35
+    multiline: False
+
+<Login>:
+    username_text_input: username
+    password_text_input: password
+   
+    FloatLayout:
+        orientation: "vertical"
+        pos_hint_y: 1
+        pos_hint_x: 5
+        
+        CustLabel:
+            text: "Ram Rewards Teacher App"
+            color: 0, .5, 0, .9
+            pos_hint: {"center_x": 0.5, "center_y": .85}
+            font_size: 30
+            
+        CustLabel:
+            text: "Welcome!"
+            pos_hint: {"center_x": 0.5, "center_y": .75}
+            font_size: 30
+        
+        CustLabel:
+            text: "Username"
+            pos_hint: {"center_x": 0.43, "center_y": .65}
+                   
+        LoginInput:
+            id: username  
+            pos_hint: {"center_x": 0.5, "center_y": .6}
+            
+        CustLabel:
+            text: "Password"
+            pos_hint: {"center_x": 0.43, "center_y": .5}
+            
+        LoginInput:
+            id: password
+            pos_hint: {"center_x": 0.5, "center_y": .45}
+            
+        Button:
+            text: "Login"  
+            background_color: 0, 2.2, 0, .8
+            size_hint_x: None
+            size_hint_y: None
+            width: 200
+            height: 50
+            pos_hint: {"center_x": 0.5, "center_y": .3}
+            on_press: root.submit()
+
 <Start>:
     orientation: "vertical"   
     cols: 2
@@ -655,6 +708,34 @@ class List(GridLayout):
     def login(self):
         pass
 
+class Login(Screen):
+
+    username_text_input = ObjectProperty()
+    password_text_input = ObjectProperty()
+
+
+    def submit(self):
+        global current_user
+        loggedon = False
+        for account in teachers:
+            if self.username_text_input.text == account.get_userName():
+                loggedon = True
+                if self.password_text_input.text == account.get_password():
+                    screen_manager.current = 'screen_one'
+                    current_user = account
+                else:
+                    passwPop = Popup(title="Login Error",
+                                     content= Label(text="Wrong password"),
+                                     background='atlas://data/images/defaulttheme/button_pressed',
+                                    size_hint=(None, None), size=(400, 150))
+                    passwPop.open()
+        if not loggedon:
+            userPop = Popup(title="Login Error",
+                             content=Label(text="Invalid username"),
+                             background='atlas://data/images/defaulttheme/button_pressed',
+                             size_hint=(None, None), size=(400, 150))
+            userPop.open()
+
 class HomePageScreen(Screen):
 
     def __init__(self, **kwargs):
@@ -767,7 +848,15 @@ class Scanner(Screen):
         sidebar = SideBar()
         self.add_widget(sidebar)
 
+# Adding Teachers
+teachers = []
+teachers.append(Teacher("Eric F", 1234, "eric", "pass"))
+empty_acc = Teacher("empty", None, "", "")
+current_user = empty_acc
+
+
 # Adding screens to the Screen Manager
+screen_manager.add_widget(Login(name = "login"))
 screen_manager.add_widget(HomePageScreen(name= "screen_one"))
 screen_manager.add_widget(ProfileScreen(name= "screen_two"))
 screen_manager.add_widget(GeneralScreen(name= "screen_three"))

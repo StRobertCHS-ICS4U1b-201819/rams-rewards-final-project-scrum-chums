@@ -135,13 +135,22 @@ Builder.load_string("""
             width: 200
             height: 60
             on_press: root.change_screen("Robotics")
+        
+        Button:
+            text: "Scanner"
+            background_down: 'why.png.png' 
+            size_hint_x: None
+            size_hint_y: None
+            width: 200
+            height: 60
+            on_press: root.change_screen("Scanner")
                    
         Button:
             text: "+ Add New Club"
             size_hint_x: None
             size_hint_y: None
             width: 200
-            height: 325
+            height: 265
             
         Label:
             background_color: 1, 1, 1, 1
@@ -182,8 +191,6 @@ Builder.load_string("""
                         id: grade12ss_list_view
                         adapter:
                             ListAdapter(data= root.names, cls= main.ListItemButton)
-                TabbedPanelItem:
-                    text: "Scanner"
                     
         BoxLayout:
             size_hint_y: None
@@ -242,7 +249,10 @@ class SideBar(GridLayout):
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.001
             screen_manager.current = "screen_five"
-
+        elif page == "Scanner" and screen_manager.current != "screen_six":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_six"
 
 class Code(object):
     '''
@@ -750,6 +760,12 @@ class ClubTwoScreen(Screen):
         layout = BaseTabs(student_list, rewards, members)
         self.add_widget(layout)
 
+class Scanner(Screen):
+
+    def __init__(self, **kwargs):
+        super(Scanner, self).__init__(**kwargs)
+        sidebar = SideBar()
+        self.add_widget(sidebar)
 
 # Adding screens to the Screen Manager
 screen_manager.add_widget(HomePageScreen(name= "screen_one"))
@@ -757,7 +773,7 @@ screen_manager.add_widget(ProfileScreen(name= "screen_two"))
 screen_manager.add_widget(GeneralScreen(name= "screen_three"))
 screen_manager.add_widget(ClubOneScreen(name= "screen_four"))
 screen_manager.add_widget(ClubTwoScreen(name= "screen_five"))
-
+screen_manager.add_widget(Scanner(name= "screen_six"))
 
 class TeacherApp(App):
 

@@ -4,6 +4,8 @@ from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.adapters.simplelistadapter import SimpleListAdapter
+from kivy.uix.listview import ListView
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
@@ -271,6 +273,7 @@ class Student(object):
         self.__homeroom = homeroom
         self.__clubsInvolved = clubs
         self.__points = 0
+        self._completed = []
 
     def get_id(self):
         return self.__id
@@ -289,6 +292,12 @@ class Student(object):
 
     def set_points(self, morePts):
         self.__points += morePts
+
+    def get_completed_activities(self):
+        return self._completed
+
+    def add_completed_activity(self, activity):
+        self._completed.append(activity)
 
 # THIS TOO
 class Teacher(object):
@@ -413,14 +422,9 @@ class Rewards(object):
         return self.__activity_name()
 
 
-class ChooseStudents(object):
-    '''
-    Individually selects students for a specific club
-    '''
+class OGStudents(object):
 
-    def __init__(self, memberList):
-
-        self.members = []
+    def __init__(self):
         self.allStudents = []
         student = Student("Chen Feng", "Zhang", 1, "12E", "")
         student1 = Student("Jason", "Ng", 2, "12E", "Yearbook")
@@ -446,7 +450,6 @@ class ChooseStudents(object):
         student21 = Student("Darya", "Pascarel", 22, "11E", "Robotics")
         student22 = Student("Caterina", "Paganelli", 23, "12E", "Band, Psychology Club, Politics, Sad Boi Club")
 
-
         self.allStudents.append(student)
         self.allStudents.append(student1)
         self.allStudents.append(student2)
@@ -471,6 +474,23 @@ class ChooseStudents(object):
         self.allStudents.append(student21)
         self.allStudents.append(student22)
 
+    # does not work yet
+    '''
+    def set_student_points(self, who, howMany):
+        for i in self.allStudents:
+            if i.get_student_name() == who:
+                i.set_points(howMany)
+    '''
+
+class ChooseStudents(OGStudents):
+    '''
+    Individually selects students for a specific club
+    '''
+
+    def __init__(self, memberList):
+
+        super(ChooseStudents, self).__init__()
+        self.members = []
 
         for i in sorted(memberList):
             for j in self.allStudents:
@@ -479,13 +499,6 @@ class ChooseStudents(object):
 
     def get_newList(self):
         return self.members
-
-    # does not work yet
-    def set_student_points(self, who, howMany):
-        for i in self.allStudents:
-            if i.get_student_name() == who:
-                i.set_points(howMany)
-
 
 class BaseTabs(GridLayout):
     '''
@@ -572,6 +585,7 @@ class BaseTabs(GridLayout):
 
     def get_active_boxes(self, *args):
         pts = 0
+        selection = ""
 
         # finding amount of points for that activity
         if self.reward_list.adapter.selection:
@@ -582,8 +596,13 @@ class BaseTabs(GridLayout):
 
         # finding selected students and distributing points
         for member, boxes in self.student_checkboxes.items():
-            if boxes.active:
+            if boxes.active and selection not in member.get_completed_activities():
                 member.set_points(pts)
+                member.add_completed_activity(selection)
+                # below does not work like i want it to
+                # self.grade12s_list._trigger_reset_populate()
+            elif boxes.active:
+                print("Sorry, ", member.get_student_name(), " has already \n recieved the points for this activity.")
 
     def view_student(self):
         if self.grade12s_list.adapter.selection:
@@ -601,7 +620,12 @@ class BaseTabs(GridLayout):
                     content.add_widget(Label(text="Student ID: " + str(i.get_id())))
                     content.add_widget(Label(text="Accumulated Points: " + str(i.get_points())))
                     content.add_widget(Label(text="Clubs Involved: " + "\n" + i.get_clubs()))
-            help.add_widget(Button(text='View Rewards History', size_hint_y=None, height=40))
+                    simple_list_adapter = SimpleListAdapter(
+                        data=i.get_completed_activities(),
+                        cls=Label)
+            help.add_widget(Label(text='Student Rewards History', size_hint_y=None, height=40))
+            theirRewardsList = ListView(adapter=simple_list_adapter)
+            help.add_widget(theirRewardsList)
             co.add_widget(content)
             co.add_widget(help)
             popup = Popup(title= selection,

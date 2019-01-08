@@ -1,10 +1,11 @@
 # Importing the Kivy application, layouts, and buttons
 import random
-from RRTAA.BarcodeScanner import Scanner
 from kivy.app import App
-
+from RRTAA.BarcodeScanner import Scanner
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.adapters.simplelistadapter import SimpleListAdapter
+from kivy.uix.listview import ListView
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
@@ -39,24 +40,85 @@ Builder.load_string("""
     background_down: 'why.png.png'
     background_color: .88, .88, .88, 1
 
+<LoginInput@TextInput>: 
+    size_hint_x: None
+    size_hint_y: None
+    width: 200
+    height: 35
+    multiline: False
+
+<Login>:
+    username_text_input: username
+    password_text_input: password
+   
+    FloatLayout:
+        orientation: "vertical"
+        pos_hint_y: 1
+        pos_hint_x: 5
+        
+        CustLabel:
+            text: "Ram Rewards Teacher App"
+            color: 0, .5, 0, .9
+            pos_hint: {"center_x": 0.5, "center_y": .85}
+            font_size: 30
+            
+        CustLabel:
+            text: "Welcome!"
+            pos_hint: {"center_x": 0.5, "center_y": .75}
+            font_size: 30
+        
+        CustLabel:
+            text: "Username"
+            pos_hint: {"center_x": 0.43, "center_y": .65}
+                   
+        LoginInput:
+            id: username  
+            pos_hint: {"center_x": 0.5, "center_y": .6}
+            
+        CustLabel:
+            text: "Password"
+            pos_hint: {"center_x": 0.43, "center_y": .5}
+            
+        LoginInput:
+            id: password
+            pos_hint: {"center_x": 0.5, "center_y": .45}
+            
+        Button:
+            text: "Login"  
+            background_color: 0, 2.2, 0, .8
+            size_hint_x: None
+            size_hint_y: None
+            width: 200
+            height: 50
+            pos_hint: {"center_x": 0.5, "center_y": .3}
+            on_press: root.submit()
+
 <Start>:
-    CustButton:
-        text: "WELCOME TO MY MESS OF A PROJECT"
-        pos: 255, 530 
-    CustButton:
-        text: "Add New Teacher"
-        pos: 255, 480
+    orientation: "vertical"   
+    cols: 2
+    rows: 1
+    padding: 0
+    spacing: 0
+    
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_x: 0.34
+        
     BoxLayout:
         orientation: "vertical"
         size_hint_x: 1
+        Label:
+            size_hint_y: None
+            height: 80
+            text: "WELCOME! WELCOME! WELCOME! WELCOME! WELCOME! WELCOME!"
         BoxLayout:
             orientation: "horizontal"
             TabbedPanel:
                 do_default_tab: False
                 TabbedPanelItem:
-                    text: "Add New Teacher"
-                
-             
+                    text: "Teachers"
+                    ListView:
+                        text: "Add New Teacher"
 
 # CHANGE LATER   
 <TeacherProfile>:
@@ -126,13 +188,22 @@ Builder.load_string("""
             width: 200
             height: 60
             on_press: root.change_screen("Robotics")
+        
+        Button:
+            text: "Scanner"
+            background_down: 'why.png.png' 
+            size_hint_x: None
+            size_hint_y: None
+            width: 200
+            height: 60
+            on_press: root.change_screen("Scanner")
                    
         Button:
             text: "+ Add New Club"
             size_hint_x: None
             size_hint_y: None
             width: 200
-            height: 325
+            height: 265
             
         Label:
             background_color: 1, 1, 1, 1
@@ -160,6 +231,7 @@ Builder.load_string("""
             orientation: "horizontal"
             TabbedPanel:
                 do_default_tab: False
+                tab_width: 120
                 TabbedPanelItem:
                     text: "Activities"
                     ListView:
@@ -172,8 +244,6 @@ Builder.load_string("""
                         id: grade12ss_list_view
                         adapter:
                             ListAdapter(data= root.names, cls= main.ListItemButton)
-                TabbedPanelItem:
-                    text: "Scanner"
                     
         BoxLayout:
             size_hint_y: None
@@ -190,12 +260,12 @@ Builder.load_string("""
 """)
 
 
-class Start(Widget):
+class Start(GridLayout):
     '''
     For adding text to Homepage Screen
     '''
-
-    pass
+    def __init__(self, **kwargs):
+        super(Start, self).__init__(**kwargs)
 
 
 class TeacherProfile(Widget):
@@ -232,7 +302,10 @@ class SideBar(GridLayout):
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.001
             screen_manager.current = "screen_five"
-
+        elif page == "Scanner" and screen_manager.current != "screen_six":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_six"
 
 class Code(object):
     '''
@@ -263,6 +336,7 @@ class Student(object):
         self.__homeroom = homeroom
         self.__clubsInvolved = clubs
         self.__points = 0
+        self._completed = []
 
     def get_id(self):
         return self.__id
@@ -281,6 +355,12 @@ class Student(object):
 
     def set_points(self, morePts):
         self.__points += morePts
+
+    def get_completed_activities(self):
+        return self._completed
+
+    def add_completed_activity(self, activity):
+        self._completed.append(activity)
 
 # THIS TOO
 class Teacher(object):
@@ -316,6 +396,7 @@ class Teacher(object):
 
     def set_password(self, new_password:str):
         self.__password = new_password
+
 # AND THIS
 class AccountManager(object):
     '''
@@ -404,14 +485,9 @@ class Rewards(object):
         return self.__activity_name()
 
 
-class ChooseStudents(object):
-    '''
-    Individually selects students for a specific club
-    '''
+class OGStudents(object):
 
-    def __init__(self, memberList):
-
-        self.members = []
+    def __init__(self):
         self.allStudents = []
         student = Student("Chen Feng", "Zhang", 1, "12E", "")
         student1 = Student("Jason", "Ng", 2, "12E", "Yearbook")
@@ -437,7 +513,6 @@ class ChooseStudents(object):
         student21 = Student("Darya", "Pascarel", 22, "11E", "Robotics")
         student22 = Student("Caterina", "Paganelli", 23, "12E", "Band, Psychology Club, Politics, Sad Boi Club")
 
-
         self.allStudents.append(student)
         self.allStudents.append(student1)
         self.allStudents.append(student2)
@@ -462,6 +537,23 @@ class ChooseStudents(object):
         self.allStudents.append(student21)
         self.allStudents.append(student22)
 
+    # does not work yet
+    '''
+    def set_student_points(self, who, howMany):
+        for i in self.allStudents:
+            if i.get_student_name() == who:
+                i.set_points(howMany)
+    '''
+
+class ChooseStudents(OGStudents):
+    '''
+    Individually selects students for a specific club
+    '''
+
+    def __init__(self, memberList):
+
+        super(ChooseStudents, self).__init__()
+        self.members = []
 
         for i in sorted(memberList):
             for j in self.allStudents:
@@ -470,13 +562,6 @@ class ChooseStudents(object):
 
     def get_newList(self):
         return self.members
-
-    # does not work yet
-    def set_student_points(self, who, howMany):
-        for i in self.allStudents:
-            if i.get_student_name() == who:
-                i.set_points(howMany)
-
 
 class BaseTabs(GridLayout):
     '''
@@ -563,6 +648,7 @@ class BaseTabs(GridLayout):
 
     def get_active_boxes(self, *args):
         pts = 0
+        selection = ""
 
         # finding amount of points for that activity
         if self.reward_list.adapter.selection:
@@ -573,8 +659,13 @@ class BaseTabs(GridLayout):
 
         # finding selected students and distributing points
         for member, boxes in self.student_checkboxes.items():
-            if boxes.active:
+            if boxes.active and selection not in member.get_completed_activities():
                 member.set_points(pts)
+                member.add_completed_activity(selection)
+                # below does not work like i want it to
+                # self.grade12s_list._trigger_reset_populate()
+            elif boxes.active:
+                print("Sorry, ", member.get_student_name(), " has already \n recieved the points for this activity.")
 
     def view_student(self):
         if self.grade12s_list.adapter.selection:
@@ -582,18 +673,27 @@ class BaseTabs(GridLayout):
             selection = self.grade12s_list.adapter.selection[0].text
 
             # creating layout for tab
+            co = GridLayout(cols=2)
             content = GridLayout(cols=1)
+            help = GridLayout(cols=1)
             content.add_widget(Label(text="Student Name: " + selection))
             for i in self.grade12_list:
                 if i.get_student_name() == selection:
                     content.add_widget(Label(text="Homeroom: " + i.get_homeroom()))
                     content.add_widget(Label(text="Student ID: " + str(i.get_id())))
                     content.add_widget(Label(text="Accumulated Points: " + str(i.get_points())))
-                    content.add_widget(Label(text="Clubs Involved: " + i.get_clubs()))
-            content.add_widget(Button(text='View Rewards History', size_hint_y=None, height=40))
+                    content.add_widget(Label(text="Clubs Involved: " + "\n" + i.get_clubs()))
+                    simple_list_adapter = SimpleListAdapter(
+                        data=i.get_completed_activities(),
+                        cls=Label)
+            help.add_widget(Label(text='Student Rewards History', size_hint_y=None, height=40))
+            theirRewardsList = ListView(adapter=simple_list_adapter)
+            help.add_widget(theirRewardsList)
+            co.add_widget(content)
+            co.add_widget(help)
             popup = Popup(title= selection,
-                          content=content,
-                          size_hint=(None, None), size=(400, 400))
+                          content=co,
+                          size_hint=(None, None), size=(800, 500))
             popup.open()
 
 class List(GridLayout):
@@ -607,6 +707,34 @@ class List(GridLayout):
 
     def login(self):
         pass
+
+class Login(Screen):
+
+    username_text_input = ObjectProperty()
+    password_text_input = ObjectProperty()
+
+
+    def submit(self):
+        global current_user
+        loggedon = False
+        for account in teachers:
+            if self.username_text_input.text == account.get_userName():
+                loggedon = True
+                if self.password_text_input.text == account.get_password():
+                    screen_manager.current = 'screen_one'
+                    current_user = account
+                else:
+                    passwPop = Popup(title="Login Error",
+                                     content= Label(text="Wrong password"),
+                                     background='atlas://data/images/defaulttheme/button_pressed',
+                                    size_hint=(None, None), size=(400, 150))
+                    passwPop.open()
+        if not loggedon:
+            userPop = Popup(title="Login Error",
+                             content=Label(text="Invalid username"),
+                             background='atlas://data/images/defaulttheme/button_pressed',
+                             size_hint=(None, None), size=(400, 150))
+            userPop.open()
 
 class HomePageScreen(Screen):
 
@@ -636,7 +764,7 @@ class GeneralScreen(Screen):
         self.add_widget(SideBar())
 
         # Creates all the members
-        members = ChooseStudents(["Chen Feng Zhang", "Jason Ng", "Alex Negoe", "Carson Tang", "Natalie Tam",
+        members = ChooseStudents(["Chen Feng Zhang", "Jason Ng", "Carson Tang", "Natalie Tam",
                                 "Derek Shat", "Kun Lee", "Shawn Nimal", "Tony Ni", "Thomas Maglietta", "Caterina Paganelli"])
         student_list = members.get_newList()
 
@@ -644,13 +772,13 @@ class GeneralScreen(Screen):
         rewards = []
         act = Rewards("Ram of The Month", "Does good in life", "Once a month", 20)
         act1 = Rewards("Participate in Inside Ride", "Riding bikes for cancer \n and raising money", "Sometime", 100)
-        act2 = Rewards("Attend Hockey Buyout", "Watching teachers play hockey, school spirit", "Sometime", 50)
-        act3 = Rewards("Attend School Dance", "Grade 9 Dance, Semi-formal, Formal", "Sometime", 25)
+        act2 = Rewards("Attend Hockey Buyout", "Watching teachers play \n hockey, school spirit", "Sometime", 50)
+        act3 = Rewards("Attend School Dance", "Grade 9 Dance, \n Semi-formal, Formal", "Sometime", 25)
         act4 = Rewards("Participate in Christmas Concert", "Singing, Dancing, etc.", "Sometime", 60)
         act5 = Rewards("Attend Christmas Concert", "Watching students perform", "Sometime", 10)
         act6 = Rewards("Participate in Expresso Self", "Singing, Dancing, etc.", "Sometime", 60)
         act7 = Rewards("Attend Expresso Self", "Watching students perform", "Sometime", 10)
-        act8 = Rewards("Winning Kahoots", "Getting Top 5 in cafeteria kahoots", "Sometime", 70)
+        act8 = Rewards("Winning Kahoots", "Getting Top 5 in \n cafeteria kahoots", "Sometime", 70)
         act9 = Rewards("Participate in School Play", "Acting, Singing, Dancing, etc.", "Sometime", 60)
         act10 = Rewards("Watching School Play", "Watching fun school plays", "Sometime", 10)
         rewards.append(act)
@@ -713,14 +841,28 @@ class ClubTwoScreen(Screen):
         layout = BaseTabs(student_list, rewards, members)
         self.add_widget(layout)
 
+class Scanner(Screen):
+
+    def __init__(self, **kwargs):
+        super(Scanner, self).__init__(**kwargs)
+        sidebar = SideBar()
+        self.add_widget(sidebar)
+
+# Adding Teachers
+teachers = []
+teachers.append(Teacher("Eric F", 1234, "eric", "pass"))
+empty_acc = Teacher("empty", None, "", "")
+current_user = empty_acc
+
 
 # Adding screens to the Screen Manager
+screen_manager.add_widget(Login(name = "login"))
 screen_manager.add_widget(HomePageScreen(name= "screen_one"))
 screen_manager.add_widget(ProfileScreen(name= "screen_two"))
 screen_manager.add_widget(GeneralScreen(name= "screen_three"))
 screen_manager.add_widget(ClubOneScreen(name= "screen_four"))
 screen_manager.add_widget(ClubTwoScreen(name= "screen_five"))
-
+screen_manager.add_widget(Scanner(name= "screen_six"))
 
 class TeacherApp(App):
 

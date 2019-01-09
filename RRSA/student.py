@@ -2,7 +2,7 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.pagelayout import PageLayout
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, StringProperty
 from kivy.uix.listview import ListItemButton
 from kivy.core.window import Window
 from kivy.uix.textinput import TextInput
@@ -81,17 +81,22 @@ Builder.load_string("""
             height: 50
             pos_hint: {"center_x": 0.5, "center_y": .3}
             on_press: root.submit()
+            
                 
 
 
 <Profile>:  
 
+    
     PageLayout:    
         
         FloatLayout:
+            
+            id: names
+            
                 
             CustButton:
-                text: "Name"
+                text: root.namer
                 pos_hint: {"x": 0, "top": 1}
                 size_hint: 1, .2 
                 on_press: root.hmrm()
@@ -141,6 +146,7 @@ class Login(Screen):
     password_text_input = ObjectProperty()
 
 
+
     def submit(self):
         global current_user
         loggedon = False
@@ -165,9 +171,28 @@ class Login(Screen):
 
 
 class Profile(Screen):
-    # current_name = current_user.get_name()
+
+    global current_user
+    #
     # current_id = current_user.get_id()
     # current_points = current_user.get_points()
+    names = ObjectProperty()
+    namer = StringProperty()
+
+    # def __init__(self, curr_user):
+    #     super().__init__()
+    #     self.current_user = curr_user
+    #     self.current_name = self.current_user.get_name()
+    #     self.name = self.current_name
+
+    def __init__(self, **kwargs):
+        super(Profile, self).__init__(**kwargs)
+        # self.names = ""
+        self.namer = current_user.get_name()
+
+    def info(self):
+        self.ids.curr_name = current_user.get_name()
+
 
     def hmrm(self):
 
@@ -235,6 +260,7 @@ current_user = empty_acc
 
 screen_manager.add_widget(Login(name = "login"))
 screen_manager.add_widget(Profile(name = "profile"))
+
 
 class LoginApp(App):
     def build(self):

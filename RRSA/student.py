@@ -11,6 +11,8 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+
+
 Builder.load_string("""
 #: import main student
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
@@ -57,7 +59,7 @@ Builder.load_string("""
             font_size: 30
         
         CustLabel:
-            text: "Username"
+            text: "Username"   
             pos_hint: {"center_x": 0.43, "center_y": .65}
                    
         LoginInput:
@@ -92,11 +94,9 @@ Builder.load_string("""
         
         FloatLayout:
             
-            id: names
-            
                 
             CustButton:
-                text: root.namer
+                text: root.curr_name
                 pos_hint: {"x": 0, "top": 1}
                 size_hint: 1, .2 
                 on_press: root.hmrm()
@@ -139,93 +139,24 @@ Builder.load_string("""
 
 screen_manager = ScreenManager()
 
-
-class Login(Screen):
-
-    username_text_input = ObjectProperty()
-    password_text_input = ObjectProperty()
-
-
-
-    def submit(self):
-        global current_user
-        loggedon = False
-        for account in students:
-            if self.username_text_input.text == account.get_user():
-                loggedon = True
-                if self.password_text_input.text == account.get_pass():
-                    screen_manager.current = 'profile'
-                    current_user = account
-                else:
-                    passwPop = Popup(title="Login Error",
-                                     content= Label(text="Wrong password"),
-                                     background='atlas://data/images/defaulttheme/button_pressed',
-                                    size_hint=(None, None), size=(400, 150))
-                    passwPop.open()
-        if not loggedon:
-            userPop = Popup(title="Login Error",
-                             content=Label(text="Invalid username"),
-                             background='atlas://data/images/defaulttheme/button_pressed',
-                             size_hint=(None, None), size=(400, 150))
-            userPop.open()
-
-
-class Profile(Screen):
-
-    global current_user
-    #
-    # current_id = current_user.get_id()
-    # current_points = current_user.get_points()
-    names = ObjectProperty()
-    namer = StringProperty()
-
-    # def __init__(self, curr_user):
-    #     super().__init__()
-    #     self.current_user = curr_user
-    #     self.current_name = self.current_user.get_name()
-    #     self.name = self.current_name
-
-    def __init__(self, **kwargs):
-        super(Profile, self).__init__(**kwargs)
-        # self.names = ""
-        self.namer = current_user.get_name()
-
-    def info(self):
-        self.ids.curr_name = current_user.get_name()
-
-
-    def hmrm(self):
-
-        hmrmPop = Popup(title="Homeroom",
-                     content = Label(text="Homeroom: " + current_user.get_hmrm()),
-                     size_hint=(None, None),
-                     size=(400, 100))
-        hmrmPop.open()
-
-    def history(self):
-        historyPop = Popup(title = "Points History",
-                     content = Label(text= "lol"),
-                     size_hint=(None, None),
-                     size=(400, 400))
-        historyPop.open()
-
 class Student(object):
     def __init__(self, name, studentID, user, password):
-        self.__name = name
+        self.name =  StringProperty(name)
         self.__id = studentID
         self.__user = user
         self.__password = password
         self.__points = 0
-        self.__hmrm = "12A"
+        self.hmrm = "12A"
         self.__history = []
 
     def get_name(self):
-        return self.__name
+        return StringProperty(self.name)
 
     def get_id(self):
         return self.__id
+
     def get_hmrm(self):
-        return self.__hmrm
+        return self.hmrm
 
     def get_user(self):
         return self.__user
@@ -244,18 +175,101 @@ class Student(object):
 
 
 
-
-
 students = []
 students.append(Student("Eryka S", 1234, "eryka", "pass"))
 students.append(Student("Grace L", 8888, "grace", "pass"))
 students.append(Student("Erin C", 9111, "erin", "pass"))
 students.append(Student("Carson T", 8765, "carson", "pass"))
 students.append(Student("Chen Feng Z", 7878, "chenfeng", "pass"))
-students.append(Student("admin", 0000, "1", "1"))
+admin = Student("admin", 0000, "1", "1")
+admin.hmrm = "YE"
+students.append(admin)
 empty_acc = Student("empty", None, "", "")
 current_user = empty_acc
 
+
+class Login(Screen):
+
+    username_text_input = ObjectProperty()
+    password_text_input = ObjectProperty()
+
+
+
+    def submit(self):
+
+        global current_user
+
+        loggedon = False
+        for account in students:
+            if self.username_text_input.text == account.get_user():
+                loggedon = True
+                if self.password_text_input.text == account.get_pass():
+                    current_user = account
+                    # Profile.info()
+                    screen_manager.current = 'profile'
+
+                else:
+                    passwPop = Popup(title="Login Error",
+                                     content= Label(text="Wrong password"),
+                                     background='atlas://data/images/defaulttheme/button_pressed',
+                                    size_hint=(None, None), size=(400, 150))
+                    passwPop.open()
+
+        if not loggedon:
+            userPop = Popup(title="Login Error",
+                             content=Label(text="Invalid username"),
+                             background='atlas://data/images/defaulttheme/button_pressed',
+                             size_hint=(None, None), size=(400, 150))
+            userPop.open()
+
+
+class Profile(Screen):
+
+
+    #
+    # current_id = current_user.get_id()
+    # current_points = current_user.get_points()
+    names = ObjectProperty()
+    namer = StringProperty()
+
+    # def __init__(self, curr_user):
+    #     super().__init__()
+    #     self.current_user = curr_user
+    #     self.current_name = self.current_user.get_name()
+    #     self.name = self.current_name
+
+    # def __init__(self, **kwargs):
+    #     super(Profile, self).__init__(**kwargs)
+    #     # self.names = ""
+    #     self.namer = current_user.get_name()
+    global current_user
+    # name = StringProperty(current_user.get_name())
+
+
+    curr_name = current_user.name
+
+
+    def hmrm(self):
+
+        hmrmPop = Popup(title="Homeroom",
+                     content = Label(text="Homeroom: " + current_user.get_hmrm()),
+                     size_hint=(None, None),
+                     size=(400, 100))
+        hmrmPop.open()
+
+    def history(self):
+        historyPop = Popup(title = "Points History",
+                     content = Label(text= "lol"),
+                     size_hint=(None, None),
+                     size=(400, 400))
+        historyPop.open()
+
+
+
+
+
+
+rewards = []
 
 
 screen_manager.add_widget(Login(name = "login"))

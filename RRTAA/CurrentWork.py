@@ -91,7 +91,7 @@ Builder.load_string("""
             width: 200
             height: 50
             pos_hint: {"center_x": 0.5, "center_y": .3}
-            on_press: root.submit()
+            on_press: root.submit(username.text, password.text)
 
 <Start>:
     orientation: "vertical"   
@@ -659,9 +659,10 @@ class BaseTabs(GridLayout):
 
         # finding selected students and distributing points
         for member, boxes in self.student_checkboxes.items():
-            if boxes.active and selection not in member.get_completed_activities():
+            if boxes.active and (selection not in member.get_completed_activities() or selection in ["Club Attendance", "Winning Kahoots", "Ram of The Month"]):
                 member.set_points(pts)
-                member.add_completed_activity(selection)
+                if selection not in member.get_completed_activities():
+                    member.add_completed_activity(selection)
                 # below does not work like i want it to
                 # self.grade12s_list._trigger_reset_populate()
             elif boxes.active:
@@ -714,13 +715,13 @@ class Login(Screen):
     password_text_input = ObjectProperty()
 
 
-    def submit(self):
+    def submit(self, userN, passW):
         global current_user
         loggedon = False
         for account in teachers:
-            if self.username_text_input.text == account.get_userName():
+            if userN == account.get_userName():
                 loggedon = True
-                if self.password_text_input.text == account.get_password():
+                if passW == account.get_password():
                     screen_manager.current = 'screen_one'
                     current_user = account
                 else:
@@ -771,16 +772,18 @@ class GeneralScreen(Screen):
         # Creates all the activities
         rewards = []
         act = Rewards("Ram of The Month", "Does good in life", "Once a month", 20)
-        act1 = Rewards("Participate in Inside Ride", "Riding bikes for cancer \n and raising money", "Sometime", 100)
-        act2 = Rewards("Attend Hockey Buyout", "Watching teachers play \n hockey, school spirit", "Sometime", 50)
-        act3 = Rewards("Attend School Dance", "Grade 9 Dance, \n Semi-formal, Formal", "Sometime", 25)
-        act4 = Rewards("Participate in Christmas Concert", "Singing, Dancing, etc.", "Sometime", 60)
-        act5 = Rewards("Attend Christmas Concert", "Watching students perform", "Sometime", 10)
-        act6 = Rewards("Participate in Expresso Self", "Singing, Dancing, etc.", "Sometime", 60)
-        act7 = Rewards("Attend Expresso Self", "Watching students perform", "Sometime", 10)
+        act1 = Rewards("Participate in Inside Ride 2017", "Riding bikes for cancer \n and raising money", "Sometime", 100)
+        act2 = Rewards("Attend Hockey Buyout 2018", "Watching teachers play \n hockey, school spirit", "Sometime", 50)
+        act3 = Rewards("Attend School Dance 2018", "Grade 9 Dance, \n Semi-formal, Formal", "Sometime", 25)
+        act4 = Rewards("Participate in Christmas Concert 2018", "Singing, Dancing, etc.", "Sometime", 60)
+        act5 = Rewards("Attend Christmas Concert 2018", "Watching students perform", "Sometime", 10)
+        act6 = Rewards("Participate in Expresso Self 2018", "Singing, Dancing, etc.", "Sometime", 60)
+        act7 = Rewards("Attend Expresso Self 2018", "Watching students perform", "Sometime", 10)
         act8 = Rewards("Winning Kahoots", "Getting Top 5 in \n cafeteria kahoots", "Sometime", 70)
-        act9 = Rewards("Participate in School Play", "Acting, Singing, Dancing, etc.", "Sometime", 60)
-        act10 = Rewards("Watching School Play", "Watching fun school plays", "Sometime", 10)
+        act9 = Rewards("Participate in School Play 2019", "Acting, Singing, Dancing, etc.", "Sometime", 60)
+        act10 = Rewards("Watching School Play 2019", "Watching fun school plays", "Sometime", 10)
+        act11 = Rewards("Attend 'Revolution' Art Show 2019", "Looking at some nice art", "Sometime", 40)
+
         rewards.append(act)
         rewards.append(act1)
         rewards.append(act2)
@@ -792,6 +795,7 @@ class GeneralScreen(Screen):
         rewards.append(act8)
         rewards.append(act9)
         rewards.append(act10)
+        rewards.append(act11)
 
         # Adds the members and activities to the tabs
         layout = BaseTabs(student_list, rewards, members)
@@ -812,7 +816,7 @@ class ClubOneScreen(Screen):
         # Creates all the activities
         rewards = []
         act = Rewards("Club Attendance", "Attends a weekly club meeting", "Every week", 1)
-        act1 = Rewards("Coding Competitions", "DMOJ", " ", 20)
+        act1 = Rewards("Coding Competition 2019", "DMOJ", "February 20th", 20)
         rewards.append(act)
         rewards.append(act1)
 

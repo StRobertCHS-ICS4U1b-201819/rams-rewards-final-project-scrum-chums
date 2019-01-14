@@ -1,3 +1,8 @@
+from kivy.uix.label import Label
+from kivy.app import App
+from kivy.uix.behaviors import DragBehavior
+from kivy.lang import Builder
+from kivy.uix.button import Button
 import random
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
@@ -22,22 +27,17 @@ from kivy.properties import ObjectProperty, ListProperty
 # Setting Screen Manager as a variable
 screen_manager = ScreenManager()
 
-# Creating a kivy text file in this window
+# You could also put the following in your kv file...
 Builder.load_string("""
-#: import main Testing
+#: import main help
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
 
-<CustLabel@Label>
-    color: 0, 0, 1, 1
-
-<CustButton@Button>:
-    font_size: 18
-    color: 0, 0, 0, 1 # In RBG then alpha
-    size: 450, 25
-    background_normal: ''
-    background_down: 'why.png.png'
-    background_color: .88, .88, .88, 1
+<DragBoxLayout>:
+    # Define the properties for the DragLabel
+    drag_rectangle: 0, self.y, self.width, self.height
+    drag_timeout: 90
+    drag_distance: 0
 
 <SideBar>:
     orientation: "vertical"  
@@ -46,7 +46,7 @@ Builder.load_string("""
     padding: 0
     spacing: 0
     
-    BoxLayout:
+    DragBoxLayout:
         orientation: "vertical"
         size_hint_x: 0.34
         Button:
@@ -113,7 +113,14 @@ Builder.load_string("""
             background_color: 1, 1, 1, 1
             size_hint_x: None
             width: 200
+        
+
 """)
+
+
+class DragBoxLayout(DragBehavior, BoxLayout):
+    pass
+
 
 class SideBar(GridLayout):
     '''

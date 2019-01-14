@@ -22,9 +22,9 @@ This mobile app will be used by teacher and administrators to distribute rewards
 - [x] Sidebar
 - [x] List of activities --> Assign points to members of activity & view students per activity
 - [x] Barcode/QRCode Scanner
-- [ ] Sort students by grades --> list of students and search bar --> student profile
+- [x] Sort students by grades --> list of students and search bar --> student profile
 #### Scanner works - need to combine with app
-
+- [ ] QR Code/Barcode Generator
 
 ## RR Web Administration (Radmin) Console User Stories - Django
 * ChenFeng, Erin

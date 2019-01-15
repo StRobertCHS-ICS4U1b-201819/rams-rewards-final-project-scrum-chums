@@ -1,5 +1,7 @@
 from kivy.uix.label import Label
 from kivy.app import App
+import sqlite3 as lite
+
 from kivy.uix.behaviors import DragBehavior
 from kivy.lang import Builder
 from kivy.uix.button import Button

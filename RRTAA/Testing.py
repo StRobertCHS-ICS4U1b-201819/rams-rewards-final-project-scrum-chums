@@ -10,6 +10,8 @@ from kivy.uix.listview import ListView
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 
+import getpass
+
 from kivy.uix.button import Label
 from kivy.uix.treeview import TreeViewLabel
 from kivy.uix.button import Button
@@ -98,6 +100,7 @@ Builder.load_string("""
 
         LoginInput:
             id: password
+            password: True
             pos_hint: {"center_x": 0.5, "center_y": .45}
 
         Button:
@@ -154,7 +157,7 @@ Builder.load_string("""
                 size: self.size
         canvas.after:
             Color:
-                rgba: (0,0.1,0.1,root._anim_progress*root.main_panel_darkness)
+                rgba: (0,0,0,root._anim_progress*root.main_panel_darkness)
             Rectangle:
                 size: self.size
                 pos: self.pos
@@ -222,7 +225,7 @@ Builder.load_string("""
             orientation: "horizontal"
             TabbedPanel:
                 do_default_tab: False
-                tab_width: 120
+                tab_width: 180
                 TabbedPanelItem:
                     text: "Activities"
                     ListView:
@@ -1076,7 +1079,7 @@ class Scanner(Screen):
 
 # Adding Teachers
 teachers = []
-teachers.append(Teacher("Eric F", 1234, "eric", "pass"))
+teachers.append(Teacher("Eric F", 1234, "eric", "eChin4theWin"))
 empty_acc = Teacher("empty", None, "", "")
 current_user = empty_acc
 
@@ -1098,10 +1101,10 @@ class TeacherApp(App):
 
         side_panel = BoxLayout(orientation='vertical')
 
-        homepage = Button(text='Homepage', size_hint_y= None, height= 40, background_color= (0, 1, 0.7, 1))
+        homepage = Button(text='Homepage', background_color= (0, 1, 0.7, 1))
         homepage.bind(on_press=lambda x: self.change_screen('Homepage'))
 
-        teach = Button(text='Teacher Profile', size_hint_y= None, height= 60, background_color= (0, 1, 0.7, 1))
+        teach = Button(text='Teacher Profile', background_color= (0, 1, 0.7, 1))
         teach.bind(on_press=lambda x: self.change_screen('Profile'))
 
         gen = Button(text='General Activities', background_color= (0, 1, 0.7, 1))

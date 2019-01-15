@@ -10,6 +10,8 @@ from kivy.uix.listview import ListView
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 
+import getpass
+
 from kivy.uix.button import Label
 from kivy.uix.treeview import TreeViewLabel
 from kivy.uix.button import Button
@@ -19,13 +21,33 @@ from kivy.uix.checkbox import CheckBox
 from kivy.uix.popup import Popup
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty, ListProperty
+from kivy.base import runTouchApp
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
+from kivy.uix.button import Button
+from kivy.uix.popup import Popup
+from kivy.uix.image import Image
+from kivy.core.window import Window
+
+
+from kivy.animation import Animation
+from kivy.uix.widget import Widget
+from kivy.uix.stencilview import StencilView
+from kivy.metrics import dp
+from kivy.clock import Clock
+from kivy.properties import (ObjectProperty, NumericProperty, OptionProperty,
+                             BooleanProperty, StringProperty)
+from kivy.lang import Builder
 
 # Setting Screen Manager as a variable
 screen_manager = ScreenManager()
 
+global grace
+
+
 # Creating a kivy text file in this window
 Builder.load_string("""
-#: import main CurrentWork
+#: import main Testing
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
 
@@ -50,39 +72,40 @@ Builder.load_string("""
 <Login>:
     username_text_input: username
     password_text_input: password
-   
+
     FloatLayout:
         orientation: "vertical"
         pos_hint_y: 1
         pos_hint_x: 5
-        
+
         CustLabel:
             text: "Ram Rewards Teacher App"
             color: 0, .5, 0, .9
             pos_hint: {"center_x": 0.5, "center_y": .85}
             font_size: 30
-            
+
         CustLabel:
             text: "Welcome!"
             pos_hint: {"center_x": 0.5, "center_y": .75}
             font_size: 30
-        
+
         CustLabel:
             text: "Username"
             pos_hint: {"center_x": 0.43, "center_y": .65}
-                   
+
         LoginInput:
             id: username  
             pos_hint: {"center_x": 0.5, "center_y": .6}
-            
+
         CustLabel:
             text: "Password"
             pos_hint: {"center_x": 0.43, "center_y": .5}
-            
+
         LoginInput:
             id: password
+            password: True
             pos_hint: {"center_x": 0.5, "center_y": .45}
-            
+
         Button:
             text: "Login"  
             background_color: 0, 2.2, 0, .8
@@ -93,17 +116,74 @@ Builder.load_string("""
             pos_hint: {"center_x": 0.5, "center_y": .3}
             on_press: root.submit(username.text, password.text)
 
+<NavigationDrawer>:
+    size_hint: (1,1)
+    _side_panel: sidepanel
+    _main_panel: mainpanel
+    _join_image: joinimage
+    side_panel_width: min(dp(250), 0.5*self.width)
+    BoxLayout:
+        id: sidepanel
+        y: root.y
+        x: root.x - \
+           (1-root._anim_progress)* \
+           root.side_panel_init_offset*root.side_panel_width
+        height: root.height
+        width: root.side_panel_width
+        opacity: root.side_panel_opacity + \
+                 (1-root.side_panel_opacity)*root._anim_progress
+        canvas:
+            Color:
+                rgba: (0,0,0,1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        canvas.after:
+            Color:
+                rgba: (0,0,0,(1-root._anim_progress)*root.side_panel_darkness)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+    BoxLayout:
+        id: mainpanel
+        x: root.x + \
+           root._anim_progress * \
+           root.side_panel_width * \
+           root.main_panel_final_offset
+        y: root.y
+        size: root.size
+        canvas:
+            Color:
+                rgba: (0,0,0,1)
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        canvas.after:
+            Color:
+                rgba: (0,0,0,root._anim_progress*root.main_panel_darkness)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+    Image:
+        id: joinimage
+        opacity: min(sidepanel.opacity, 0 if root._anim_progress < 0.00001 \
+                 else min(root._anim_progress*40,1))
+        mipmap: False
+        width: root.separator_image_width
+        height: root._side_panel.height
+        x: (mainpanel.x - self.width + 1) if root._main_above \
+           else (sidepanel.x + sidepanel.width - 1)
+        y: root.y
+        allow_stretch: True
+        keep_ratio: False
+
 <Start>:
     orientation: "vertical"   
     cols: 2
     rows: 1
     padding: 0
     spacing: 0
-    
-    BoxLayout:
-        orientation: "vertical"
-        size_hint_x: 0.34
-        
+
     BoxLayout:
         orientation: "vertical"
         size_hint_x: 1
@@ -130,100 +210,17 @@ Builder.load_string("""
         text: "Club Coordination: Coding Club, Robotics"
         pos: 255, 490
 
-<SideBar>:
-    orientation: "vertical"  
-    cols: 2
-    rows: 1
-    padding: 0
-    spacing: 0
-    
-    BoxLayout:
-        orientation: "vertical"
-        size_hint_x: 0.34
-        Button:
-            text: "Homepage"
-            background_normal: ''
-            background_color: 0.16, 0.02, 0.39, 1
-            background_down: 'why.png.png' 
-            size_hint_x: None
-            size_hint_y: None
-            width: 200
-            height: 40
-            on_press:root.change_screen("Homepage")
-        
-        Button:
-            text: "Teacher Profile"
-            background_normal: ''
-            background_color: 0.46, 0.32, 0.69, 1
-            background_down: 'why.png.png' 
-            size_hint_x: None
-            size_hint_y: None
-            width: 200
-            height: 60
-            on_press: root.change_screen("Profile")
-            
-        Button:
-            text: "General Activities"
-            background_down: 'why.png.png' 
-            size_hint_x: None
-            size_hint_y: None
-            width: 200
-            height: 60
-            on_press: root.change_screen("General")
-            
-        Button:
-            text: "Coding Club"
-            background_down: 'why.png.png' 
-            size_hint_x: None
-            size_hint_y: None
-            width: 200
-            height: 60
-            on_press: root.change_screen("Coding")
-                
-        Button:
-            text: "Robotics"
-            background_down: 'why.png.png' 
-            size_hint_x: None
-            size_hint_y: None
-            width: 200
-            height: 60
-            on_press: root.change_screen("Robotics")
-        
-        Button:
-            text: "Scanner"
-            background_down: 'why.png.png' 
-            size_hint_x: None
-            size_hint_y: None
-            width: 200
-            height: 60
-            on_press: root.change_screen("Scanner")
-                   
-        Button:
-            text: "+ Add New Club"
-            size_hint_x: None
-            size_hint_y: None
-            width: 200
-            height: 265
-            
-        Label:
-            background_color: 1, 1, 1, 1
-            size_hint_x: None
-            width: 200
 
 <BaseTabs>
     reward_list: rewards_list_view
     grade12s_list: grade12ss_list_view
-    
+
     orientation: "vertical"   
     cols: 2
     rows: 1
     padding: 0
     spacing: 0
-    
-    BoxLayout:
-        orientation: "vertical"
-        size_hint_x: 0.34
-    
+
     BoxLayout:
         orientation: "vertical"
         size_hint_x: 1
@@ -231,7 +228,7 @@ Builder.load_string("""
             orientation: "horizontal"
             TabbedPanel:
                 do_default_tab: False
-                tab_width: 120
+                tab_width: 180
                 TabbedPanelItem:
                     text: "Activities"
                     ListView:
@@ -244,7 +241,7 @@ Builder.load_string("""
                         id: grade12ss_list_view
                         adapter:
                             ListAdapter(data= root.names, cls= main.ListItemButton)
-                    
+
         BoxLayout:
             size_hint_y: None
             height: "40dp"
@@ -256,7 +253,7 @@ Builder.load_string("""
                 text: "View Student"
                 size_hint_x: 10
                 on_press: root.view_student()
-                
+
 """)
 
 
@@ -264,6 +261,7 @@ class Start(GridLayout):
     '''
     For adding text to Homepage Screen
     '''
+
     def __init__(self, **kwargs):
         super(Start, self).__init__(**kwargs)
 
@@ -275,37 +273,258 @@ class TeacherProfile(Widget):
 
     pass
 
+class NavigationDrawerException(Exception):
+    '''Raised when add_widget or remove_widget called incorrectly on a
+    NavigationDrawer.
 
-class SideBar(GridLayout):
-    '''
-    A Sidebar that switches the screens
     '''
 
-    def change_screen(self, page):
-        if page == "Homepage" and screen_manager.current != "screen_one":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_one"
-        elif page == "Profile" and screen_manager.current != "screen_two":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_two"
-        elif page == "General" and screen_manager.current != "screen_three":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_three"
-        elif page == "Coding" and screen_manager.current != "screen_four":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_four"
-        elif page == "Robotics" and screen_manager.current != "screen_five":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_five"
-        elif page == "Scanner" and screen_manager.current != "screen_six":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_six"
+
+class NavigationDrawer(StencilView):
+
+    # Internal references for side, main and image widgets
+    _side_panel = ObjectProperty()
+    _main_panel = ObjectProperty()
+    _join_image = ObjectProperty()
+
+    side_panel = ObjectProperty(None, allownone=True)
+    '''Automatically bound to whatever widget is added as the hidden panel.'''
+    main_panel = ObjectProperty(None, allownone=True)
+    '''Automatically bound to whatever widget is added as the main panel.'''
+
+    # Appearance properties
+    side_panel_width = NumericProperty()
+    '''The width of the hidden side panel. Defaults to the minimum of
+    250dp or half the NavigationDrawer width.'''
+
+    separator_image_width = NumericProperty(dp(1))
+    '''The width of the separator image. Defaults to 10dp'''
+
+    # Touch properties
+    touch_accept_width = NumericProperty('14dp')
+    '''Distance from the left of the NavigationDrawer in which to grab the
+    touch and allow revealing of the hidden panel.'''
+    _touch = ObjectProperty(None, allownone=True)  # The currently active touch
+
+    # Animation properties
+    state = OptionProperty('open', options=('open', 'closed'))
+    '''Specifies the state of the widget. Must be one of 'open' or
+    'closed'. Setting its value automatically jumps to the relevant state,
+    or users may use the anim_to_state() method to animate the
+    transition.'''
+    anim_time = NumericProperty(0.3)
+    '''The time taken for the panel to slide to the open/closed state when
+    released or manually animated with anim_to_state.'''
+    min_dist_to_open = NumericProperty(0.7)
+    '''Must be between 0 and 1. Specifies the fraction of the hidden panel
+    width beyond which the NavigationDrawer will relax to open state when
+    released. Defaults to 0.7.'''
+    _anim_progress = NumericProperty(0)  # Internal state controlling
+                                         # widget positions
+    _anim_init_progress = NumericProperty(0)
+
+    # Animation controls
+    top_panel = OptionProperty('main', options=['main', 'side'])
+    '''Denotes which panel should be drawn on top of the other. Must be
+    one of 'main' or 'side'. Defaults to 'main'.'''
+    _main_above = BooleanProperty(True)
+
+    side_panel_init_offset = NumericProperty(0.5)
+    '''Intial offset (to the left of the widget) of the side panel, in
+    units of its total width. Opening the panel moves it smoothly to its
+    final position at the left of the screen.'''
+
+    side_panel_darkness = NumericProperty(0.8)
+    '''Controls the fade-to-black of the side panel in its hidden
+    state. Must be between 0 (no fading) and 1 (fades to totally
+    black).'''
+
+    side_panel_opacity = NumericProperty(1)
+    '''Controls the opacity of the side panel in its hidden state. Must be
+    between 0 (fade to transparent) and 1 (no transparency)'''
+
+    main_panel_final_offset = NumericProperty(1)
+    '''Final offset (to the right of the normal position) of the main
+    panel, in units of the side panel width.'''
+
+    main_panel_darkness = NumericProperty(0)
+    '''Controls the fade-to-black of the main panel when the side panel is
+    in its hidden state. Must be between 0 (no fading) and 1 (fades to
+    totally black).
+    '''
+
+    opening_transition = StringProperty('out_cubic')
+    '''The name of the animation transition type to use when animating to
+    an open state. Defaults to 'out_cubic'.'''
+
+    closing_transition = StringProperty('in_cubic')
+    '''The name of the animation transition type to use when animating to
+    a closed state. Defaults to 'out_cubic'.'''
+
+    anim_type = OptionProperty('reveal_from_below',
+                               options=['slide_above_anim'])
+    '''The default animation type to use. Several options are available,
+    modifying all possibly animation properties including darkness,
+    opacity, movement and draw height. Users may also (and are
+    encouaged to) edit these properties individually, for a vastly
+    larger range of possible animations. Defaults to reveal_below_anim.
+    '''
+
+    def __init__(self, **kwargs):
+        super(NavigationDrawer, self).__init__(**kwargs)
+        Clock.schedule_once(self.on__main_above, 0)
+
+    def on_anim_type(self, *args):
+
+        self.top_panel = 'side'
+        self.side_panel_darkness = 0
+        self.side_panel_opacity = 1
+        self.main_panel_final_offset = 0.5
+        self.main_panel_darkness = 0.5
+        self.side_panel_init_offset = 1
+
+    def on_top_panel(self, *args):
+        if self.top_panel == 'main':
+            self._main_above = True
+        else:
+            self._main_above = False
+
+    def on__main_above(self, *args):
+        newval = self._main_above
+        main_panel = self._main_panel
+        side_panel = self._side_panel
+        self.canvas.remove(main_panel.canvas)
+        self.canvas.remove(side_panel.canvas)
+        if newval:
+            self.canvas.insert(0, main_panel.canvas)
+            self.canvas.insert(0, side_panel.canvas)
+        else:
+            self.canvas.insert(0, side_panel.canvas)
+            self.canvas.insert(0, main_panel.canvas)
+
+    def add_widget(self, widget):
+        if len(self.children) == 0:
+            super(NavigationDrawer, self).add_widget(widget)
+            self._side_panel = widget
+        elif len(self.children) == 1:
+            super(NavigationDrawer, self).add_widget(widget)
+            self._main_panel = widget
+        elif len(self.children) == 2:
+            super(NavigationDrawer, self).add_widget(widget)
+            self._join_image = widget
+        elif self.side_panel is None:
+            self._side_panel.add_widget(widget)
+            self.side_panel = widget
+        elif self.main_panel is None:
+            self._main_panel.add_widget(widget)
+            self.main_panel = widget
+        else:
+            raise NavigationDrawerException(
+                'Can\'t add more than two widgets'
+                'directly to NavigationDrawer')
+
+    def anim_to_state(self, state):
+        '''If not already in state `state`, animates smoothly to it, taking
+        the time given by self.anim_time. State may be either 'open'
+        or 'closed'.
+
+        '''
+        if state == 'open':
+            anim = Animation(_anim_progress=1,
+                             duration=self.anim_time,
+                             t=self.closing_transition)
+            anim.start(self)
+        elif state == 'closed':
+            anim = Animation(_anim_progress=0,
+                             duration=self.anim_time,
+                             t=self.opening_transition)
+            anim.start(self)
+        else:
+            raise NavigationDrawerException(
+                'Invalid state received, should be one of `open` or `closed`')
+
+
+    def on_touch_down(self, touch):
+        col_self = self.collide_point(*touch.pos)
+        col_side = self._side_panel.collide_point(*touch.pos)
+        col_main = self._main_panel.collide_point(*touch.pos)
+
+        if self._anim_progress < 0.001:  # i.e. closed
+            valid_region = (self.x <=
+                            touch.x <=
+                            (self.x + self.touch_accept_width))
+            if not valid_region:
+                self._main_panel.on_touch_down(touch)
+                return False
+        else:
+            if col_side and not self._main_above:
+                self._side_panel.on_touch_down(touch)
+                return False
+            valid_region = (self._main_panel.x <=
+                            touch.x <=
+                            (self._main_panel.x + self._main_panel.width))
+            if not valid_region:
+                if self._main_above:
+                    if col_main:
+                        self._main_panel.on_touch_down(touch)
+                    elif col_side:
+                        self._side_panel.on_touch_down(touch)
+                else:
+                    if col_side:
+                        self._side_panel.on_touch_down(touch)
+                    elif col_main:
+                        self._main_panel.on_touch_down(touch)
+                return False
+        Animation.cancel_all(self)
+        self._anim_init_progress = self._anim_progress
+        self._touch = touch
+        touch.ud['type'] = self.state
+        touch.ud['panels_jiggled'] = False  # If user moved panels back
+                                            # and forth, don't default
+                                            # to close on touch release
+        touch.grab(self)
+        return True
+
+    def on_touch_move(self, touch):
+        if touch is self._touch:
+            dx = touch.x - touch.ox
+            self._anim_progress = max(0, min(self._anim_init_progress +
+                                            (dx / self.side_panel_width), 1))
+            if self._anim_progress < 0.975:
+                touch.ud['panels_jiggled'] = True
+        else:
+            super(NavigationDrawer, self).on_touch_move(touch)
+            return
+
+    def on_touch_up(self, touch):
+        if touch is self._touch:
+            self._touch = None
+            init_state = touch.ud['type']
+            touch.ungrab(self)
+            jiggled = touch.ud['panels_jiggled']
+            if init_state == 'open' and not jiggled:
+                if self._anim_progress >= 0.975:
+                        self.anim_to_state('closed')
+                else:
+                    self._anim_relax()
+            else:
+                self._anim_relax()
+        else:
+            super(NavigationDrawer, self).on_touch_up(touch)
+            return
+
+    def _anim_relax(self):
+        '''Animates to the open or closed position, depending on whether the
+        current position is past self.min_dist_to_open.
+
+        '''
+        if self._anim_progress > self.min_dist_to_open:
+            self.anim_to_state('open')
+        else:
+            self.anim_to_state('closed')
+
+
+
 
 class Code(object):
     '''
@@ -322,6 +541,7 @@ class Code(object):
             if newCode not in self.usedCodes:
                 self.usedCodes.append(newCode)
         return newCode
+
 
 # SHOULD MOVE TO ANOTHER PY FILE
 class Student(object):
@@ -362,46 +582,50 @@ class Student(object):
     def add_completed_activity(self, activity):
         self._completed.append(activity)
 
+
 # THIS TOO
 class Teacher(object):
     '''
     Constructor for Teacher
     '''
-    def __init__(self, firstName:str, lastName:str, userName:str, password:str):
+
+    def __init__(self, firstName: str, lastName: str, userName: str, password: str):
         self.__firstName = firstName
         self.__lastName = lastName
         self.__userName = userName
         self.__password = password
 
-    def get_firstName(self)->str:
+    def get_firstName(self) -> str:
         return self.__firstName
 
-    def get_lastName(self)->str:
+    def get_lastName(self) -> str:
         return self.__lastName
 
-    def get_userName(self)->str:
+    def get_userName(self) -> str:
         return self.__userName
 
-    def get_password(self)->str:
+    def get_password(self) -> str:
         return self.__password
 
-    def set_firstName(self, new_firstName:str):
+    def set_firstName(self, new_firstName: str):
         self.__firstName = new_firstName
 
-    def set_lastName(self, new_lastName:str):
+    def set_lastName(self, new_lastName: str):
         self.__lastName = new_lastName
 
-    def set_userName(self, new_userName:str):
+    def set_userName(self, new_userName: str):
         self.__userName = new_userName
 
-    def set_password(self, new_password:str):
+    def set_password(self, new_password: str):
         self.__password = new_password
+
 
 # AND THIS
 class AccountManager(object):
     '''
     Constructor for accounts of teachers
     '''
+
     def __init__(self):
         self.__list_teachers = []
 
@@ -415,7 +639,7 @@ class AccountManager(object):
     def get_list_teachers(self):
         return self.__list_teachers
 
-    def validLogin(self, teacher: Teacher, password: str)->bool:
+    def validLogin(self, teacher: Teacher, password: str) -> bool:
         return teacher.get_password() == password
 
     def samePassword(self, password1: str, password2: str):
@@ -545,6 +769,7 @@ class OGStudents(object):
                 i.set_points(howMany)
     '''
 
+
 class ChooseStudents(OGStudents):
     '''
     Individually selects students for a specific club
@@ -562,6 +787,7 @@ class ChooseStudents(OGStudents):
 
     def get_newList(self):
         return self.members
+
 
 class BaseTabs(GridLayout):
     '''
@@ -655,11 +881,13 @@ class BaseTabs(GridLayout):
             selection = self.reward_list.adapter.selection[0].text
             for student in self.rewarding_list:
                 if student.get_activity_name() == selection:
-                     pts = student.get_points()
+                    pts = student.get_points()
 
         # finding selected students and distributing points
         for member, boxes in self.student_checkboxes.items():
-            if boxes.active and (selection not in member.get_completed_activities() or selection in ["Club Attendance", "Winning Kahoots", "Ram of The Month"]):
+            if boxes.active and (selection not in member.get_completed_activities() or selection in ["Club Attendance",
+                                                                                                     "Winning Kahoots",
+                                                                                                     "Ram of The Month"]):
                 member.set_points(pts)
                 if selection not in member.get_completed_activities():
                     member.add_completed_activity(selection)
@@ -692,28 +920,29 @@ class BaseTabs(GridLayout):
             help.add_widget(theirRewardsList)
             co.add_widget(content)
             co.add_widget(help)
-            popup = Popup(title= selection,
+            popup = Popup(title=selection,
                           content=co,
                           size_hint=(None, None), size=(800, 500))
             popup.open()
 
+
 class List(GridLayout):
     teacher_account = ObjectProperty()
     teacher_list = ListProperty()
+
     def __init__(self, teacherList: list, **kwargs):
         super(List, self).__init__(**kwargs)
         self.teacherList = teacherList
         for teacher in self.teacherList:
-            self.teacher_list.append(teacher.get_firstName()+" "+teacher.get_lastName())
+            self.teacher_list.append(teacher.get_firstName() + " " + teacher.get_lastName())
 
     def login(self):
         pass
 
-class Login(Screen):
 
+class Login(Screen):
     username_text_input = ObjectProperty()
     password_text_input = ObjectProperty()
-
 
     def submit(self, userN, passW):
         global current_user
@@ -722,26 +951,89 @@ class Login(Screen):
             if userN == account.get_userName():
                 loggedon = True
                 if passW == account.get_password():
-                    screen_manager.current = 'screen_one'
+                    navigationdrawer = NavigationDrawer()
+
+                    side_panel = BoxLayout(orientation='vertical')
+                    side_panel.add_widget(
+                        Label(text='~~~ * ------------- Menu ------------- * ~~~', size_hint_y=None, height=40))
+
+                    homepage = Button(text='Homepage', background_color=(0, 1, 0.7, 1))
+                    homepage.bind(on_press=lambda x: self.change_screen('Homepage'))
+
+                    teach = Button(text='Teacher Profile', background_color=(0, 1, 0.7, 1))
+                    teach.bind(on_press=lambda x: self.change_screen('Profile'))
+
+                    gen = Button(text='General Activities', background_color=(0, 1, 0.7, 1))
+                    gen.bind(on_press=lambda x: self.change_screen('General'))
+
+                    cc = Button(text='Coding Club', background_color=(0, 1, 0.7, 1))
+                    cc.bind(on_press=lambda x: self.change_screen('Coding'))
+
+                    ro = Button(text='Robotics', background_color=(0, 1, 0.7, 1))
+                    ro.bind(on_press=lambda x: self.change_screen('Robotics'))
+
+                    scan = Button(text='Scanner', background_color=(0, 1, 0.7, 1))
+                    scan.bind(on_press=lambda x: self.change_screen('Scanner'))
+
+                    side_panel.add_widget(homepage)
+                    side_panel.add_widget(teach)
+                    side_panel.add_widget(gen)
+                    side_panel.add_widget(cc)
+                    side_panel.add_widget(ro)
+                    side_panel.add_widget(scan)
+                    navigationdrawer.add_widget(side_panel)
+
+                    main_panel = screen_manager
+                    navigationdrawer.add_widget(main_panel)
+
+                    navigationdrawer.anim_type = 'slide_above_anim'
+                    navigationdrawer.anim_to_state('open')
+
+                    Window.add_widget(navigationdrawer)
+
                     current_user = account
                 else:
                     passwPop = Popup(title="Login Error",
-                                     content= Label(text="Wrong password"),
+                                     content=Label(text="Wrong password"),
                                      background='atlas://data/images/defaulttheme/button_pressed',
-                                    size_hint=(None, None), size=(400, 150))
+                                     size_hint=(None, None), size=(400, 150))
                     passwPop.open()
         if not loggedon:
             userPop = Popup(title="Login Error",
-                             content=Label(text="Invalid username"),
-                             background='atlas://data/images/defaulttheme/button_pressed',
-                             size_hint=(None, None), size=(400, 150))
+                            content=Label(text="Invalid username"),
+                            background='atlas://data/images/defaulttheme/button_pressed',
+                            size_hint=(None, None), size=(400, 150))
             userPop.open()
+    def change_screen(self, page):
+        if page == "Homepage" and screen_manager.current != "screen_one":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_one"
+        elif page == "Profile" and screen_manager.current != "screen_two":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_two"
+        elif page == "General" and screen_manager.current != "screen_three":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_three"
+        elif page == "Coding" and screen_manager.current != "screen_four":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_four"
+        elif page == "Robotics" and screen_manager.current != "screen_five":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_five"
+        elif page == "Scanner" and screen_manager.current != "screen_six":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_six"
 
 class HomePageScreen(Screen):
 
     def __init__(self, **kwargs):
         super(HomePageScreen, self).__init__(**kwargs)
-        self.add_widget(SideBar())
         self.add_widget(Start())
 
         manager = AccountManager()
@@ -754,7 +1046,6 @@ class ProfileScreen(Screen):
 
     def __init__(self, **kwargs):
         super(ProfileScreen, self).__init__(**kwargs)
-        self.add_widget(SideBar())
         self.add_widget(TeacherProfile())
 
 
@@ -762,17 +1053,18 @@ class GeneralScreen(Screen):
 
     def __init__(self, **kwargs):
         super(GeneralScreen, self).__init__(**kwargs)
-        self.add_widget(SideBar())
 
         # Creates all the members
         members = ChooseStudents(["Chen Feng Zhang", "Jason Ng", "Carson Tang", "Natalie Tam",
-                                "Derek Shat", "Kun Lee", "Shawn Nimal", "Tony Ni", "Thomas Maglietta", "Caterina Paganelli"])
+                                  "Derek Shat", "Kun Lee", "Shawn Nimal", "Tony Ni", "Thomas Maglietta",
+                                  "Caterina Paganelli"])
         student_list = members.get_newList()
 
         # Creates all the activities
         rewards = []
         act = Rewards("Ram of The Month", "Does good in life", "Once a month", 20)
-        act1 = Rewards("Participate in Inside Ride 2017", "Riding bikes for cancer \n and raising money", "Sometime", 100)
+        act1 = Rewards("Participate in Inside Ride 2017", "Riding bikes for cancer \n and raising money", "Sometime",
+                       100)
         act2 = Rewards("Attend Hockey Buyout 2018", "Watching teachers play \n hockey, school spirit", "Sometime", 50)
         act3 = Rewards("Attend School Dance 2018", "Grade 9 Dance, \n Semi-formal, Formal", "Sometime", 25)
         act4 = Rewards("Participate in Christmas Concert 2018", "Singing, Dancing, etc.", "Sometime", 60)
@@ -806,11 +1098,11 @@ class ClubOneScreen(Screen):
 
     def __init__(self, **kwargs):
         super(ClubOneScreen, self).__init__(**kwargs)
-        self.add_widget(SideBar())
 
         # Creates all the members
         members = ChooseStudents(["Allen Kim", "Bonnie Li", "Camille Law", "Carson Tang", "Cecil Cao", "Chelsea Moon",
-                                "Erin Chin", "Eryka Shi-Shun", "Felix Yang", "Grace Leung", "Joon Kim", "Sarah Wang", "Thomas Maglietta"])
+                                  "Erin Chin", "Eryka Shi-Shun", "Felix Yang", "Grace Leung", "Joon Kim", "Sarah Wang",
+                                  "Thomas Maglietta"])
         student_list = members.get_newList()
 
         # Creates all the activities
@@ -829,8 +1121,7 @@ class ClubTwoScreen(Screen):
 
     def __init__(self, **kwargs):
         super(ClubTwoScreen, self).__init__(**kwargs)
-        sidebar = SideBar()
-        self.add_widget(sidebar)
+
 
         # Creates all the members
         members = ChooseStudents(["Allen Kim", "Darya Pascarel", "Grace Leung"])
@@ -845,33 +1136,35 @@ class ClubTwoScreen(Screen):
         layout = BaseTabs(student_list, rewards, members)
         self.add_widget(layout)
 
-class Scanner(Screen):
 
+class Scanner(Screen):
     def __init__(self, **kwargs):
         super(Scanner, self).__init__(**kwargs)
-        sidebar = SideBar()
-        self.add_widget(sidebar)
+
 
 # Adding Teachers
 teachers = []
-teachers.append(Teacher("Eric F", 1234, "eric", "pass"))
+teachers.append(Teacher("Eric F", 1234, "eric", "eChin4theWin"))
 empty_acc = Teacher("empty", None, "", "")
 current_user = empty_acc
 
-
 # Adding screens to the Screen Manager
-screen_manager.add_widget(Login(name = "login"))
-screen_manager.add_widget(HomePageScreen(name= "screen_one"))
-screen_manager.add_widget(ProfileScreen(name= "screen_two"))
-screen_manager.add_widget(GeneralScreen(name= "screen_three"))
-screen_manager.add_widget(ClubOneScreen(name= "screen_four"))
-screen_manager.add_widget(ClubTwoScreen(name= "screen_five"))
-screen_manager.add_widget(Scanner(name= "screen_six"))
+screen_manager.add_widget(HomePageScreen(name="screen_one"))
+screen_manager.add_widget(ProfileScreen(name="screen_two"))
+screen_manager.add_widget(GeneralScreen(name="screen_three"))
+screen_manager.add_widget(ClubOneScreen(name="screen_four"))
+screen_manager.add_widget(ClubTwoScreen(name="screen_five"))
+screen_manager.add_widget(Scanner(name="screen_six"))
+
+
 
 class TeacherApp(App):
 
     def build(self):
-        Window.clearcolor = (0.3725, 0.6196, 0.6275, 1)
-        return screen_manager
+
+        Window.add_widget(Login())
+
+
+
 
 TeacherApp().run()

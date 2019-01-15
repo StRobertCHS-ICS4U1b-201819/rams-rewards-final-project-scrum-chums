@@ -108,6 +108,18 @@ Builder.load_string("""
                 pos_hint: {"x": 0, "top": .8}
                 size_hint: 1, .15 
                 on_press: root.history()
+                
+            TextInput: 
+                size_hint: .6, .1 
+                multiline: False
+                pos_hint: {"x": .2, "top": .6}
+                
+            CustButton:
+                text: "Go"
+                pos_hint: {"x": .8, "top": .6}
+                size_hint: .2, .1 
+                background_color: 0, 0, 0, 0.2
+                
        
             CustButton:
                 text: "Logout"
@@ -279,8 +291,8 @@ class Profile(Screen):
     #     curr_id = gcurr_id
 
     def on_start(self):
-        curr_name = gcurr_name
-        curr_id = gcurr_id
+        self.curr_name = gcurr_name
+        self.curr_id = gcurr_id
 
     def hmrm(self):
 
@@ -297,10 +309,23 @@ class Profile(Screen):
                      size=(400, 400))
         historyPop.open()
 
-    
 
 
 
+class Rewards(object):
+    def __init__(self, activity, points, code):
+        self.__act = activity
+        self.__points = points
+        self.__code = code
+
+    def get_act(self):
+        return self.__act
+
+    def get_points(self):
+        return self.__points
+
+    def get_code(self):
+        return self.__code
 
 
 rewards = []

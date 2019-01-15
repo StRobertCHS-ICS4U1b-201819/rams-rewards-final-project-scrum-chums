@@ -47,6 +47,7 @@ Builder.load_string("""
         pos_hint_y: 1
         pos_hint_x: 5
         
+        
         CustLabel:
             text: "Ram Rewards Student App"
             color: 0, .5, 0, .9
@@ -73,6 +74,7 @@ Builder.load_string("""
         LoginInput:
             id: password
             pos_hint: {"center_x": 0.5, "center_y": .45}
+            password: True
             
         Button:
             text: "Login"  
@@ -83,12 +85,12 @@ Builder.load_string("""
             height: 50
             pos_hint: {"center_x": 0.5, "center_y": .3}
             on_press: root.submit()
+        
             
                 
 
 
 <Profile>:  
-
     
     PageLayout:    
         
@@ -130,7 +132,7 @@ Builder.load_string("""
                 pos_hint: {"center_x": .3, "top": .7}
 
             CustLabel:
-                text: "123213131"
+                text: root.curr_id
                 pos_hint: {"center_x": .6, "top": .7}
     BoxLayout:
         orientation: "vertical"
@@ -141,22 +143,25 @@ screen_manager = ScreenManager()
 
 class Student(object):
     def __init__(self, name, studentID, user, password):
-        self.name =  StringProperty(name)
+        self.__name =  StringProperty(name)
         self.__id = studentID
         self.__user = user
         self.__password = password
         self.__points = 0
-        self.hmrm = "12A"
+        self.__hmrm = "12A"
         self.__history = []
 
     def get_name(self):
-        return StringProperty(self.name)
+        return self.__name
 
     def get_id(self):
-        return self.__id
+        return str(self.__id)
 
     def get_hmrm(self):
-        return self.hmrm
+        return self.__hmrm
+
+    def set_hmrm(self, newhmrm):
+        self.__hmrm = newhmrm
 
     def get_user(self):
         return self.__user
@@ -182,10 +187,12 @@ students.append(Student("Erin C", 9111, "erin", "pass"))
 students.append(Student("Carson T", 8765, "carson", "pass"))
 students.append(Student("Chen Feng Z", 7878, "chenfeng", "pass"))
 admin = Student("admin", 0000, "1", "1")
-admin.hmrm = "YE"
+admin.set_hmrm("YE")
 students.append(admin)
 empty_acc = Student("empty", None, "", "")
 current_user = empty_acc
+gcurr_name = current_user.get_name()
+gcurr_id = current_user.get_id()
 
 
 class Login(Screen):
@@ -199,14 +206,19 @@ class Login(Screen):
 
         global current_user
 
+        global gcurr_name
+        global gcurr_id
+
+
         loggedon = False
         for account in students:
             if self.username_text_input.text == account.get_user():
                 loggedon = True
                 if self.password_text_input.text == account.get_pass():
                     current_user = account
-                    # Profile.info()
+                    # update_info()
                     screen_manager.current = 'profile'
+
 
                 else:
                     passwPop = Popup(title="Login Error",
@@ -223,14 +235,20 @@ class Login(Screen):
             userPop.open()
 
 
+
+
+
+
+
+
 class Profile(Screen):
 
 
     #
     # current_id = current_user.get_id()
     # current_points = current_user.get_points()
-    names = ObjectProperty()
-    namer = StringProperty()
+    # names = ObjectProperty()
+    # namer = StringProperty()
 
     # def __init__(self, curr_user):
     #     super().__init__()
@@ -242,12 +260,27 @@ class Profile(Screen):
     #     super(Profile, self).__init__(**kwargs)
     #     # self.names = ""
     #     self.namer = current_user.get_name()
-    global current_user
+    # def __init__(self):
+    #     self.curr_name = current_user.get_name()
+    #     self.curr_id = current_user.get_id()
+    #
+    #
+
     # name = StringProperty(current_user.get_name())
 
+    curr_name = current_user.get_name()
+    curr_id = current_user.get_id()
 
-    curr_name = current_user.name
+    global gcurr_name
+    global gcurr_id
 
+    # def on_enter(self):
+    #     curr_name = gcurr_name
+    #     curr_id = gcurr_id
+
+    def on_start(self):
+        curr_name = gcurr_name
+        curr_id = gcurr_id
 
     def hmrm(self):
 
@@ -264,6 +297,7 @@ class Profile(Screen):
                      size=(400, 400))
         historyPop.open()
 
+    
 
 
 

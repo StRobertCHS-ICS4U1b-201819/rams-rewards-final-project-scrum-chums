@@ -42,6 +42,9 @@ from kivy.lang import Builder
 # Setting Screen Manager as a variable
 screen_manager = ScreenManager()
 
+global grace
+
+
 # Creating a kivy text file in this window
 Builder.load_string("""
 #: import main Testing
@@ -948,7 +951,45 @@ class Login(Screen):
             if userN == account.get_userName():
                 loggedon = True
                 if passW == account.get_password():
-                    screen_manager.current = 'screen_one'
+                    navigationdrawer = NavigationDrawer()
+
+                    side_panel = BoxLayout(orientation='vertical')
+                    side_panel.add_widget(
+                        Label(text='~~~ * ------------- Menu ------------- * ~~~', size_hint_y=None, height=40))
+
+                    homepage = Button(text='Homepage', background_color=(0, 1, 0.7, 1))
+                    homepage.bind(on_press=lambda x: self.change_screen('Homepage'))
+
+                    teach = Button(text='Teacher Profile', background_color=(0, 1, 0.7, 1))
+                    teach.bind(on_press=lambda x: self.change_screen('Profile'))
+
+                    gen = Button(text='General Activities', background_color=(0, 1, 0.7, 1))
+                    gen.bind(on_press=lambda x: self.change_screen('General'))
+
+                    cc = Button(text='Coding Club', background_color=(0, 1, 0.7, 1))
+                    cc.bind(on_press=lambda x: self.change_screen('Coding'))
+
+                    ro = Button(text='Robotics', background_color=(0, 1, 0.7, 1))
+                    ro.bind(on_press=lambda x: self.change_screen('Robotics'))
+
+                    scan = Button(text='Scanner', background_color=(0, 1, 0.7, 1))
+                    scan.bind(on_press=lambda x: self.change_screen('Scanner'))
+
+                    side_panel.add_widget(homepage)
+                    side_panel.add_widget(teach)
+                    side_panel.add_widget(gen)
+                    side_panel.add_widget(cc)
+                    side_panel.add_widget(ro)
+                    side_panel.add_widget(scan)
+                    navigationdrawer.add_widget(side_panel)
+
+                    main_panel = screen_manager
+                    navigationdrawer.add_widget(main_panel)
+
+                    navigationdrawer.anim_type = 'slide_above_anim'
+                    navigationdrawer.anim_to_state('open')
+
+                    Window.add_widget(navigationdrawer)
 
                     current_user = account
                 else:
@@ -963,7 +1004,31 @@ class Login(Screen):
                             background='atlas://data/images/defaulttheme/button_pressed',
                             size_hint=(None, None), size=(400, 150))
             userPop.open()
-
+    def change_screen(self, page):
+        if page == "Homepage" and screen_manager.current != "screen_one":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_one"
+        elif page == "Profile" and screen_manager.current != "screen_two":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_two"
+        elif page == "General" and screen_manager.current != "screen_three":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_three"
+        elif page == "Coding" and screen_manager.current != "screen_four":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_four"
+        elif page == "Robotics" and screen_manager.current != "screen_five":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_five"
+        elif page == "Scanner" and screen_manager.current != "screen_six":
+            screen_manager.transition.direction = "left"
+            screen_manager.transition.duration = 0.001
+            screen_manager.current = "screen_six"
 
 class HomePageScreen(Screen):
 
@@ -1084,7 +1149,6 @@ empty_acc = Teacher("empty", None, "", "")
 current_user = empty_acc
 
 # Adding screens to the Screen Manager
-screen_manager.add_widget(Login(name="login"))
 screen_manager.add_widget(HomePageScreen(name="screen_one"))
 screen_manager.add_widget(ProfileScreen(name="screen_two"))
 screen_manager.add_widget(GeneralScreen(name="screen_three"))
@@ -1097,70 +1161,10 @@ screen_manager.add_widget(Scanner(name="screen_six"))
 class TeacherApp(App):
 
     def build(self):
-        navigationdrawer = NavigationDrawer()
 
-        side_panel = BoxLayout(orientation='vertical')
-
-        homepage = Button(text='Homepage', background_color= (0, 1, 0.7, 1))
-        homepage.bind(on_press=lambda x: self.change_screen('Homepage'))
-
-        teach = Button(text='Teacher Profile', background_color= (0, 1, 0.7, 1))
-        teach.bind(on_press=lambda x: self.change_screen('Profile'))
-
-        gen = Button(text='General Activities', background_color= (0, 1, 0.7, 1))
-        gen.bind(on_press=lambda x: self.change_screen('General'))
-
-        cc = Button(text='Coding Club', background_color= (0, 1, 0.7, 1))
-        cc.bind(on_press=lambda x: self.change_screen('Coding'))
-
-        ro = Button(text='Robotics', background_color= (0, 1, 0.7, 1))
-        ro.bind(on_press=lambda x: self.change_screen('Robotics'))
-
-        scan = Button(text='Scanner', background_color= (0, 1, 0.7, 1))
-        scan.bind(on_press=lambda x: self.change_screen('Scanner'))
+        Window.add_widget(Login())
 
 
-        side_panel.add_widget(homepage)
-        side_panel.add_widget(teach)
-        side_panel.add_widget(gen)
-        side_panel.add_widget(cc)
-        side_panel.add_widget(ro)
-        side_panel.add_widget(scan)
-        navigationdrawer.add_widget(side_panel)
 
-        main_panel = screen_manager
-        navigationdrawer.add_widget(main_panel)
-
-        navigationdrawer.anim_type = 'slide_above_anim'
-
-
-        Window.add_widget(navigationdrawer)
-
-
-    def change_screen(self, page):
-        if page == "Homepage" and screen_manager.current != "screen_one":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_one"
-        elif page == "Profile" and screen_manager.current != "screen_two":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_two"
-        elif page == "General" and screen_manager.current != "screen_three":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_three"
-        elif page == "Coding" and screen_manager.current != "screen_four":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_four"
-        elif page == "Robotics" and screen_manager.current != "screen_five":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_five"
-        elif page == "Scanner" and screen_manager.current != "screen_six":
-            screen_manager.transition.direction = "left"
-            screen_manager.transition.duration = 0.001
-            screen_manager.current = "screen_six"
 
 TeacherApp().run()

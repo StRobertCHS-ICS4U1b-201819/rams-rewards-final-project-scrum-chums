@@ -91,6 +91,7 @@ Builder.load_string("""
 
 
 <Profile>:  
+    code_text_input: code
     
     PageLayout:    
         
@@ -110,6 +111,7 @@ Builder.load_string("""
                 on_press: root.history()
                 
             TextInput: 
+                id: code
                 size_hint: .6, .1 
                 multiline: False
                 pos_hint: {"x": .2, "top": .6}
@@ -119,6 +121,7 @@ Builder.load_string("""
                 pos_hint: {"x": .8, "top": .6}
                 size_hint: .2, .1 
                 background_color: 0, 0, 0, 0.2
+                on_press: root.add_activity()
                 
        
             CustButton:
@@ -184,11 +187,15 @@ class Student(object):
     def get_points(self):
         return self.__points
 
-    def add_points(self, points):
-        self.__points += points
+    def add_points(self, reward):
+        self.__points += reward.get_points()
 
-    def add_history(self, points):
-        self.__history.append(points)
+    def add_history(self, reward):
+        self.__history.append(rewards.get_activity())
+
+    def add_reward(self, reward):
+        self.add_history(reward)
+        self.add_points(reward)
 
 
 
@@ -255,7 +262,8 @@ class Login(Screen):
 
 class Profile(Screen):
 
-
+    code_text_input = ObjectProperty()
+    global current_user
     #
     # current_id = current_user.get_id()
     # current_points = current_user.get_points()
@@ -309,6 +317,12 @@ class Profile(Screen):
                      size=(400, 400))
         historyPop.open()
 
+    def add_activity(self):
+
+        for activity in rewards:
+            if self.code_text_input.text == activity.get_code:
+                current_user.add_reward(activity)
+
 
 
 
@@ -329,7 +343,11 @@ class Rewards(object):
 
 
 rewards = []
-
+rewards.append(Rewards("Attendance", 2, "att"))
+rewards.append(Rewards("Paint", 5, "paint"))
+rewards.append(Rewards("Prom", 10, "prom"))
+rewards.append(Rewards("Cafeteria activity", 1, "caf"))
+rewards.append(Rewards("Ram of the Month", 20, "ram"))
 
 screen_manager.add_widget(Login(name = "login"))
 screen_manager.add_widget(Profile(name = "profile"))

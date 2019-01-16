@@ -1,53 +1,39 @@
 # Importing the Kivy application, layouts, and buttons
-import random
+import random, sqlite3
+
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.adapters.simplelistadapter import SimpleListAdapter
 from kivy.uix.listview import ListView
-
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.gridlayout import GridLayout
-
-import getpass
-
-from kivy.uix.button import Label
-from kivy.uix.treeview import TreeViewLabel
-from kivy.uix.button import Button
-from kivy.uix.listview import ListItemButton
-from kivy.uix.widget import Widget
-from kivy.uix.checkbox import CheckBox
-from kivy.uix.popup import Popup
-from kivy.core.window import Window
-from kivy.properties import ObjectProperty, ListProperty
-from kivy.base import runTouchApp
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.uix.popup import Popup
-from kivy.uix.image import Image
-from kivy.core.window import Window
-
-
 from kivy.animation import Animation
-from kivy.uix.widget import Widget
 from kivy.uix.stencilview import StencilView
 from kivy.metrics import dp
 from kivy.clock import Clock
 from kivy.properties import (ObjectProperty, NumericProperty, OptionProperty,
-                             BooleanProperty, StringProperty)
-from kivy.lang import Builder
+                             BooleanProperty, StringProperty, ListProperty)
+
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
+
+from kivy.uix.widget import Widget
+from kivy.uix.popup import Popup
+from kivy.uix.button import Label
+from kivy.uix.button import Button
+from kivy.uix.listview import ListItemButton
+from kivy.uix.image import Image
+
+from kivy.uix.checkbox import CheckBox
+
+from kivy.core.window import Window
 
 # Setting Screen Manager as a variable
 screen_manager = ScreenManager()
 
-global grace
-
-
-# Creating a kivy text file in this window
+# Creating a Kivy text file in this window
 Builder.load_string("""
-#: import main Testing
+#: import main CurrentWork
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
 
@@ -191,14 +177,7 @@ Builder.load_string("""
             size_hint_y: None
             height: 80
             text: "WELCOME! WELCOME! WELCOME! WELCOME! WELCOME! WELCOME!"
-        BoxLayout:
-            orientation: "horizontal"
-            TabbedPanel:
-                do_default_tab: False
-                TabbedPanelItem:
-                    text: "Teachers"
-                    ListView:
-                        text: "Add New Teacher"
+            valign: 'middle'
 
 # CHANGE LATER   
 <TeacherProfile>:
@@ -264,6 +243,9 @@ class Start(GridLayout):
 
     def __init__(self, **kwargs):
         super(Start, self).__init__(**kwargs)
+        image = Image(source= 'erin.jpg', pos= (100, 100))
+        self.add_widget(image)
+
 
 
 class TeacherProfile(Widget):
@@ -272,6 +254,7 @@ class TeacherProfile(Widget):
     '''
 
     pass
+
 
 class NavigationDrawerException(Exception):
     '''Raised when add_widget or remove_widget called incorrectly on a
@@ -524,8 +507,6 @@ class NavigationDrawer(StencilView):
             self.anim_to_state('closed')
 
 
-
-
 class Code(object):
     '''
     For generating random code numbers
@@ -712,6 +693,7 @@ class Rewards(object):
 class OGStudents(object):
 
     def __init__(self):
+        from RRTAA import db_test
         self.allStudents = []
         student = Student("Chen Feng", "Zhang", 1, "12E", "")
         student1 = Student("Jason", "Ng", 2, "12E", "Yearbook")
@@ -760,6 +742,17 @@ class OGStudents(object):
         self.allStudents.append(student20)
         self.allStudents.append(student21)
         self.allStudents.append(student22)
+
+        q = db_test.return_all(db_test.con)
+        for c in q:
+            k = c[1].split()
+            a = k[0]
+            b = k[1]
+            #print(a, b)
+            studente = Student(a, b, c[0], c[2], "")
+            self.allStudents.append(studente)
+
+
 
     # does not work yet
     '''
@@ -1030,6 +1023,7 @@ class Login(Screen):
             screen_manager.transition.duration = 0.001
             screen_manager.current = "screen_six"
 
+
 class HomePageScreen(Screen):
 
     def __init__(self, **kwargs):
@@ -1057,7 +1051,8 @@ class GeneralScreen(Screen):
         # Creates all the members
         members = ChooseStudents(["Chen Feng Zhang", "Jason Ng", "Carson Tang", "Natalie Tam",
                                   "Derek Shat", "Kun Lee", "Shawn Nimal", "Tony Ni", "Thomas Maglietta",
-                                  "Caterina Paganelli"])
+                                  "Caterina Paganelli", "Yelix Fang", "Donner Cong", "Tarson Cang", "Zhen Cheng Feng",
+                                  "Ching Chong", "Wing Wong", "Grade Nine"])
         student_list = members.get_newList()
 
         # Creates all the activities
@@ -1144,7 +1139,7 @@ class Scanner(Screen):
 
 # Adding Teachers
 teachers = []
-teachers.append(Teacher("Eric F", 1234, "eric", "eChin4theWin"))
+teachers.append(Teacher("Eric F", 1234, "eric", "hiCarson"))
 empty_acc = Teacher("empty", None, "", "")
 current_user = empty_acc
 
@@ -1157,13 +1152,10 @@ screen_manager.add_widget(ClubTwoScreen(name="screen_five"))
 screen_manager.add_widget(Scanner(name="screen_six"))
 
 
-
 class TeacherApp(App):
 
     def build(self):
-
         Window.add_widget(Login())
-
 
 
 

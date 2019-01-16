@@ -2,7 +2,8 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.pagelayout import PageLayout
-from kivy.properties import ObjectProperty, StringProperty
+from kivy.uix.gridlayout import GridLayout
+from kivy.properties import ObjectProperty, StringProperty, ListProperty
 from kivy.uix.listview import ListItemButton
 from kivy.core.window import Window
 from kivy.uix.textinput import TextInput
@@ -11,6 +12,9 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+from kivy.adapters.simplelistadapter import SimpleListAdapter
+from kivy.uix.listview import ListView
+from kivy.adapters.simplelistadapter import SimpleListAdapter
 
 
 Builder.load_string("""
@@ -197,6 +201,9 @@ class Student(object):
         self.add_history(reward)
         self.add_points(reward)
 
+    def get_history(self):
+        return self.__history
+
 
 
 students = []
@@ -310,9 +317,24 @@ class Profile(Screen):
                      size=(400, 100))
         hmrmPop.open()
 
+    reward_list = ListProperty()
+
+
     def history(self):
+        self.reward_list = current_user.get_history()
+
+        for display in self.reward_list:
+            self.reward_list.append(display.get_name + ": " + str(display.get_points()))
+        simple_list_adapter = SimpleListAdapter(
+            data=self.reward_list,
+            cls=Label)
+        con = GridLayout(cols=1)
+        con.add_widget(Label(text='Student Rewards History', size_hint_y=None, height=40))
+        theirRewardsList = ListView(adapter=simple_list_adapter)
+        con.add_widget(theirRewardsList)
+
         historyPop = Popup(title = "Points History",
-                     content = Label(text= "lol"),
+                     content = con,
                      size_hint=(None, None),
                      size=(400, 400))
         historyPop.open()
@@ -322,6 +344,12 @@ class Profile(Screen):
         for activity in rewards:
             if self.code_text_input.text == activity.get_code:
                 current_user.add_reward(activity)
+
+                activityPop = Popup(title="Points History",
+                                   content= activity.get_name() + ": " + activity.get_points(),
+                                   size_hint=(None, None),
+                                   size=(400, 400))
+                activityPop.open()
 
 
 

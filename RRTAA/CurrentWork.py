@@ -6,12 +6,8 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.adapters.simplelistadapter import SimpleListAdapter
 from kivy.uix.listview import ListView
-
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-
-import getpass
-
 from kivy.uix.button import Label
 from kivy.uix.treeview import TreeViewLabel
 from kivy.uix.button import Button
@@ -28,8 +24,6 @@ from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.uix.image import Image
 from kivy.core.window import Window
-
-
 from kivy.animation import Animation
 from kivy.uix.widget import Widget
 from kivy.uix.stencilview import StencilView
@@ -38,6 +32,10 @@ from kivy.clock import Clock
 from kivy.properties import (ObjectProperty, NumericProperty, OptionProperty,
                              BooleanProperty, StringProperty)
 from kivy.lang import Builder
+
+# Import StudentClass
+from RRTAA.TeacherClass import Teacher
+from RRTAA.StudentClass import Student
 
 # Setting Screen Manager as a variable
 screen_manager = ScreenManager()
@@ -542,146 +540,6 @@ class Code(object):
                 self.usedCodes.append(newCode)
         return newCode
 
-
-# SHOULD MOVE TO ANOTHER PY FILE
-class Student(object):
-    '''
-    For creating each student
-    '''
-
-    def __init__(self, firstName, lastName, id, homeroom, clubs):
-        self.__first_name = firstName
-        self.__last_name = lastName
-        self.__id = id
-        self.__homeroom = homeroom
-        self.__clubsInvolved = clubs
-        self.__points = 0
-        self._completed = []
-
-    def get_id(self):
-        return self.__id
-
-    def get_student_name(self):
-        return self.__first_name + " " + self.__last_name
-
-    def get_homeroom(self):
-        return self.__homeroom
-
-    def get_clubs(self):
-        return self.__clubsInvolved
-
-    def get_points(self):
-        return self.__points
-
-    def set_points(self, morePts):
-        self.__points += morePts
-
-    def get_completed_activities(self):
-        return self._completed
-
-    def add_completed_activity(self, activity):
-        self._completed.append(activity)
-
-
-# THIS TOO
-class Teacher(object):
-    '''
-    Constructor for Teacher
-    '''
-
-    def __init__(self, firstName: str, lastName: str, userName: str, password: str):
-        self.__firstName = firstName
-        self.__lastName = lastName
-        self.__userName = userName
-        self.__password = password
-
-    def get_firstName(self) -> str:
-        return self.__firstName
-
-    def get_lastName(self) -> str:
-        return self.__lastName
-
-    def get_userName(self) -> str:
-        return self.__userName
-
-    def get_password(self) -> str:
-        return self.__password
-
-    def set_firstName(self, new_firstName: str):
-        self.__firstName = new_firstName
-
-    def set_lastName(self, new_lastName: str):
-        self.__lastName = new_lastName
-
-    def set_userName(self, new_userName: str):
-        self.__userName = new_userName
-
-    def set_password(self, new_password: str):
-        self.__password = new_password
-
-
-# AND THIS
-class AccountManager(object):
-    '''
-    Constructor for accounts of teachers
-    '''
-
-    def __init__(self):
-        self.__list_teachers = []
-
-    def add_teacher(self, teacher: Teacher):
-        self.__list_teachers.append(teacher)
-
-    def remove_teacher(self, teacher: Teacher):
-        if teacher in self.__list_teachers:
-            self.__list_teachers.remove(teacher)
-
-    def get_list_teachers(self):
-        return self.__list_teachers
-
-    def validLogin(self, teacher: Teacher, password: str) -> bool:
-        return teacher.get_password() == password
-
-    def samePassword(self, password1: str, password2: str):
-        return password1 == password2
-
-    def change_password(self, teacher: Teacher, old_password: str, new_password: str, new_password2: str):
-        if self.samePassword(new_password, new_password2) and self.validLogin(teacher, old_password):
-            teacher.set_password(new_password)
-            # give some confirmation
-            return True
-        else:
-            # give some error
-            return False
-
-    def change_userName(self, teacher: Teacher, new_userName: str, password: str):
-        if self.samePassword(password, teacher.get_password()):
-            teacher.set_userName(new_userName)
-            # give some confirmation
-            return True
-        else:
-            # give some error
-            return False
-
-    def change_lastName(self, teacher: Teacher, new_lastName: str, password: str):
-        if self.samePassword(password, teacher.get_password()):
-            teacher.set_lastName(new_lastName)
-            # give some confirmation
-            return True
-        else:
-            # give some error
-            return False
-
-    def change_firstName(self, teacher: Teacher, new_firstName: str, password: str):
-        if self.samePassword(password, teacher.get_password()):
-            teacher.set_firstName(new_firstName)
-            # give some confirmation
-            return True
-        else:
-            # give some error
-            return False
-
-
 class Rewards(object):
     '''
     Creates each Activity
@@ -1144,7 +1002,7 @@ class Scanner(Screen):
 
 # Adding Teachers
 teachers = []
-teachers.append(Teacher("Eric F", 1234, "eric", "eChin4theWin"))
+teachers.append(Teacher("Eric F", 1234, "eric", "hiCarson"))
 empty_acc = Teacher("empty", None, "", "")
 current_user = empty_acc
 

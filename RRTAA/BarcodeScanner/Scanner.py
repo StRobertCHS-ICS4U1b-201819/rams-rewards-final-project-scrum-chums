@@ -2,16 +2,18 @@ from __future__ import print_function
 import pyzbar.pyzbar as pyzbar
 import numpy as np
 import cv2
-
+from RRTAA import CurrentWork
 from PIL import Image
 
 # https://www.learnopencv.com/barcode-and-qr-code-scanner-using-zbar-and-opencv/
 
 def decode(im):
     decodedObjects = pyzbar.decode(im)
+
     for obj in decodedObjects:
         print('Type : ', obj.type)
         print('Data : ', obj.data, '\n')
+
 
     return decodedObjects
 
@@ -32,7 +34,17 @@ def display(im, decodedObjects):
 
 if __name__ == '__main__':
 
-    im = cv2.imread('barcode_test1.jpg', 0)
+    user_codes = {}
 
-    decodedObjects = decode(im)
-    display(im, decodedObjects)
+    while 1:
+        # TAKE IMAGE
+        # MAP IMAGE
+        # GRAB IMAGE
+        # with open(filename,)
+        # DECODE IMAGE
+        im = cv2.imread('why.png.png', 0)
+        decodedObjects = decode(im)
+        if len(decodedObjects)!=0:
+            break
+        # SHOWS IMG
+        display(im, decodedObjects)

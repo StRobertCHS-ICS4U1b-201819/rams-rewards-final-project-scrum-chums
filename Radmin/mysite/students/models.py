@@ -16,6 +16,7 @@ class Student(models.Model):
     student_score = models.IntegerField()
     student_id = models.CharField(max_length=50)
     student_pass = models.CharField(max_length=50)
+    student_history = models.TextField()
     
 
     def __str__(self):

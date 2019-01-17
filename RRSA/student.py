@@ -103,13 +103,13 @@ Builder.load_string("""
             
                 
             CustButton:
-                text: root.curr_name
+                text: "Profile Information"
                 pos_hint: {"x": 0, "top": 1}
                 size_hint: 1, .2 
-                on_press: root.hmrm()
+                on_press: root.name_hmrm()
             
             CustButton:
-                text: "Points:"
+                text: "Point History"
                 pos_hint: {"x": 0, "top": .8}
                 size_hint: 1, .15 
                 on_press: root.history()
@@ -136,9 +136,10 @@ Builder.load_string("""
                 on_press: root.manager.current = 'login'
                 
             CustButton:
-                text: "Settings"
+                text: "Quit"
                 pos_hint: {"right": 1, "top": .1}
                 size_hint: .5, .1 
+                on_press: App.get_running_app().stop() 
                 
         FloatLayout:
             background_color: 1, 1, 1, 1
@@ -146,13 +147,14 @@ Builder.load_string("""
                 text: "Swipe right to interact"
                 font_size: 15
                 pos_hint: {"center_x": .2, "top": .75}
-            CustLabel: 
+                
+            CustButton: 
                 text: "Student ID"
-                pos_hint: {"center_x": .3, "top": .7}
+                pos_hint: {"center_x": .5, "top": .7}
+                height: 50
+                width: 100
+                on_press: root.studentid()
 
-            CustLabel:
-                text: root.curr_id
-                pos_hint: {"center_x": .6, "top": .7}
     BoxLayout:
         orientation: "vertical"
 
@@ -160,15 +162,40 @@ Builder.load_string("""
 
 screen_manager = ScreenManager()
 
+
+class Rewards(object):
+    def __init__(self, activity, points, code):
+        self.__act = activity
+        self.__points = points
+        self.__code = code
+
+    def get_actName(self):
+        return self.__act
+
+    def get_points(self):
+        return self.__points
+
+    def get_code(self):
+        return self.__code
+
+
+rewards = []
+rewards.append(Rewards("Attendance", 2, "att"))
+rewards.append(Rewards("Paint", 5, "paint"))
+rewards.append(Rewards("Prom", 10, "prom"))
+rewards.append(Rewards("Cafeteria activity", 1, "caf"))
+rewards.append(Rewards("Ram of the Month", 20, "ram"))
+
 class Student(object):
     def __init__(self, name, studentID, user, password):
-        self.__name =  StringProperty(name)
+        self.__name =  name
         self.__id = studentID
         self.__user = user
         self.__password = password
         self.__points = 0
         self.__hmrm = "12A"
         self.__history = []
+        self.__history.append(Rewards("", 0, ""))
 
     def get_name(self):
         return self.__name
@@ -191,15 +218,15 @@ class Student(object):
     def get_points(self):
         return self.__points
 
-    def add_points(self, reward):
+    def __add_points(self, reward):
         self.__points += reward.get_points()
 
-    def add_history(self, reward):
-        self.__history.append(rewards.get_activity())
+    def __add_history(self, reward):
+        self.__history.append(reward.get_actName() + ": " + str(reward.get_points) + " points")
 
     def add_reward(self, reward):
-        self.add_history(reward)
-        self.add_points(reward)
+        self.__add_history(reward)
+        self.__add_points(reward)
 
     def get_history(self):
         return self.__history
@@ -271,32 +298,7 @@ class Profile(Screen):
 
     code_text_input = ObjectProperty()
     global current_user
-    #
-    # current_id = current_user.get_id()
-    # current_points = current_user.get_points()
-    # names = ObjectProperty()
-    # namer = StringProperty()
 
-    # def __init__(self, curr_user):
-    #     super().__init__()
-    #     self.current_user = curr_user
-    #     self.current_name = self.current_user.get_name()
-    #     self.name = self.current_name
-
-    # def __init__(self, **kwargs):
-    #     super(Profile, self).__init__(**kwargs)
-    #     # self.names = ""
-    #     self.namer = current_user.get_name()
-    # def __init__(self):
-    #     self.curr_name = current_user.get_name()
-    #     self.curr_id = current_user.get_id()
-    #
-    #
-
-    # name = StringProperty(current_user.get_name())
-
-    curr_name = current_user.get_name()
-    curr_id = current_user.get_id()
 
     global gcurr_name
     global gcurr_id
@@ -309,29 +311,37 @@ class Profile(Screen):
         self.curr_name = gcurr_name
         self.curr_id = gcurr_id
 
-    def hmrm(self):
+    def name_hmrm(self):
+        info = GridLayout(cols=1)
+        info.add_widget(Label(text="Name: " + current_user.get_name()))
+        info.add_widget(Label(text="Homeroom: " + current_user.get_hmrm()))
 
-        hmrmPop = Popup(title="Homeroom",
-                     content = Label(text="Homeroom: " + current_user.get_hmrm()),
+        profPop = Popup(title="Profile Information",
+                     content = info,
                      size_hint=(None, None),
-                     size=(400, 100))
-        hmrmPop.open()
+                     size=(400, 200))
+        profPop.open()
 
     reward_list = ListProperty()
 
 
     def history(self):
-        self.reward_list = current_user.get_history()
+        #self.reward_list = current_user.get_history()
+        self.reward_list = []
 
-        for display in self.reward_list:
-            self.reward_list.append(display.get_name + ": " + str(display.get_points()))
+        for display in current_user.get_history():
+            #self.reward_list.append(display.get_actName() + ": " + str(display.get_points()))
+            self.reward_list.append(str(display))
+
+
+
         simple_list_adapter = SimpleListAdapter(
             data=self.reward_list,
             cls=Label)
         con = GridLayout(cols=1)
-        con.add_widget(Label(text='Student Rewards History', size_hint_y=None, height=40))
-        theirRewardsList = ListView(adapter=simple_list_adapter)
-        con.add_widget(theirRewardsList)
+        con.add_widget(Label(text="Points: " + str(current_user.get_points()), size_hint_y=None, height=40))
+        theRewardsList = ListView(adapter=simple_list_adapter)
+        con.add_widget(theRewardsList)
 
         historyPop = Popup(title = "Points History",
                      content = con,
@@ -341,41 +351,39 @@ class Profile(Screen):
 
     def add_activity(self):
 
+
+        added = False
+
         for activity in rewards:
             if self.code_text_input.text == activity.get_code:
+                added = True
                 current_user.add_reward(activity)
 
-                activityPop = Popup(title="Points History",
-                                   content= activity.get_name() + ": " + activity.get_points(),
+                activityPop = Popup(title="Reward Verification",
+                                   content= activity.get_actName() + ": " + activity.get_points(),
                                    size_hint=(None, None),
-                                   size=(400, 400))
+                                   size=(400, 200))
                 activityPop.open()
 
+        if not added:
+
+            verfPop = Popup(title="Reward Verification",
+                         content=Label(text="Sorry, that was not a valid code. Please try again."),
+                         size_hint=(None, None),
+                         size=(400, 200))
+            verfPop.open()
+
+    def studentid(self):
+        aPop = Popup(title="Student ID",
+                     content=Label(text=current_user.get_id()),
+                     size_hint=(None, None),
+                     size=(400, 200))
+        aPop.open()
 
 
 
-class Rewards(object):
-    def __init__(self, activity, points, code):
-        self.__act = activity
-        self.__points = points
-        self.__code = code
 
-    def get_act(self):
-        return self.__act
-
-    def get_points(self):
-        return self.__points
-
-    def get_code(self):
-        return self.__code
-
-
-rewards = []
-rewards.append(Rewards("Attendance", 2, "att"))
-rewards.append(Rewards("Paint", 5, "paint"))
-rewards.append(Rewards("Prom", 10, "prom"))
-rewards.append(Rewards("Cafeteria activity", 1, "caf"))
-rewards.append(Rewards("Ram of the Month", 20, "ram"))
+admin.add_reward(Rewards("name", 2, "code"))
 
 screen_manager.add_widget(Login(name = "login"))
 screen_manager.add_widget(Profile(name = "profile"))

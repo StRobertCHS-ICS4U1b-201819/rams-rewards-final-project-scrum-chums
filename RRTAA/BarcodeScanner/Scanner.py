@@ -2,7 +2,7 @@ from __future__ import print_function
 import pyzbar.pyzbar as pyzbar
 import numpy as np
 import cv2
-from RRTAA import CurrentWork
+
 from PIL import Image
 
 # https://www.learnopencv.com/barcode-and-qr-code-scanner-using-zbar-and-opencv/
@@ -32,19 +32,24 @@ def display(im, decodedObjects):
     cv2.imshow("Results", im)
     cv2.waitKey(0)
 
+def show_webcam(mirror=False):
+    cam = cv2.VideoCapture(0)
+    while True:
+        ret_val, img = cam.read()
+        if mirror:
+            img = cv2.flip(img, 1)
+        cv2.imshow('my webcam', img)
+        cv2.imwrite("code.png", img)
+        im = cv2.imread("code.png", 0)
+        decodedObjects = decode(im)
+        if len(decodedObjects) != 0 or cv2.waitKey(1) == 27:
+            display(im, decodedObjects)
+            break  # esc to quit
+    cv2.destroyAllWindows()
+
 if __name__ == '__main__':
 
     user_codes = {}
 
-    while 1:
-        # TAKE IMAGE
-        # MAP IMAGE
-        # GRAB IMAGE
-        # with open(filename,)
-        # DECODE IMAGE
-        im = cv2.imread('why.png.png', 0)
-        decodedObjects = decode(im)
-        if len(decodedObjects)!=0:
-            break
-        # SHOWS IMG
-        display(im, decodedObjects)
+    show_webcam(mirror=True)
+

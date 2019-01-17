@@ -19,21 +19,12 @@ class CamApp(App):
         # create a floating layout as base
         camlayout = FloatLayout(size=(600, 600))
         cam = Camera()  # Get the camera
-        cam = Camera(resolution=(1024, 1024), size=(300, 300))
+        cam = Camera(resolution=(1024, 1024), size=(100, 100))
         cam.play = True  # Start the camera
         camlayout.add_widget(cam)
-        self.screengrab()
         #button = Button(text='Take Picture', size_hint=(0.12, 0.12))
         #button.bind(on_press=self.screengrab)
         #camlayout.add_widget(button)  # Add button to Camera Layout
-
-        #sec = 0
-        #while sec!=10:
-        #    img = self.screengrab
-
-        #    time.sleep(1)
-        #    sec+=1
-
 
         self.fileprefix = 'snap'
 

@@ -266,7 +266,6 @@ class Login(Screen):
                 loggedon = True
                 if self.password_text_input.text == account.get_pass():
                     current_user = account
-                    # update_info()
                     screen_manager.current = 'profile'
 
 

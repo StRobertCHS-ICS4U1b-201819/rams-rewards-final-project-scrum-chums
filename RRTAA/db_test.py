@@ -1,7 +1,6 @@
 import sqlite3
 con = sqlite3.connect("db.sqlite3")
-
-
+# on return = [0] -> id, [1] -> name, [2] -> grade, [3] -> score, [4] -> id, [5] -> password
 
 def update_score(connection, param):
     try:
@@ -11,13 +10,13 @@ def update_score(connection, param):
         # add addition fields to SET using comma as separator "SET score = ?, name = ?"
         cur = connection.cursor()
         cur.execute(sql, param)
-        connection.commit() # commit changes
-    except Error:
+        connection.commit()  # commit changes
+    except ValueError:
         return False
     return True
 
-# id/ student_name/ student_score/ student_grade
 def return_all(connection):
+
     c = connection.cursor()
     users = "SELECT * FROM students_student"  # select all
     c.execute(users)
@@ -27,42 +26,34 @@ def return_all(connection):
     return result  # returns list of tuples -> contains the fields of students
 
 
-def get_id(connection):
-    c = connection.cursor()
-    users = "SELECT id FROM students_student"  # select all
-    c.execute(users)
-    result = c.fetchall()
-
-    return result  # returns list of tuples -> contains the fields of students
-
-def get_student_name(connection):
-    c = connection.cursor()
-    users = "SELECT student_name FROM students_student"  # select all
-    c.execute(users)
-    result = c.fetchall()
-
-    return result  # returns list of tuples -> contains the fields of students
+def get_by_id(connection, student_id):
+    sql = "SELECT * FROM students_student WHERE student_id = ?"
+    cur = connection.cursor()
+    cur.execute(sql, (student_id,))
+    result = cur.fetchall()
+    return result
 
 
-def get_homeroom(connection):
-    c = connection.cursor()
-    users = "SELECT student_grade FROM students_student"  # select all
-    c.execute(users)
-    result = c.fetchall()
+def get_by_name(connection, student_id):
+    sql = "SELECT * FROM students_student WHERE student_name = ?"
+    cur = connection.cursor()
+    cur.execute(sql, (student_id,))
+    result = cur.fetchall()
+    return result
 
-    return result  # returns list of tuples -> contains the fields of students
+def verify(connection, userid, password):
+    sql = "SELECT * FROM students_student WHERE student_id = ? and student_pass = ?"
+    cur = connection.cursor()
+    cur.execute(sql, (userid, password))
+    result = cur.fetchall()
+    if len(result) == 0:
+        return False
+    return True
 
 
-def get_points(connection):
-    c = connection.cursor()
-    users = "SELECT student_score FROM students_student"  # select all
-    c.execute(users)
-    result = c.fetchall()
-
-    return result  # returns list of tuples -> contains the fields of students
-
-
+student = get_by_name(con, 'Donnor Cong')[0] # list of one
 print(return_all(con))
-update_score(con, (23, "Donnor Cong"))
-print(get_student_name(con))
-print(return_all(con))
+# update_score(con, (89, student[1]))
+print(get_by_name(con, 'Donnor Cong')[0])
+
+

@@ -1,5 +1,13 @@
 # Importing the Kivy application, layouts, and buttons
 import random, sqlite3
+from kivy.app import App
+from kivy.uix.widget import Widget
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.image import Image
+from kivy.clock import Clock
+from kivy.graphics.texture import Texture
+
+import cv2
 
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
@@ -529,32 +537,8 @@ class Student(object):
     For creating each student
     '''
 
-    def __init__(self, firstName, lastName, id, homeroom, pts, clubs):
-        self.__first_name = firstName
-        self.__last_name = lastName
-        self.__id = id
-        self.__homeroom = homeroom
-        self.__clubsInvolved = clubs
-        self.__points = pts
+    def __init__(self, clubs):
         self._completed = []
-
-    def get_id(self):
-        return self.__id
-
-    def get_student_name(self):
-        return self.__first_name + " " + self.__last_name
-
-    def get_homeroom(self):
-        return self.__homeroom
-
-    def get_clubs(self):
-        return self.__clubsInvolved
-
-    def get_points(self):
-        return self.__points
-
-    def set_points(self, morePts):
-        self.__points += morePts
 
     def get_completed_activities(self):
         return self._completed
@@ -600,68 +584,6 @@ class Teacher(object):
         self.__password = new_password
 
 
-# AND THIS
-class AccountManager(object):
-    '''
-    Constructor for accounts of teachers
-    '''
-
-    def __init__(self):
-        self.__list_teachers = []
-
-    def add_teacher(self, teacher: Teacher):
-        self.__list_teachers.append(teacher)
-
-    def remove_teacher(self, teacher: Teacher):
-        if teacher in self.__list_teachers:
-            self.__list_teachers.remove(teacher)
-
-    def get_list_teachers(self):
-        return self.__list_teachers
-
-    def validLogin(self, teacher: Teacher, password: str) -> bool:
-        return teacher.get_password() == password
-
-    def samePassword(self, password1: str, password2: str):
-        return password1 == password2
-
-    def change_password(self, teacher: Teacher, old_password: str, new_password: str, new_password2: str):
-        if self.samePassword(new_password, new_password2) and self.validLogin(teacher, old_password):
-            teacher.set_password(new_password)
-            # give some confirmation
-            return True
-        else:
-            # give some error
-            return False
-
-    def change_userName(self, teacher: Teacher, new_userName: str, password: str):
-        if self.samePassword(password, teacher.get_password()):
-            teacher.set_userName(new_userName)
-            # give some confirmation
-            return True
-        else:
-            # give some error
-            return False
-
-    def change_lastName(self, teacher: Teacher, new_lastName: str, password: str):
-        if self.samePassword(password, teacher.get_password()):
-            teacher.set_lastName(new_lastName)
-            # give some confirmation
-            return True
-        else:
-            # give some error
-            return False
-
-    def change_firstName(self, teacher: Teacher, new_firstName: str, password: str):
-        if self.samePassword(password, teacher.get_password()):
-            teacher.set_firstName(new_firstName)
-            # give some confirmation
-            return True
-        else:
-            # give some error
-            return False
-
-
 class Rewards(object):
     '''
     Creates each Activity
@@ -689,40 +611,6 @@ class Rewards(object):
         return self.__activity_name()
 
 
-class OGStudents(object):
-
-    def __init__(self):
-        from RRTAA import db_test
-        self.allStudents = []
-
-        q = db_test.return_all(db_test.con)
-        for c in q:
-            k = c[1].split()
-            a = k[0]
-            b = k[1]
-            studente = Student(a, b, c[0], c[2], c[3], "")
-            self.allStudents.append(studente)
-
-
-class ChooseStudents(OGStudents):
-    '''
-    Individually selects students for a specific club
-    '''
-
-    def __init__(self, memberList):
-
-        super(ChooseStudents, self).__init__()
-        self.members = []
-
-        for i in sorted(memberList):
-            for j in self.allStudents:
-                if j.get_student_name() == i:
-                    self.members.append(j)
-
-    def get_newList(self):
-        return self.members
-
-
 class BaseTabs(GridLayout):
     '''
     Makes the tabs look good, distribute points with checkboxes; very bad and inefficient carson pls help
@@ -747,17 +635,16 @@ class BaseTabs(GridLayout):
     names = ListProperty()
     rewardNames = ListProperty()
 
-    def __init__(self, studentList, rewardList, test, **kwargs):
+    def __init__(self, studentList, rewardList, **kwargs):
         super(BaseTabs, self).__init__(**kwargs)
 
         # members of the clubs as objects
         self.grade12_list = studentList
         self.rewarding_list = rewardList
-        self.test = test
 
         # creating the list of just member names
         for i in self.grade12_list:
-            self.names.append(i.get_student_name())
+            self.names.append(i[1])
         for j in self.rewarding_list:
             self.rewardNames.append(j.get_activity_name())
 
@@ -788,7 +675,7 @@ class BaseTabs(GridLayout):
 
             col2 = GridLayout(cols=2)
             for student in self.grade12_list:
-                col2.add_widget(Label(text=student.get_student_name()))
+                col2.add_widget(Label(text=student[1]))
                 box = CheckBox()
                 self.student_checkboxes[student] = box
                 col2.add_widget(box)
@@ -820,17 +707,22 @@ class BaseTabs(GridLayout):
 
         # finding selected students and distributing points
         for member, boxes in self.student_checkboxes.items():
-            if boxes.active and (selection not in member.get_completed_activities() or selection in ["Club Attendance",                                                                                 "Winning Kahoots",
-                                                                                                     "Ram of The Month"]):
-                member.set_points(pts)
-                db_test.update_score(db_test.con, (23, member.get_student_name()))
+            from RRTAA import db_test
+            if boxes.active: # and (selection not in member.get_completed_activities() or selection in ["Club Attendance",                                                                                 "Winning Kahoots",
+                                                 #                                                    "Ram of The Month"]):
+                # member.set_points(pts)
+                db_test.update_score(db_test.con, (member[3] + pts, member[1]))
+                self.grade12s_list._trigger_reset_populate()
 
-                if selection not in member.get_completed_activities():
-                    member.add_completed_activity(selection)
-                # below does not work like i want it to
-                # self.grade12s_list._trigger_reset_populate()
-            elif boxes.active:
-                print("Sorry, ", member.get_student_name(), " has already \n recieved the points for this activity.")
+
+                print(member, member[1], db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
+
+
+            #if selection not in member.get_completed_activities():
+                #member.add_completed_activity(selection)
+
+            # elif boxes.active:
+              #  print("Sorry, ", member.get_student_name(), " has already \n recieved the points for this activity.")
 
     def view_student(self):
         if self.grade12s_list.adapter.selection:
@@ -843,16 +735,16 @@ class BaseTabs(GridLayout):
             help = GridLayout(cols=1)
             content.add_widget(Label(text="Student Name: " + selection))
             for i in self.grade12_list:
-                if i.get_student_name() == selection:
-                    content.add_widget(Label(text="Homeroom: " + i.get_homeroom()))
-                    content.add_widget(Label(text="Student ID: " + str(i.get_id())))
-                    content.add_widget(Label(text="Accumulated Points: " + str(i.get_points())))
-                    simple_list_adapter = SimpleListAdapter(
-                        data=i.get_completed_activities(),
-                        cls=Label)
+                if i[1] == selection:
+                    content.add_widget(Label(text="Homeroom: " + i[2]))
+                    content.add_widget(Label(text="Student ID: " + str(i[4])))
+                    content.add_widget(Label(text="Accumulated Points: " + str(i[3])))
+                    #simple_list_adapter = SimpleListAdapter(
+                     #   data=i.get_completed_activities(),
+                      #  cls=Label)
             help.add_widget(Label(text='Student Rewards History', size_hint_y=None, height=40))
-            theirRewardsList = ListView(adapter=simple_list_adapter)
-            help.add_widget(theirRewardsList)
+            #theirRewardsList = ListView(adapter=simple_list_adapter)
+            #help.add_widget(theirRewardsList)
             co.add_widget(content)
             co.add_widget(help)
             popup = Popup(title=selection,
@@ -972,11 +864,6 @@ class HomePageScreen(Screen):
         super(HomePageScreen, self).__init__(**kwargs)
         self.add_widget(Start())
 
-        manager = AccountManager()
-        teacherList = manager.get_list_teachers()
-        layout = List(teacherList)
-        self.add_widget(layout)
-
 
 class ProfileScreen(Screen):
 
@@ -991,9 +878,14 @@ class GeneralScreen(Screen):
         super(GeneralScreen, self).__init__(**kwargs)
 
         # Creates all the members
-        members = ChooseStudents(["Yelix Fang", "Donner Cong", "Tarson Cang", "Zhen Cheng Feng",
-                                  "Ching Chong", "Wing Wong", "Grade Nine"])
-        student_list = members.get_newList()
+        from RRTAA import db_test
+
+        # Creates all the members
+        student_list = []
+        student_list.append(db_test.get_by_name(db_test.con, 'Yelix Fang')[0])
+        student_list.append(db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
+        student_list.append(db_test.get_by_name(db_test.con, 'Tarson Cang')[0])
+        student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
 
         # Creates all the activities
         rewards = []
@@ -1025,7 +917,7 @@ class GeneralScreen(Screen):
         rewards.append(act11)
 
         # Adds the members and activities to the tabs
-        layout = BaseTabs(student_list, rewards, members)
+        layout = BaseTabs(student_list, rewards)
         self.add_widget(layout)
 
 
@@ -1035,9 +927,13 @@ class ClubOneScreen(Screen):
         super(ClubOneScreen, self).__init__(**kwargs)
 
         # Creates all the members
-        members = ChooseStudents(["Tarson Cang", "Zhen Cheng Feng",
-                                  "Ching Chong", "Wing Wong", "Grade Nine"])
-        student_list = members.get_newList()
+        from RRTAA import db_test
+
+        # Creates all the members
+        student_list = []
+        student_list.append(db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
+        student_list.append(db_test.get_by_name(db_test.con, 'Tarson Cang')[0])
+        student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
 
         # Creates all the activities
         rewards = []
@@ -1047,7 +943,7 @@ class ClubOneScreen(Screen):
         rewards.append(act1)
 
         # Adds the members and activities to the tabs
-        layout = BaseTabs(student_list, rewards, members)
+        layout = BaseTabs(student_list, rewards)
         self.add_widget(layout)
 
 
@@ -1055,11 +951,15 @@ class ClubTwoScreen(Screen):
 
     def __init__(self, **kwargs):
         super(ClubTwoScreen, self).__init__(**kwargs)
-
+        from RRTAA import db_test
 
         # Creates all the members
-        members = ChooseStudents(["Yelix Fang", "Donner Cong", "Tarson Cang", "Zhen Cheng Feng"])
-        student_list = members.get_newList()
+        student_list = []
+        student_list.append(db_test.get_by_name(db_test.con, 'Yelix Fang')[0])
+        student_list.append(db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
+        student_list.append(db_test.get_by_name(db_test.con, 'Tarson Cang')[0])
+        student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
+
 
         # Creates all the activities
         rewards = []
@@ -1067,7 +967,7 @@ class ClubTwoScreen(Screen):
         rewards.append(act)
 
         # Adds the members and activities to the tabs
-        layout = BaseTabs(student_list, rewards, members)
+        layout = BaseTabs(student_list, rewards)
         self.add_widget(layout)
 
 
@@ -1079,6 +979,7 @@ class Scanner(Screen):
 # Adding Teachers
 teachers = []
 teachers.append(Teacher("Eric F", 1234, "eric", "hiCarson"))
+teachers.append(Teacher("grace", 8884, "gg", "g"))
 empty_acc = Teacher("empty", None, "", "")
 current_user = empty_acc
 
@@ -1095,7 +996,27 @@ class TeacherApp(App):
 
     def build(self):
         Window.add_widget(Login())
+        self.img1 = Image()
+        layout = BoxLayout()
+        layout.add_widget(self.img1)
+        # opencv2 stuffs
+        self.capture = cv2.VideoCapture(0)
+        cv2.namedWindow("CV2 Image")
+        Clock.schedule_interval(self.update, 1.0 / 33.0)
 
+
+    def update(self, dt):
+        # display image from cam in opencv window
+        ret, frame = self.capture.read()
+        cv2.imshow("CV2 Image", frame)
+        # convert it to texture
+        buf1 = cv2.flip(frame, 0)
+        buf = buf1.tostring()
+        texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+        texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+        # display image from the texture
+        self.img1.texture = texture1
 
 
 TeacherApp().run()
+#cv2.destroyAllWindows()

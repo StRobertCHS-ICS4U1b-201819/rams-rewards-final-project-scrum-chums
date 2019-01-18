@@ -14,6 +14,9 @@ class Student(models.Model):
     student_name = models.CharField(max_length = 200) # Maybe some Indian names too long??
     student_grade = models.CharField(max_length=2, choices=GRADE_CHOICES, default="9")
     student_score = models.IntegerField()
+    student_id = models.CharField(max_length=50)
+    student_pass = models.CharField(max_length=50)
+    
 
     def __str__(self):
         return " ".join((self.student_name, self.student_grade, str(self.student_score)))

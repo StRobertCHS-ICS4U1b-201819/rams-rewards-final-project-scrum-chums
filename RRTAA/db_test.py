@@ -17,8 +17,7 @@ def update_score(connection, param):
 
 def return_all(connection):
 
-    c = connection.cursor()
-    users = "SELECT * FROM students_student"  # select all
+    c = connection.cursor()    users = "SELECT * FROM students_student"  # select all
     c.execute(users)
     result = c.fetchall()
 

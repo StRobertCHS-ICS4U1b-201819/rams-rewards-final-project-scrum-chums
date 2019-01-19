@@ -14,6 +14,8 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy.uix.listview import ListView
 from kivy.adapters.simplelistadapter import SimpleListAdapter
+from kivy.uix.image import Image
+
 
 
 Builder.load_string("""
@@ -42,7 +44,6 @@ Builder.load_string("""
 
     username_text_input: username
     password_text_input: password
-   
     
     FloatLayout:
         orientation: "vertical"
@@ -69,6 +70,7 @@ Builder.load_string("""
             id: username  
             pos_hint: {"center_x": 0.5, "center_y": .6}
             
+            
         CustLabel:
             text: "Password"
             pos_hint: {"center_x": 0.43, "center_y": .5}
@@ -86,10 +88,7 @@ Builder.load_string("""
             width: 200
             height: 50
             pos_hint: {"center_x": 0.5, "center_y": .3}
-            on_press: root.submit()
-        
-            
-                
+            on_press: root.submit()  
 
 
 <Profile>:  
@@ -97,9 +96,7 @@ Builder.load_string("""
     
     PageLayout:    
         
-        FloatLayout:
-            
-                
+        FloatLayout:      
             CustButton:
                 text: "Profile Information"
                 pos_hint: {"x": 0, "top": 1}
@@ -116,7 +113,7 @@ Builder.load_string("""
                 id: code
                 size_hint: .6, .1 
                 multiline: False
-                pos_hint: {"x": .2, "top": .6}
+                pos_hint: {"x": .15, "top": .6}
                 
             CustButton:
                 text: "Go"
@@ -125,37 +122,35 @@ Builder.load_string("""
                 background_color: 0, 0, 0, 0.2
                 on_press: root.add_activity()
                 
-       
+            CustButton:
+                text: "Quit"
+                pos_hint: {"right": 1.1, "top": .1}
+                color: 1, 1, 1, 0
+                size_hint: .55, .1 
+                background_color: 0, 0, 0, 1
+                on_press: App.get_running_app().stop()    
+                 
             CustButton:
                 text: "Logout"
                 pos_hint: {"x": 0, "top": .1}
-                size_hint: .5, .1 
+                size_hint: .55, .1 
                 background_color: 0, 0, 0, 0.2
                 on_press: root.manager.current = 'login'
-                
-            CustButton:
-                text: "Quit"
-                pos_hint: {"right": 1, "top": .1}
-                size_hint: .5, .1 
-                on_press: App.get_running_app().stop() 
+                    
                 
         FloatLayout:
-            background_color: 1, 1, 1, 1
-            CustLabel: 
-                text: "Swipe right to interact"
-                font_size: 15
-                pos_hint: {"center_x": .2, "top": .75}
-                
             CustButton: 
                 text: "Student ID"
-                pos_hint: {"center_x": .5, "top": .7}
-                height: 50
-                width: 100
+                pos_hint: {"x": -.1, "top": .5}
+                size_hint: 1.1, .4 
                 on_press: root.studentid()
+            
 
     BoxLayout:
         orientation: "vertical"
-
+        
+            
+        
 """)
 
 screen_manager = ScreenManager()
@@ -188,6 +183,7 @@ class Student(object):
     def __init__(self, name, studentID, user, password):
         self.__name =  name
         self.__id = studentID
+        self.__barcode = Image(source='indbarcode.jpg')
         self.__user = user
         self.__password = password
         self.__points = 0
@@ -200,6 +196,9 @@ class Student(object):
 
     def get_id(self):
         return str(self.__id)
+
+    def get_barcode(self):
+        return self.__barcode
 
     def get_hmrm(self):
         return self.__hmrm
@@ -229,45 +228,33 @@ class Student(object):
     def get_history(self):
         return self.__history
 
-
-
 students = []
 students.append(Student("Eryka S", 1234, "eryka", "pass"))
 students.append(Student("Grace L", 8888, "grace", "pass"))
 students.append(Student("Erin C", 9111, "erin", "pass"))
 students.append(Student("Carson T", 8765, "carson", "pass"))
 students.append(Student("Chen Feng Z", 7878, "chenfeng", "pass"))
-admin = Student("admin", 0000, "1", "1")
-admin.set_hmrm("YE")
+admin = Student("admin", 1000, "1", "1")
 students.append(admin)
 empty_acc = Student("empty", None, "", "")
 current_user = empty_acc
-gcurr_name = current_user.get_name()
-gcurr_id = current_user.get_id()
 
 
 class Login(Screen):
-
     username_text_input = ObjectProperty()
     password_text_input = ObjectProperty()
 
-
     def submit(self):
-
         global current_user
-
-        global gcurr_name
-        global gcurr_id
-
-
         loggedon = False
         for account in students:
             if self.username_text_input.text == account.get_user():
                 loggedon = True
                 if self.password_text_input.text == account.get_pass():
                     current_user = account
+                    self.username_text_input.text = ""
+                    self.password_text_input.text = ""
                     screen_manager.current = 'profile'
-
 
                 else:
                     passwPop = Popup(title="Login Error",
@@ -283,25 +270,14 @@ class Login(Screen):
                              size_hint=(None, None), size=(400, 150))
             userPop.open()
 
-
-
 class Profile(Screen):
-
     code_text_input = ObjectProperty()
     global current_user
-
-
-    global gcurr_name
-    global gcurr_id
-
-
-    def on_start(self):
-        self.curr_name = gcurr_name
-        self.curr_id = gcurr_id
 
     def name_hmrm(self):
         info = GridLayout(cols=1)
         info.add_widget(Label(text="Name: " + current_user.get_name()))
+        info.add_widget(Label(text="Student ID: " + current_user.get_id()))
         info.add_widget(Label(text="Homeroom: " + current_user.get_hmrm()))
 
         profPop = Popup(title="Profile Information",
@@ -321,13 +297,13 @@ class Profile(Screen):
             cls=Label)
         con = GridLayout(cols=1)
         con.add_widget(Label(text="Points: " + str(current_user.get_points()), size_hint_y=None, height=40))
-        theRewardsList = ListView(adapter=simple_list_adapter)
-        con.add_widget(theRewardsList)
+        rewardsList = ListView(adapter=simple_list_adapter)
+        con.add_widget(rewardsList)
 
         historyPop = Popup(title = "Points History",
                      content = con,
                      size_hint=(None, None),
-                     size=(400, 400))
+                     size=(400, 300))
         historyPop.open()
 
     def add_activity(self):
@@ -338,6 +314,7 @@ class Profile(Screen):
             if self.code_text_input.text == activity.get_code():
                 added = True
                 current_user.add_reward(activity)
+                self.code_text_input.text = ""
 
                 activityPop = Popup(title="Reward Verification",
                                    content= Label(text="Added " + activity.get_actName() + ": " + str(activity.get_points()) + " points"),
@@ -353,13 +330,15 @@ class Profile(Screen):
             verfPop.open()
 
     def studentid(self):
+        id_content = GridLayout(cols=1)
+        id_content.add_widget(current_user.get_barcode())
+        id_content.add_widget(Label(text=current_user.get_id()))
+
         aPop = Popup(title="Student ID",
-                     content=Label(text=current_user.get_id()),
+                     content=id_content,
                      size_hint=(None, None),
-                     size=(400, 200))
+                     size=(400, 300))
         aPop.open()
-
-
 
 screen_manager.add_widget(Login(name = "login"))
 screen_manager.add_widget(Profile(name = "profile"))

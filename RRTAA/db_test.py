@@ -17,7 +17,8 @@ def update_score(connection, param):
 
 def return_all(connection):
 
-    c = connection.cursor()    users = "SELECT * FROM students_student"  # select all
+    c = connection.cursor()
+    users = "SELECT * FROM students_student"  # select all
     c.execute(users)
     result = c.fetchall()
 
@@ -49,10 +50,23 @@ def verify(connection, userid, password):
         return False
     return True
 
+def update_history(connection, param):
+    try:
+        sql = "UPDATE students_student SET student_history = ? WHERE student_name = ?"  # sets the student score
+        # question marks are filled in order with the values in param
+        # param must have the proper values or it will fail
+        # add addition fields to SET using comma as separator "SET score = ?, name = ?"
+        cur = connection.cursor()
+        cur.execute(sql, param)
+        connection.commit()  # commit changes
+    except NameError:
+        return False
+    return True
 
-student = get_by_name(con, 'Donnor Cong')[0] # list of one
-print(return_all(con))
-# update_score(con, (89, student[1]))
-print(get_by_name(con, 'Donnor Cong')[0])
-
+"""
+for student in return_all(con):
+    update_history(con, ('', student[1]))
+    print(get_by_name(con, student[1])[0])
+    print(student[6].split('.'))
+"""
 

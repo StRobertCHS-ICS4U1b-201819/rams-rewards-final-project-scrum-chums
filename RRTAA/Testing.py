@@ -531,22 +531,6 @@ class Code(object):
         return newCode
 
 
-# SHOULD MOVE TO ANOTHER PY FILE
-class Student(object):
-    '''
-    For creating each student
-    '''
-
-    def __init__(self, clubs):
-        self._completed = []
-
-    def get_completed_activities(self):
-        return self._completed
-
-    def add_completed_activity(self, activity):
-        self._completed.append(activity)
-
-
 # THIS TOO
 class Teacher(object):
     '''
@@ -708,21 +692,16 @@ class BaseTabs(GridLayout):
         # finding selected students and distributing points
         for member, boxes in self.student_checkboxes.items():
             from RRTAA import db_test
-            if boxes.active: # and (selection not in member.get_completed_activities() or selection in ["Club Attendance",                                                                                 "Winning Kahoots",
-                                                 #                                                    "Ram of The Month"]):
-                # member.set_points(pts)
+            completed_activities = member[6].split('.')
+            if boxes.active and (selection not in completed_activities or selection in ["Club Attendance", "Winning Kahoots", "Ram of The Month"]):
                 db_test.update_score(db_test.con, (member[3] + pts, member[1]))
                 self.grade12s_list._trigger_reset_populate()
-
-
                 print(member, member[1], db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
-
-
-            #if selection not in member.get_completed_activities():
-                #member.add_completed_activity(selection)
-
-            # elif boxes.active:
-              #  print("Sorry, ", member.get_student_name(), " has already \n recieved the points for this activity.")
+                if selection not in completed_activities:
+                    print(completed_activities, selection)
+                    db_test.update_history(db_test.con, (member[6] + '.' + selection, member[1]))
+            elif boxes.active:
+                print("Sorry, ", member[1], " has already \n recieved the points for this activity.")
 
     def view_student(self):
         if self.grade12s_list.adapter.selection:
@@ -739,12 +718,12 @@ class BaseTabs(GridLayout):
                     content.add_widget(Label(text="Homeroom: " + i[2]))
                     content.add_widget(Label(text="Student ID: " + str(i[4])))
                     content.add_widget(Label(text="Accumulated Points: " + str(i[3])))
-                    #simple_list_adapter = SimpleListAdapter(
-                     #   data=i.get_completed_activities(),
-                      #  cls=Label)
+                    simple_list_adapter = SimpleListAdapter(
+                        data=i[6].split('.')[1: ],
+                        cls=Label)
             help.add_widget(Label(text='Student Rewards History', size_hint_y=None, height=40))
-            #theirRewardsList = ListView(adapter=simple_list_adapter)
-            #help.add_widget(theirRewardsList)
+            theirRewardsList = ListView(adapter=simple_list_adapter)
+            help.add_widget(theirRewardsList)
             co.add_widget(content)
             co.add_widget(help)
             popup = Popup(title=selection,
@@ -765,6 +744,27 @@ class List(GridLayout):
 
     def login(self):
         pass
+
+
+class KivyCamera(Image):
+    def __init__(self, capture=None, fps=0, **kwargs):
+        super(KivyCamera, self).__init__(**kwargs)
+        self.capture = cv2.VideoCapture("/sdcard2/python-apk/2.mp4")
+        # print "file path exist :" + str(os.path.exists("/sdcard2/python-apk/1.mkv"))
+        self.capture = cv2.VideoCapture(0)
+        Clock.schedule_interval(self.update, 1.0 / fps)
+
+    def update(self, dt):
+        ret, frame = self.capture.read()
+        # print str(os.listdir('/sdcard2/'))
+        if ret:
+            # convert it to texture
+            buf1 = cv2.flip(frame, 0)
+            buf = buf1.tostring()
+            image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+            image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+            # display image from the texture
+            self.texture = image_texture
 
 
 class Login(Screen):
@@ -856,7 +856,6 @@ class Login(Screen):
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.001
             screen_manager.current = "screen_six"
-
 
 class HomePageScreen(Screen):
 
@@ -974,13 +973,14 @@ class ClubTwoScreen(Screen):
 class Scanner(Screen):
     def __init__(self, **kwargs):
         super(Scanner, self).__init__(**kwargs)
-
+        self.my_camera = KivyCamera(fps=12)
+        self.add_widget(self.my_camera)
 
 # Adding Teachers
 teachers = []
 teachers.append(Teacher("Eric F", 1234, "eric", "hiCarson"))
 teachers.append(Teacher("grace", 8884, "gg", "g"))
-empty_acc = Teacher("empty", None, "", "")
+empty_acc = Teacher("epty", None, "", "")
 current_user = empty_acc
 
 # Adding screens to the Screen Manager
@@ -996,27 +996,15 @@ class TeacherApp(App):
 
     def build(self):
         Window.add_widget(Login())
-        self.img1 = Image()
-        layout = BoxLayout()
-        layout.add_widget(self.img1)
-        # opencv2 stuffs
-        self.capture = cv2.VideoCapture(0)
-        cv2.namedWindow("CV2 Image")
-        Clock.schedule_interval(self.update, 1.0 / 33.0)
+        #Window.add_widget(Scanner())
 
+    def on_stop(self):
+        # without this, app will not exit even if the window is closed
+        # self.capture.release()
+        pass
 
-    def update(self, dt):
-        # display image from cam in opencv window
-        ret, frame = self.capture.read()
-        cv2.imshow("CV2 Image", frame)
-        # convert it to texture
-        buf1 = cv2.flip(frame, 0)
-        buf = buf1.tostring()
-        texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
-        texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-        # display image from the texture
-        self.img1.texture = texture1
+    def on_pause(self):
+        return True
 
 
 TeacherApp().run()
-#cv2.destroyAllWindows()

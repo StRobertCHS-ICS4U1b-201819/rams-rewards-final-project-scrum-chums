@@ -1,5 +1,5 @@
 # Importing the Kivy application, layouts, and buttons
-import random
+import random, cv2
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
 from kivy.lang import Builder
@@ -38,6 +38,8 @@ from kivy.clock import Clock
 from kivy.properties import (ObjectProperty, NumericProperty, OptionProperty,
                              BooleanProperty, StringProperty)
 from kivy.lang import Builder
+from kivy.graphics.texture import Texture
+
 
 # Setting Screen Manager as a variable
 screen_manager = ScreenManager()
@@ -265,7 +267,29 @@ class Start(GridLayout):
     def __init__(self, **kwargs):
         super(Start, self).__init__(**kwargs)
 
+class No(BoxLayout):
+    def __init__(self, **kwargs):
+        super(No, self).__init__(**kwargs)
+        self.img1 = Image()
+        layout = BoxLayout()
+        layout.add_widget(self.img1)
+        # opencv2 stuffs
+        self.capture = cv2.VideoCapture(0)
+        cv2.namedWindow("CV2 Image")
+        Clock.schedule_interval(self.update, 1.0 / 33.0)
 
+
+    def update(self, dt):
+        # display image from cam in opencv window
+        ret, frame = self.capture.read()
+        cv2.imshow("CV2 Image", frame)
+        # convert it to texture
+        buf1 = cv2.flip(frame, 0)
+        buf = buf1.tostring()
+        texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+        texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+        # display image from the texture
+        self.img1.texture = texture1
 class TeacherProfile(Widget):
     '''
     For adding text to Teacher Profile Screen
@@ -975,6 +999,7 @@ class Login(Screen):
                     scan = Button(text='Scanner', background_color=(0, 1, 0.7, 1))
                     scan.bind(on_press=lambda x: self.change_screen('Scanner'))
 
+
                     side_panel.add_widget(homepage)
                     side_panel.add_widget(teach)
                     side_panel.add_widget(gen)
@@ -1140,11 +1165,12 @@ class ClubTwoScreen(Screen):
 class Scanner(Screen):
     def __init__(self, **kwargs):
         super(Scanner, self).__init__(**kwargs)
-
+        layout = No()
+        self.add_widget(layout)
 
 # Adding Teachers
 teachers = []
-teachers.append(Teacher("Eric F", 1234, "eric", "eChin4theWin"))
+teachers.append(Teacher("Eric F", 1234, "eric", "hi"))
 empty_acc = Teacher("empty", None, "", "")
 current_user = empty_acc
 

@@ -1,5 +1,7 @@
 # Importing the Kivy application, layouts, and buttons
 import random
+import cv2
+
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
 from kivy.lang import Builder
@@ -533,9 +535,9 @@ class Code(object):
         self.usedCodes = []
 
     def get_new_code(self):
-        newCode = random.randrange(0, 9999999)
+        newCode = random.randrange(1000000000000, 9999999999999)
         while newCode not in self.usedCodes:
-            newCode = random.randrange(0, 9999999)
+            newCode = random.randrange(1000000000000, 9999999999999)
             if newCode not in self.usedCodes:
                 self.usedCodes.append(newCode)
         return newCode
@@ -998,11 +1000,17 @@ class ClubTwoScreen(Screen):
 class Scanner(Screen):
     def __init__(self, **kwargs):
         super(Scanner, self).__init__(**kwargs)
-
+        self.img1 = Image()
+        layout = BoxLayout()
+        layout.add_widget(self.img1)
+        # opencv2 stuffs
+        self.capture = cv2.VideoCapture(0)
+        cv2.namedWindow("CV2 Image")
+        Clock.schedule_interval(self.update, 1.0 / 33.0)
 
 # Adding Teachers
 teachers = []
-teachers.append(Teacher("Eric F", 1234, "eric", "hiCarson"))
+teachers.append(Teacher("Eric F", 1234, "eric", "hi"))
 empty_acc = Teacher("empty", None, "", "")
 current_user = empty_acc
 

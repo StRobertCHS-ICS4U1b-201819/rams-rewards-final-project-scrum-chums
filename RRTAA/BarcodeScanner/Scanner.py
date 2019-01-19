@@ -3,6 +3,7 @@ import pyzbar.pyzbar as pyzbar
 import numpy as np
 import cv2
 
+
 from PIL import Image
 
 # https://www.learnopencv.com/barcode-and-qr-code-scanner-using-zbar-and-opencv/

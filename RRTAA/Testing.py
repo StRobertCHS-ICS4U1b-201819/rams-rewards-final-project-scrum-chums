@@ -1,14 +1,6 @@
 # Importing the Kivy application, layouts, and buttons
-import random, sqlite3
-from kivy.app import App
-from kivy.uix.widget import Widget
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.image import Image
-from kivy.clock import Clock
-from kivy.graphics.texture import Texture
 
-import cv2
-
+import random, cv2
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
 from kivy.lang import Builder
@@ -35,6 +27,16 @@ from kivy.uix.image import Image
 from kivy.uix.checkbox import CheckBox
 
 from kivy.core.window import Window
+from kivy.animation import Animation
+from kivy.uix.widget import Widget
+from kivy.uix.stencilview import StencilView
+from kivy.metrics import dp
+from kivy.clock import Clock
+from kivy.properties import (ObjectProperty, NumericProperty, OptionProperty,
+                             BooleanProperty, StringProperty)
+from kivy.lang import Builder
+from kivy.graphics.texture import Texture
+
 
 # Setting Screen Manager as a variable
 screen_manager = ScreenManager()
@@ -254,7 +256,29 @@ class Start(GridLayout):
         image = Image(source='erin.jpg', pos=(0, 100))
         self.add_widget(image)
 
+class No(BoxLayout):
+    def __init__(self, **kwargs):
+        super(No, self).__init__(**kwargs)
+        self.img1 = Image()
+        layout = BoxLayout()
+        layout.add_widget(self.img1)
+        # opencv2 stuffs
+        self.capture = cv2.VideoCapture(0)
+        cv2.namedWindow("CV2 Image")
+        Clock.schedule_interval(self.update, 1.0 / 33.0)
 
+
+    def update(self, dt):
+        # display image from cam in opencv window
+        ret, frame = self.capture.read()
+        cv2.imshow("CV2 Image", frame)
+        # convert it to texture
+        buf1 = cv2.flip(frame, 0)
+        buf = buf1.tostring()
+        texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+        texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+        # display image from the texture
+        self.img1.texture = texture1
 class TeacherProfile(Widget):
     '''
     For adding text to Teacher Profile Screen
@@ -802,6 +826,7 @@ class Login(Screen):
                     scan = Button(text='Scanner', background_color=(0, 1, 0.7, 1))
                     scan.bind(on_press=lambda x: self.change_screen('Scanner'))
 
+
                     side_panel.add_widget(homepage)
                     side_panel.add_widget(teach)
                     side_panel.add_widget(gen)
@@ -981,6 +1006,7 @@ teachers = []
 teachers.append(Teacher("Eric F", 1234, "eric", "hiCarson"))
 teachers.append(Teacher("grace", 8884, "gg", "g"))
 empty_acc = Teacher("epty", None, "", "")
+
 current_user = empty_acc
 
 # Adding screens to the Screen Manager
@@ -996,7 +1022,6 @@ class TeacherApp(App):
 
     def build(self):
         Window.add_widget(Login())
-        #Window.add_widget(Scanner())
 
     def on_stop(self):
         # without this, app will not exit even if the window is closed

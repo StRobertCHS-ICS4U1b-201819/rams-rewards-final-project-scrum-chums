@@ -63,6 +63,7 @@ def update_history(connection, param):
         return False
     return True
 
+print(return_all(con))
 """
 for student in return_all(con):
     update_history(con, ('', student[1]))

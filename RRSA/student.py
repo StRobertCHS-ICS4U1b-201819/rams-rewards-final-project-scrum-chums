@@ -1,13 +1,10 @@
 from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.pagelayout import PageLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.properties import ObjectProperty, StringProperty, ListProperty
-from kivy.uix.listview import ListItemButton
+from kivy.properties import ObjectProperty
 from kivy.core.window import Window
 from kivy.uix.textinput import TextInput
-from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.lang import Builder
 from kivy.uix.popup import Popup
@@ -17,6 +14,17 @@ from kivy.adapters.simplelistadapter import SimpleListAdapter
 from kivy.uix.image import Image
 
 
+"""
+-------------------------------------------------------------------------------
+Name:		student.py
+Purpose:		
+An app that lets users view and interact with their profiles and point tallies 
+
+Author:		Shi-Shun E. 
+
+Created:		15.12.2018
+------------------------------------------------------------------------------
+"""
 
 Builder.load_string("""
 #: import main student
@@ -39,7 +47,6 @@ Builder.load_string("""
     height: 35
     multiline: False
     
-    
 <Login>:
 
     username_text_input: username
@@ -49,7 +56,6 @@ Builder.load_string("""
         orientation: "vertical"
         pos_hint_y: 1
         pos_hint_x: 5
-        
         
         CustLabel:
             text: "Ram Rewards Student App"
@@ -69,7 +75,6 @@ Builder.load_string("""
         LoginInput:
             id: username  
             pos_hint: {"center_x": 0.5, "center_y": .6}
-            
             
         CustLabel:
             text: "Password"
@@ -101,7 +106,7 @@ Builder.load_string("""
                 text: "Profile Information"
                 pos_hint: {"x": 0, "top": 1}
                 size_hint: 1, .2 
-                on_press: root.name_hmrm()
+                on_press: root.info()
             
             CustButton:
                 text: "Point History"
@@ -155,20 +160,35 @@ Builder.load_string("""
 
 screen_manager = ScreenManager()
 
-
 class Rewards(object):
+    '''
+    A class representing the rewarded points gotten from activities
+    '''
+
     def __init__(self, activity, points, code):
         self.__act = activity
         self.__points = points
         self.__code = code
 
     def get_actName(self):
+        '''
+        get the name of an activity
+        :return: self.__act: str
+        '''
         return self.__act
 
     def get_points(self):
+        '''
+        get the value of points of an activity
+        :return: self.__points: int
+        '''
         return self.__points
 
     def get_code(self):
+        '''
+        get the code of an activity
+        :return: self.__code: str
+        '''
         return self.__code
 
 
@@ -180,6 +200,9 @@ rewards.append(Rewards("Cafeteria activity", 1, "caf"))
 rewards.append(Rewards("Ram of the Month", 20, "ram"))
 
 class Student(object):
+    '''
+    A class representing a student user
+    '''
     def __init__(self, name, studentID, user, password):
         self.__name =  name
         self.__id = studentID
@@ -192,40 +215,92 @@ class Student(object):
        
 
     def get_name(self):
+        '''
+        get the name of a student
+        :return: self.__name: str
+        '''
         return self.__name
 
     def get_id(self):
+        '''
+        get the id of a student
+        :return: self.__id: int
+        '''
         return str(self.__id)
 
     def get_barcode(self):
+        '''
+        get the barcode of a student
+        :return: self.__barcode: Image
+        '''
         return self.__barcode
 
     def get_hmrm(self):
+        '''
+        get the homeroom of a student
+        :return: self.__hmrm: str
+        '''
         return self.__hmrm
 
     def set_hmrm(self, newhmrm):
+        '''
+        set the homeroom of a student
+        :param newhmrm: str new homeroom
+        :return: None
+        '''
         self.__hmrm = newhmrm
 
     def get_user(self):
+        '''
+        get the username of a student
+        :return: self.__user: str
+        '''
         return self.__user
 
     def get_pass(self):
+        '''
+        get the password of a student
+        :return: self.__password: str
+        '''
         return self.__password
 
     def get_points(self):
+        '''
+        get the value of how many points a student has
+        :return: self.__points: int
+        '''
         return self.__points
 
     def __add_points(self, reward):
+        '''
+        Give a student points
+        :param reward: Object
+        :return: None
+        '''
         self.__points += reward.get_points()
 
     def __add_history(self, reward):
+        '''
+        Add reward content to a student's history
+        :param reward: Object
+        :return: None
+        '''
         self.__history.append(reward.get_actName() + ": " + str(reward.get_points()) + " points")
 
     def add_reward(self, reward):
+        '''
+        Add reward content to history and points
+        :param reward: Object
+        :return: None
+        '''
         self.__add_history(reward)
         self.__add_points(reward)
 
     def get_history(self):
+        '''
+        get the rewards history of a student
+        :return: self.__history: list
+        '''
         return self.__history
 
 students = []
@@ -245,6 +320,10 @@ class Login(Screen):
     password_text_input = ObjectProperty()
 
     def submit(self):
+        '''
+        Validates the username and password input to change the current user
+        :return: None
+        '''
         global current_user
         loggedon = False
         for account in students:
@@ -274,29 +353,31 @@ class Profile(Screen):
     code_text_input = ObjectProperty()
     global current_user
 
-    def name_hmrm(self):
+    def info(self):
+        '''
+        Opens popup that displays student name, id and homeroom
+        :return:
+        '''
         info = GridLayout(cols=1)
         info.add_widget(Label(text="Name: " + current_user.get_name()))
         info.add_widget(Label(text="Student ID: " + current_user.get_id()))
         info.add_widget(Label(text="Homeroom: " + current_user.get_hmrm()))
 
-        profPop = Popup(title="Profile Information",
+        profilePop = Popup(title="Profile Information",
                      content = info,
                      size_hint=(None, None),
                      size=(400, 200))
-        profPop.open()
-
-    reward_list = ListProperty()
-
+        profilePop.open()
 
     def history(self):
-        self.reward_list = current_user.get_history()
-
-        simple_list_adapter = SimpleListAdapter(
-            data=self.reward_list,
-            cls=Label)
+        '''
+        Opens popup that displays a list of a student's history
+        :return: None
+        '''
         con = GridLayout(cols=1)
         con.add_widget(Label(text="Points: " + str(current_user.get_points()), size_hint_y=None, height=40))
+        self.reward_list = current_user.get_history()
+        simple_list_adapter = SimpleListAdapter(data=self.reward_list, cls=Label)
         rewardsList = ListView(adapter=simple_list_adapter)
         con.add_widget(rewardsList)
 
@@ -307,7 +388,10 @@ class Profile(Screen):
         historyPop.open()
 
     def add_activity(self):
-
+        '''
+        Verifies inputed code and adds reward to student
+        :return: None
+        '''
         added = False
 
         for activity in rewards:
@@ -330,6 +414,11 @@ class Profile(Screen):
             verfPop.open()
 
     def studentid(self):
+        '''
+        Opens popup that displays image of barcode and student ID
+        :return: None
+        '''
+
         id_content = GridLayout(cols=1)
         id_content.add_widget(current_user.get_barcode())
         id_content.add_widget(Label(text=current_user.get_id()))
@@ -339,6 +428,7 @@ class Profile(Screen):
                      size_hint=(None, None),
                      size=(400, 300))
         aPop.open()
+
 
 screen_manager.add_widget(Login(name = "login"))
 screen_manager.add_widget(Profile(name = "profile"))

@@ -556,12 +556,10 @@ class BaseTabs(GridLayout):
     # These are the actual lists still as properties so i can call their other methods
     grade12_list = ObjectProperty()
     rewarding_list = ObjectProperty()
-    #code_list = ObjectProperty()
 
     # These are the actual lists of just names that make the tab lists
     names = ListProperty()
     rewardNames = ListProperty()
-    #code = ListProperty()
 
     def __init__(self, studentList, rewardList, **kwargs):
         super(BaseTabs, self).__init__(**kwargs)
@@ -569,9 +567,7 @@ class BaseTabs(GridLayout):
         # members of the clubs as objects
         self.grade12_list = studentList
         self.rewarding_list = rewardList
-        self.code_list = []
         # creating the list of just member names
-        code_generator = Code()
         for i in self.grade12_list:
             self.names.append(i[1])
         for j in self.rewarding_list:

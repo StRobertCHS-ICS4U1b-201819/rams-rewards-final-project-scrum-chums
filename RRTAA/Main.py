@@ -188,6 +188,11 @@ Builder.load_string("""
             height: 80
             text: "WELCOME! WELCOME! WELCOME! WELCOME! WELCOME! WELCOME!"
             valign: 'middle'
+            
+        Image:
+            source: 'erin.jpg'
+            size: 400, 400
+            pos: (400,400)
 
 # CHANGE LATER   
 <TeacherProfile>:
@@ -253,8 +258,6 @@ class Start(GridLayout):
 
     def __init__(self, **kwargs):
         super(Start, self).__init__(**kwargs)
-        image = Image(source='erin.jpg', pos=(0, 100))
-        self.add_widget(image)
 
 
 class TeacherProfile(Widget):

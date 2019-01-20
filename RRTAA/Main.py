@@ -43,7 +43,7 @@ screen_manager = ScreenManager()
 
 # Creating a Kivy text file in this window
 Builder.load_string("""
-#: import main Testing
+#: import main Main
 #: import ListAdapter kivy.adapters.listadapter.ListAdapter
 #: import ListItemButton kivy.uix.listview.ListItemButton
 
@@ -256,29 +256,7 @@ class Start(GridLayout):
         image = Image(source='erin.jpg', pos=(0, 100))
         self.add_widget(image)
 
-class No(BoxLayout):
-    def __init__(self, **kwargs):
-        super(No, self).__init__(**kwargs)
-        self.img1 = Image()
-        layout = BoxLayout()
-        layout.add_widget(self.img1)
-        # opencv2 stuffs
-        self.capture = cv2.VideoCapture(0)
-        cv2.namedWindow("CV2 Image")
-        Clock.schedule_interval(self.update, 1.0 / 33.0)
 
-
-    def update(self, dt):
-        # display image from cam in opencv window
-        ret, frame = self.capture.read()
-        cv2.imshow("CV2 Image", frame)
-        # convert it to texture
-        buf1 = cv2.flip(frame, 0)
-        buf = buf1.tostring()
-        texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
-        texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-        # display image from the texture
-        self.img1.texture = texture1
 class TeacherProfile(Widget):
     '''
     For adding text to Teacher Profile Screen
@@ -881,6 +859,7 @@ class Login(Screen):
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.001
             screen_manager.current = "screen_six"
+
 
 class HomePageScreen(Screen):
 

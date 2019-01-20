@@ -252,7 +252,7 @@ class Start(GridLayout):
 
     def __init__(self, **kwargs):
         super(Start, self).__init__(**kwargs)
-        image = Image(source= 'erin.jpg', pos= (100, 100))
+        image = Image(source= 'robbie.jpg', pos= (100, 100))
         self.add_widget(image)
 
 

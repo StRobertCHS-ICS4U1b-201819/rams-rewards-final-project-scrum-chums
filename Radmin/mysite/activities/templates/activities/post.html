@@ -2,6 +2,7 @@
 
 {% block content %}
     <h3>{{activitie.title}}</h3>
+	<h5>Worth {{activitie.points}} Pts<h5>
     <h6>on {{activitie.date}}</h6>
     {{activitie.body|safe|linebreaks}}
 {% endblock %}

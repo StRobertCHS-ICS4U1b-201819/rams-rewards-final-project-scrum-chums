@@ -1,6 +1,16 @@
+<style>
+p {
+display: inline;
+}
+
+.name{
+font-weight: bold;
+}
+</style>
 {% extends "Radmins/header.html" %}
 {% block content %}
+	<h3>Activities <span class="glyphicon glyphicon-list-alt"></span></h3>
 	{% for activity in object_list %}
-		<h5>{{ activity.date|date:"Y-m-d" }}<a href="/activities/{{activity.id}}">  {{ activity.title }}</a></h5>
+		<h5>{{ activity.date|date:"Y-m-d" }}<a class='name' href="/activities/{{activity.id}}">  {{ activity.title }}</a> - {{ activity.points }}<p> Points </p></h5>
 	{% endfor %}
 {% endblock %}

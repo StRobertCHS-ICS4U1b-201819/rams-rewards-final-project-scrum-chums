@@ -1,7 +1,7 @@
 # Importing the Kivy application, layouts, and buttons
 
-import random, cv2, pyzbar.pyzbar as pyzbar, numpy as np, barcode
-from barcode.writer import ImageWriter
+import random, cv2, pyzbar.pyzbar as pyzbar, numpy as np #, barcode
+# from barcode.writer import ImageWriter
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -275,7 +275,7 @@ Builder.load_string("""
                             size_hint_x: 1
                             height: 50
                             on_press: root.view_student()
-
+    
 """)
 
 initCamera = False
@@ -497,14 +497,14 @@ class Code(object):
     '''
 
     def __init__(self):
-        self.usedCodes = []
+        self.__usedCodes = []
 
     def get_new_code(self):
-        newCode = random.randrange(1, 9999999)
-        while newCode not in self.usedCodes:
-            newCode = random.randrange(1, 9999999)
-            if newCode not in self.usedCodes:
-                self.usedCodes.append(newCode)
+        newCode = random.randrange(0, 9999999)
+        while newCode not in self.__usedCodes:
+            newCode = random.randrange(0, 9999999)
+            if newCode not in self.__usedCodes:
+                self.__usedCodes.append(newCode)
         return newCode
 
 
@@ -565,11 +565,15 @@ class BaseTabs(GridLayout):
 
     def __init__(self, studentList, rewardList, **kwargs):
         super(BaseTabs, self).__init__(**kwargs)
+        from RRTAA import db_test
 
         # members of the clubs as objects
-        self.grade12_list = studentList
+        self.grade12_list = []
+        for p in studentList:
+            self.grade12_list.append(db_test.get_by_id(db_test.con, p)[0])
         self.rewarding_list = rewardList
         self.code_list = []
+
         # creating the list of just member names
         code_generator = Code()
         for i in self.grade12_list:
@@ -582,6 +586,7 @@ class BaseTabs(GridLayout):
 
     # for viewing information about certain activities
     def view_activity(self):
+        self.update_info()
         if self.reward_list.adapter.selection:
             # the selected item name
             selection = self.reward_list.adapter.selection[0].text
@@ -634,29 +639,17 @@ class BaseTabs(GridLayout):
             from RRTAA import db_test
             completed_activities = member[6].split('.')
             if boxes.active and (selection not in completed_activities or selection in ["Club Attendance", "Winning Kahoots", "Ram of The Month"]):
-                # Remove the matching item
-                self.grade12s_list.adapter.data.remove(member[1])
                 db_test.update_score(db_test.con, (member[3] + pts, member[1]))
-                '''
-                for i in range(len(self.grade12_list)):
-                    if self.grade12_list[i][1] == member:
-                        del self.grade12_list[i]
-                        self.grade12_list.append(db_test.get_by_name(db_test.con, member[1])[0])
-                '''
-                # Add the updated data to the list
-                self.grade12s_list.adapter.data.extend([member[1]])
-                # Reset the ListView
-                self.grade12s_list._trigger_reset_populate()
-                # TeacherApp.update()
                 print(member, member[1], db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
+                self.update_info()
                 if selection not in completed_activities:
-                    print(completed_activities, selection)
                     db_test.update_history(db_test.con, (member[6] + '.' + selection, member[1]))
             elif boxes.active:
                 print("Sorry, ", member[1], " has already \n recieved the points for this activity.")
 
     # for viewing information on a certain student
     def view_student(self):
+        self.update_info()
         if self.grade12s_list.adapter.selection:
             # getting selected item name
             selection = self.grade12s_list.adapter.selection[0].text
@@ -684,6 +677,13 @@ class BaseTabs(GridLayout):
                           content=content,
                           size_hint=(None, None), size=(800, 500))
             popup.open()
+
+    def update_info(self):
+        from RRTAA import db_test
+        self.grade12_list = []
+        for m in self.names:
+            self.grade12_list.append(db_test.get_by_name(db_test.con, m)[0])
+
 
 class List(GridLayout):
     teacher_account = ObjectProperty()
@@ -772,6 +772,7 @@ class KivyCamera(Image):
                     self.display(im, decodedObjects)
                     #generateBarcode()
                     toggleCamera()
+
 
 class Login(Screen):
     '''
@@ -902,11 +903,7 @@ class GeneralScreen(Screen):
         from RRTAA import db_test
 
         # Creates all the members
-        student_list = []
-        student_list.append(db_test.get_by_name(db_test.con, 'Yelix Fang')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Tarson Cang')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
+        student_list = ["userid", "mathg0d", "ballsDPcoder", "chenfengzhang", "chingchangchong", "wingwangwong", "minecraftman1022"]
 
         # Creates all the activities
         rewards = []
@@ -928,10 +925,7 @@ class ClubOneScreen(Screen):
         from RRTAA import db_test
 
         # Creates all the members
-        student_list = []
-        student_list.append(db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Tarson Cang')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
+        student_list = ["userid", "mathg0d", "ballsDPcoder", "chenfengzhang"]
 
         # Creates all the activities
         rewards = []
@@ -953,13 +947,7 @@ class ClubTwoScreen(Screen):
         from RRTAA import db_test
 
         # Creates all the members
-
-        # CAN WE ASSIGN 12 DIGIT CODE TO EVERY PERSON? // add another dimension to the user
-        student_list = []
-        student_list.append(db_test.get_by_name(db_test.con, 'Yelix Fang')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Tarson Cang')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
+        student_list = ["chingchangchong", "wingwangwong", "minecraftman1022"]
 
         # Creates all the activities
         rewards = []

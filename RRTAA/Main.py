@@ -188,6 +188,11 @@ Builder.load_string("""
             height: 80
             text: "WELCOME! WELCOME! WELCOME! WELCOME! WELCOME! WELCOME!"
             valign: 'middle'
+            
+        Image:
+            source: 'erin.jpg'
+            size: 400, 400
+            pos: (400,400)
 
 # CHANGE LATER   
 <TeacherProfile>:
@@ -259,32 +264,6 @@ class Start(GridLayout):
 
     def __init__(self, **kwargs):
         super(Start, self).__init__(**kwargs)
-        image = Image(source='erin.jpg', pos=(0, 100))
-        self.add_widget(image)
-
-class No(BoxLayout):
-    def __init__(self, **kwargs):
-        super(No, self).__init__(**kwargs)
-        self.img1 = Image()
-        layout = BoxLayout()
-        layout.add_widget(self.img1)
-        # opencv2 stuffs
-        self.capture = cv2.VideoCapture(0)
-        cv2.namedWindow("CV2 Image")
-        Clock.schedule_interval(self.update, 1.0 / 33.0)
-
-
-    def update(self, dt):
-        # display image from cam in opencv window
-        ret, frame = self.capture.read()
-        cv2.imshow("CV2 Image", frame)
-        # convert it to texture
-        buf1 = cv2.flip(frame, 0)
-        buf = buf1.tostring()
-        texture1 = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
-        texture1.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-        # display image from the texture
-        self.img1.texture = texture1
 
 class TeacherProfile(Widget):
     '''
@@ -599,33 +578,6 @@ class Teacher(object):
         self.__password = new_password
 
 
-class Rewards(object):
-    '''
-    Creates each Activity
-    '''
-
-    def __init__(self, activityName, descript, date, amount):
-        self.__activity_name = activityName
-        self.__description = descript
-        self.__date = date
-        self.__points = amount
-
-    def get_activity_name(self):
-        return self.__activity_name
-
-    def get_description(self):
-        return self.__description
-
-    def get_date(self):
-        return self.__date
-
-    def get_points(self):
-        return self.__points
-
-    def __str__(self):
-        return self.__activity_name()
-
-
 class BaseTabs(GridLayout):
     '''
     Makes the tabs look good, distribute points with checkboxes; very bad and inefficient carson pls help
@@ -661,7 +613,8 @@ class BaseTabs(GridLayout):
         for i in self.grade12_list:
             self.names.append(i[1])
         for j in self.rewarding_list:
-            self.rewardNames.append(j.get_activity_name())
+            self.rewardNames.append(j[1])
+
 
         # a dictionary? for tying certain checkboxes to students
         self.student_checkboxes = {}
@@ -682,10 +635,10 @@ class BaseTabs(GridLayout):
             col1 = GridLayout(cols=1)
             col1.add_widget(Label(text="Activity Name: " + selection))
             for rewardObject in self.rewarding_list:
-                if rewardObject.get_activity_name() == selection:
-                    col1.add_widget(Label(text="Activity Description: " + rewardObject.get_description()))
-                    col1.add_widget(Label(text="Date Completed: " + rewardObject.get_date()))
-                    col1.add_widget(Label(text="Amount of Points: " + str(rewardObject.get_points())))
+                if rewardObject[1] == selection:
+                    col1.add_widget(Label(text="Activity Description: " + rewardObject[2]))
+                    col1.add_widget(Label(text="Date Completed: " + rewardObject[3]))
+                    col1.add_widget(Label(text="Amount of Points: " + str(rewardObject[4])))
             col1.add_widget(Label(text="Rewards Code: " + str(rewardCode)))
 
             col2 = GridLayout(cols=2)
@@ -717,16 +670,27 @@ class BaseTabs(GridLayout):
         if self.reward_list.adapter.selection:
             selection = self.reward_list.adapter.selection[0].text
             for student in self.rewarding_list:
-                if student.get_activity_name() == selection:
-                    pts = student.get_points()
-
+                if student[1] == selection:
+                    pts = student[4]
         # finding selected students and distributing points
         for member, boxes in self.student_checkboxes.items():
             from RRTAA import db_test
             completed_activities = member[6].split('.')
             if boxes.active and (selection not in completed_activities or selection in ["Club Attendance", "Winning Kahoots", "Ram of The Month"]):
+                # Remove the matching item
+                self.grade12s_list.adapter.data.remove(member[1])
                 db_test.update_score(db_test.con, (member[3] + pts, member[1]))
+                '''
+                for i in range(len(self.grade12_list)):
+                    if self.grade12_list[i][1] == member:
+                        del self.grade12_list[i]
+                        self.grade12_list.append(db_test.get_by_name(db_test.con, member[1])[0])
+                '''
+                # Add the updated data to the list
+                self.grade12s_list.adapter.data.extend([member[1]])
+                # Reset the ListView
                 self.grade12s_list._trigger_reset_populate()
+                # TeacherApp.update()
                 print(member, member[1], db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
                 if selection not in completed_activities:
                     print(completed_activities, selection)
@@ -737,6 +701,7 @@ class BaseTabs(GridLayout):
     def view_student(self):
         if self.grade12s_list.adapter.selection:
             # getting selected item name
+
             selection = self.grade12s_list.adapter.selection[0].text
 
             # creating layout for tab
@@ -921,6 +886,7 @@ class Login(Screen):
             screen_manager.current = "screen_six"
             toggleCamera()
 
+
 class HomePageScreen(Screen):
 
     def __init__(self, **kwargs):
@@ -952,32 +918,8 @@ class GeneralScreen(Screen):
 
         # Creates all the activities
         rewards = []
-        act = Rewards("Ram of The Month", "Does good in life", "Once a month", 20)
-        act1 = Rewards("Participate in Inside Ride 2017", "Riding bikes for cancer \n and raising money", "Sometime",
-                       100)
-        act2 = Rewards("Attend Hockey Buyout 2018", "Watching teachers play \n hockey, school spirit", "Sometime", 50)
-        act3 = Rewards("Attend School Dance 2018", "Grade 9 Dance, \n Semi-formal, Formal", "Sometime", 25)
-        act4 = Rewards("Participate in Christmas Concert 2018", "Singing, Dancing, etc.", "Sometime", 60)
-        act5 = Rewards("Attend Christmas Concert 2018", "Watching students perform", "Sometime", 10)
-        act6 = Rewards("Participate in Expresso Self 2018", "Singing, Dancing, etc.", "Sometime", 60)
-        act7 = Rewards("Attend Expresso Self 2018", "Watching students perform", "Sometime", 10)
-        act8 = Rewards("Winning Kahoots", "Getting Top 5 in \n cafeteria kahoots", "Sometime", 70)
-        act9 = Rewards("Participate in School Play 2019", "Acting, Singing, Dancing, etc.", "Sometime", 60)
-        act10 = Rewards("Watching School Play 2019", "Watching fun school plays", "Sometime", 10)
-        act11 = Rewards("Attend 'Revolution' Art Show 2019", "Looking at some nice art", "Sometime", 40)
-
-        rewards.append(act)
-        rewards.append(act1)
-        rewards.append(act2)
-        rewards.append(act3)
-        rewards.append(act4)
-        rewards.append(act5)
-        rewards.append(act6)
-        rewards.append(act7)
-        rewards.append(act8)
-        rewards.append(act9)
-        rewards.append(act10)
-        rewards.append(act11)
+        for i in db_test.return_act(db_test.con):
+            rewards.append(db_test.get_by_act(db_test.con, i[1])[0])
 
         # Adds the members and activities to the tabs
         layout = BaseTabs(student_list, rewards)
@@ -999,11 +941,10 @@ class ClubOneScreen(Screen):
         student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
 
         # Creates all the activities
+        # Creates all the activities
         rewards = []
-        act = Rewards("Club Attendance", "Attends a weekly club meeting", "Every week", 1)
-        act1 = Rewards("Coding Competition 2019", "DMOJ", "February 20th", 20)
-        rewards.append(act)
-        rewards.append(act1)
+        for i in db_test.return_act(db_test.con):
+            rewards.append(db_test.get_by_act(db_test.con, i[1])[0])
 
         # Adds the members and activities to the tabs
         layout = BaseTabs(student_list, rewards)
@@ -1026,8 +967,8 @@ class ClubTwoScreen(Screen):
 
         # Creates all the activities
         rewards = []
-        act = Rewards("Club Attendance", "Attends a weekly club meeting", "Every week", 1)
-        rewards.append(act)
+        for i in db_test.return_act(db_test.con):
+            rewards.append(db_test.get_by_act(db_test.con, i[1])[0])
 
         # Adds the members and activities to the tabs
         layout = BaseTabs(student_list, rewards)

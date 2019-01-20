@@ -1,12 +1,12 @@
 from PIL import Image
 
-image = Image.open('qrcode_test1.jpg')
+image = Image.open('code.png')
 image.show()
 
-user_codes = {'code': 'qrcode_test1.jpg'}
+user_codes = {'code': 'code.png'}
 filename = user_codes['code']
 
-with open(filename, 'rb') as f:
+with open(filename, 'code') as f:
     image = f.read()
 
 

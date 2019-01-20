@@ -638,7 +638,7 @@ class BaseTabs(GridLayout):
         for member, boxes in self.student_checkboxes.items():
             from RRTAA import db_test
             completed_activities = member[6].split('.')
-            if boxes.active and (selection not in completed_activities or selection in ["Club Attendance", "Winning Kahoots", "Ram of The Month"]):
+            if boxes.active and (selection not in completed_activities or selection in ["Club Attendance", "Winning Kahoots", "Ram of the Month"]):
                 db_test.update_score(db_test.con, (member[3] + pts, member[1]))
                 print(member, member[1], db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
                 self.update_info()

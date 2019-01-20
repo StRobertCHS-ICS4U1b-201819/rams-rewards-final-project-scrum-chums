@@ -20,7 +20,15 @@
 	</style>
 </head>
 
-<body class="body" style="background-color:#f6f6f6">
+<style>
+.right {
+	position: absolute;
+	right: 0px;
+	padding: 30px;
+}
+</style>
+
+<body class="body" style="background-color:#ffffff">
 	<div class="container-fluid" style="min-height:95%; ">
 		<div class="row">
 			  <div>
@@ -32,10 +40,21 @@
 			  <div class="col-sm-12">
 				  <br>
 				  <center>
-				  <h1>RR Web Administration</h1>
+				  <h1 style="color:#17013f">RR Web Administration</h1>
 				  <h5 style="color:#345501">~ SCRUM CHUMS ~</h4>
 				  <!--<h3><span class="glyphicon glyphicon-ok"></span></h3>-->
 				  </center>
+				  <div class = "right">
+				  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+				  	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<form class="form-inline my-2 my-lg-0">
+					    	<input class="form-control mr-sm-2" type="search" placeholder= "Search" aria-label="Search">
+					      	<button class="btn btn-outline-success my-2 my-sm-0" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+					    </form>
+					</div>
+				  </nav>
+				  </div>
+				  
 			  </div>
 		</div><hr>
 
@@ -46,12 +65,13 @@
 		  <br>
 		   <!-- Great, til you resize. -->
 			<!--<div class="well bs-sidebar affix" id="sidebar" style="background-color:#fff">-->
-			<div class="well bs-sidebar" id="sidebar" style="background-color:#fff">
+			<div class="well bs-sidebar" id="sidebar" style="background-color:#f4f4f4">
 			  <ul class="nav nav-pills nav-stacked">
 				<li><a href='/'>Home</a></li>
 				<li><a href='/activities/'>Activities</a></li>
 				<li><a href='/students/'>Students</a></li>
 				<li><a href='/contact/'>Contact</a></li>
+				<button type="button" class="btn btn-info">Info</button>
 			  </ul>
 			</div> <!--well bs-sidebar affix-->
 		  </div> <!--col-sm-2-->
@@ -65,12 +85,31 @@
 		  </div>
 		</div> 
 	</div>
-	<footer>
-		<div class="container-fluid" style='margin-left:15px'>
-			<p><a href="#" target="blank">Contact</a> | <a href="#" target="blank">LinkedIn</a> | <a href="#" target="blank">Twitter</a> | <a href="#" target="blank">Google+</a></p>
-		</div>
-	</footer>	
-	
+	<!--<footer>-->
+	<!--	<div class="container-fluid" style='margin-left:15px'>-->
+	<!--		<p><a href="#" target="blank">Contact</a> | <a href="#" target="blank">LinkedIn</a> | <a href="#" target="blank">Twitter</a> | <a href="#" target="blank">Google+</a></p>-->
+	<!--	</div>-->
+	<!--</footer>	-->
+
+
+<nav class="navbar fixed-top" style="background-color: #e3f2fd;">
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+    </div>
+</nav>
+
+<style>
+.footer {
+  background-color: #17013f;
+  padding: 45px;
+  text-align: center;
+}
+</style>
+<div class="footer">
+  <h4 style="color:#ffffff"><a href="#" target="blank">Facebook</a> | <a href="#" target="blank">LinkedIn</a> | <a href="#" target="blank">Twitter</a> | <a href="#" target="blank">Google+</a></h4>
+  <h3 style="color:#ffffff">Follow Us on Social Media!</h3>
+</div>
+
+
 </body>
 
 </html>

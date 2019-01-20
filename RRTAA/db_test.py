@@ -25,6 +25,16 @@ def return_all(connection):
 
     return result  # returns list of tuples -> contains the fields of students
 
+def return_act(connection):
+
+    c = connection.cursor()
+    users = "SELECT * FROM activities_activitie"  # select all
+    c.execute(users)
+    result = c.fetchall()
+
+
+    return result  # returns list of tuples -> contains the fields of students
+
 
 def get_by_id(connection, student_id):
     sql = "SELECT * FROM students_student WHERE student_id = ?"
@@ -38,6 +48,13 @@ def get_by_name(connection, student_id):
     sql = "SELECT * FROM students_student WHERE student_name = ?"
     cur = connection.cursor()
     cur.execute(sql, (student_id,))
+    result = cur.fetchall()
+    return result
+
+def get_by_act(connection, activitie_id):
+    sql = "SELECT * FROM activities_activitie WHERE title = ?"
+    cur = connection.cursor()
+    cur.execute(sql, (activitie_id,))
     result = cur.fetchall()
     return result
 
@@ -63,7 +80,10 @@ def update_history(connection, param):
         return False
     return True
 
-print(return_all(con))
+print(return_act(con))
+
+
+
 """
 for student in return_all(con):
     update_history(con, ('', student[1]))

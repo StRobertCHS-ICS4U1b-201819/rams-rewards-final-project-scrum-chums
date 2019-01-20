@@ -685,7 +685,6 @@ class BaseTabs(GridLayout):
                           size_hint=(None, None), size=(800, 500))
             popup.open()
 
-<<<<<<< HEAD
 class List(GridLayout):
     teacher_account = ObjectProperty()
     teacher_list = ListProperty()

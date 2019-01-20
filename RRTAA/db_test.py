@@ -80,14 +80,15 @@ def update_history(connection, param):
         return False
     return True
 
-print(return_act(con))
+print(return_all(con))
 
-
-
-"""
+# for resetting data
+'''
 for student in return_all(con):
     update_history(con, ('', student[1]))
+    update_score(con, (0, student[1]))
     print(get_by_name(con, student[1])[0])
     print(student[6].split('.'))
-"""
+'''
+
 

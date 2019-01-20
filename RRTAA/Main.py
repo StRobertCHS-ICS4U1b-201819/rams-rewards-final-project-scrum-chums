@@ -274,7 +274,7 @@ Builder.load_string("""
                             size_hint_x: 1
                             height: 50
                             on_press: root.view_student()
-
+    
 """)
 
 initCamera = False
@@ -496,14 +496,14 @@ class Code(object):
     '''
 
     def __init__(self):
-        self.usedCodes = []
+        self.__usedCodes = []
 
     def get_new_code(self):
         newCode = random.randrange(0, 9999999)
-        while newCode not in self.usedCodes:
+        while newCode not in self.__usedCodes:
             newCode = random.randrange(0, 9999999)
-            if newCode not in self.usedCodes:
-                self.usedCodes.append(newCode)
+            if newCode not in self.__usedCodes:
+                self.__usedCodes.append(newCode)
         return newCode
 
 
@@ -562,22 +562,26 @@ class BaseTabs(GridLayout):
 
     def __init__(self, studentList, rewardList, **kwargs):
         super(BaseTabs, self).__init__(**kwargs)
+        from RRTAA import db_test
 
         # members of the clubs as objects
-        self.grade12_list = studentList
+        self.grade12_list = []
+        for i in studentList:
+            self.grade12_list.append(db_test.get_by_id(db_test.con, i)[0])
         self.rewarding_list = rewardList
 
         # creating the list of just member names
-        for i in self.grade12_list:
-            self.names.append(i[1])
-        for j in self.rewarding_list:
-            self.rewardNames.append(j[1])
+        for j in self.grade12_list:
+            self.names.append(j[1])
+        for k in self.rewarding_list:
+            self.rewardNames.append(k[1])
 
         # a dictionary? for tying certain checkboxes to students
         self.student_checkboxes = {}
 
     # for viewing information about certain activities
     def view_activity(self):
+        self.update_info()
         if self.reward_list.adapter.selection:
             # the selected item name
             selection = self.reward_list.adapter.selection[0].text
@@ -630,29 +634,17 @@ class BaseTabs(GridLayout):
             from RRTAA import db_test
             completed_activities = member[6].split('.')
             if boxes.active and (selection not in completed_activities or selection in ["Club Attendance", "Winning Kahoots", "Ram of The Month"]):
-                # Remove the matching item
-                self.grade12s_list.adapter.data.remove(member[1])
                 db_test.update_score(db_test.con, (member[3] + pts, member[1]))
-                '''
-                for i in range(len(self.grade12_list)):
-                    if self.grade12_list[i][1] == member:
-                        del self.grade12_list[i]
-                        self.grade12_list.append(db_test.get_by_name(db_test.con, member[1])[0])
-                '''
-                # Add the updated data to the list
-                self.grade12s_list.adapter.data.extend([member[1]])
-                # Reset the ListView
-                self.grade12s_list._trigger_reset_populate()
-                # TeacherApp.update()
                 print(member, member[1], db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
+                self.update_info()
                 if selection not in completed_activities:
-                    print(completed_activities, selection)
                     db_test.update_history(db_test.con, (member[6] + '.' + selection, member[1]))
             elif boxes.active:
                 print("Sorry, ", member[1], " has already \n recieved the points for this activity.")
 
     # for viewing information on a certain student
     def view_student(self):
+        self.update_info()
         if self.grade12s_list.adapter.selection:
             # getting selected item name
             selection = self.grade12s_list.adapter.selection[0].text
@@ -680,6 +672,12 @@ class BaseTabs(GridLayout):
                           content=content,
                           size_hint=(None, None), size=(800, 500))
             popup.open()
+
+    def update_info(self):
+        from RRTAA import db_test
+        self.grade12_list = []
+        for m in self.names:
+            self.grade12_list.append(db_test.get_by_name(db_test.con, m)[0])
 
 
 class Scanner(Screen):
@@ -739,6 +737,7 @@ class KivyCamera(Image):
                 if len(decodedObjects) != 0 or cv2.waitKey(1) == 27:
                     self.display(im, decodedObjects)
                     toggleCamera()
+
 
 class Login(Screen):
     '''
@@ -868,11 +867,7 @@ class GeneralScreen(Screen):
         from RRTAA import db_test
 
         # Creates all the members
-        student_list = []
-        student_list.append(db_test.get_by_name(db_test.con, 'Yelix Fang')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Tarson Cang')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
+        student_list = ["userid", "mathg0d", "ballsDPcoder", "chenfengzhang", "chingchangchong", "wingwangwong", "minecraftman1022"]
 
         # Creates all the activities
         rewards = []
@@ -894,10 +889,7 @@ class ClubOneScreen(Screen):
         from RRTAA import db_test
 
         # Creates all the members
-        student_list = []
-        student_list.append(db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Tarson Cang')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
+        student_list = ["userid", "mathg0d", "ballsDPcoder", "chenfengzhang"]
 
         # Creates all the activities
         rewards = []
@@ -919,11 +911,7 @@ class ClubTwoScreen(Screen):
         from RRTAA import db_test
 
         # Creates all the members
-        student_list = []
-        student_list.append(db_test.get_by_name(db_test.con, 'Yelix Fang')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Tarson Cang')[0])
-        student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
+        student_list = ["chingchangchong", "wingwangwong", "minecraftman1022"]
 
         # Creates all the activities
         rewards = []

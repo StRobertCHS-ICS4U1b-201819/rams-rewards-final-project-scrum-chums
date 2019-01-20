@@ -1,6 +1,6 @@
 # Importing the Kivy application, layouts, and buttons
 
-import random, cv2
+import random, cv2, pyzbar.pyzbar as pyzbar, numpy as np
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -277,6 +277,12 @@ Builder.load_string("""
 
 """)
 
+initCamera = False
+
+def toggleCamera():
+    global initCamera
+    if initCamera: initCamera = False
+    else: initCamera = True
 
 class Start(GridLayout):
     '''
@@ -676,6 +682,13 @@ class BaseTabs(GridLayout):
             popup.open()
 
 
+class Scanner(Screen):
+    def __init__(self, **kwargs):
+        super(Scanner, self).__init__(**kwargs)
+        self.my_camera = KivyCamera(fps=12)
+        self.add_widget(self.my_camera)
+
+
 class KivyCamera(Image):
     '''
     Adding a camera
@@ -683,23 +696,49 @@ class KivyCamera(Image):
 
     def __init__(self, capture=None, fps=0, **kwargs):
         super(KivyCamera, self).__init__(**kwargs)
-        self.capture = cv2.VideoCapture("/sdcard2/python-apk/2.mp4")
-        # print "file path exist :" + str(os.path.exists("/sdcard2/python-apk/1.mkv"))
         self.capture = cv2.VideoCapture(0)
         Clock.schedule_interval(self.update, 1.0 / fps)
 
-    def update(self, dt):
-        ret, frame = self.capture.read()
-        # print str(os.listdir('/sdcard2/'))
-        if ret:
-            # convert it to texture
-            buf1 = cv2.flip(frame, 0)
-            buf = buf1.tostring()
-            image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
-            image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-            # display image from the texture
-            self.texture = image_texture
+    def decode(self, im):
+        decodedObjects = pyzbar.decode(im)
+        for obj in decodedObjects:
+            print('Type : ', obj.type)
+            print('Data : ', obj.data, '\n')
+        return decodedObjects
 
+    def display(self, im, decodedObjects):
+        for decodedObject in decodedObjects:
+            points = decodedObject.polygon
+            if len(points) > 4:
+                hull = cv2.convexHull(np.array([point for point in points], dtype=np.float32))
+                hull = list(map(tuple, np.squeeze(hull)))
+            else:
+                hull = points
+            n = len(hull)
+            for j in range(0, n):
+                cv2.line(im, hull[j], hull[(j + 1) % n], (255, 0, 0), 3)
+        cv2.imshow("Results", im)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    def update(self, filler):
+        #print(initCamera)
+        ret_val, img = self.capture.read()
+        if ret_val:
+            buf1 = cv2.flip(img, 0)
+            buf = buf1.tostring()
+            image_texture = Texture.create(size=(img.shape[1], img.shape[0]), colorfmt='bgr')
+            image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+            self.texture = image_texture
+            if initCamera:
+                ret_val, img = self.capture.read()
+                cv2.imwrite("code.png", img)
+                im = cv2.imread("code.png", 0)
+                decodedObjects = self.decode(im)
+                self.texture = image_texture
+                if len(decodedObjects) != 0 or cv2.waitKey(1) == 27:
+                    self.display(im, decodedObjects)
+                    toggleCamera()
 
 class Login(Screen):
     '''
@@ -708,7 +747,6 @@ class Login(Screen):
 
     username_text_input = ObjectProperty()
     password_text_input = ObjectProperty()
-
     def submit(self, userN, passW):
         global current_user
         loggedon = False
@@ -797,6 +835,7 @@ class Login(Screen):
             screen_manager.transition.direction = "left"
             screen_manager.transition.duration = 0.001
             screen_manager.current = "screen_six"
+            toggleCamera()
 
 
 class HomePageScreen(Screen):
@@ -895,16 +934,6 @@ class ClubTwoScreen(Screen):
         layout = BaseTabs(student_list, rewards)
         self.add_widget(layout)
 
-
-class Scanner(Screen):
-    '''
-    Adds a camera to a page that acts as a scanner
-    '''
-
-    def __init__(self, **kwargs):
-        super(Scanner, self).__init__(**kwargs)
-        self.my_camera = KivyCamera(fps=12)
-        self.add_widget(self.my_camera)
 
 # Adding Teachers
 teachers = []

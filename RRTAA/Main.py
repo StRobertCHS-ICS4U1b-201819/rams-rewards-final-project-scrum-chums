@@ -1,6 +1,7 @@
 # Importing the Kivy application, layouts, and buttons
 
-import random, cv2, pyzbar.pyzbar as pyzbar, numpy as np
+import random, cv2, pyzbar.pyzbar as pyzbar, numpy as np, barcode
+from barcode.writer import ImageWriter
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
 from kivy.lang import Builder
@@ -533,9 +534,9 @@ class Code(object):
         self.usedCodes = []
 
     def get_new_code(self):
-        newCode = random.randrange(0, 9999999)
+        newCode = random.randrange(1, 9999999)
         while newCode not in self.usedCodes:
-            newCode = random.randrange(0, 9999999)
+            newCode = random.randrange(1, 9999999)
             if newCode not in self.usedCodes:
                 self.usedCodes.append(newCode)
         return newCode
@@ -597,10 +598,12 @@ class BaseTabs(GridLayout):
     # These are the actual lists still as properties so i can call their other methods
     grade12_list = ObjectProperty()
     rewarding_list = ObjectProperty()
+    #code_list = ObjectProperty()
 
     # These are the actual lists of just names that make the tab lists
     names = ListProperty()
     rewardNames = ListProperty()
+    #code = ListProperty()
 
     def __init__(self, studentList, rewardList, **kwargs):
         super(BaseTabs, self).__init__(**kwargs)
@@ -608,13 +611,15 @@ class BaseTabs(GridLayout):
         # members of the clubs as objects
         self.grade12_list = studentList
         self.rewarding_list = rewardList
-
+        self.code_list = []
         # creating the list of just member names
+        code_generator = Code()
         for i in self.grade12_list:
             self.names.append(i[1])
         for j in self.rewarding_list:
             self.rewardNames.append(j[1])
-
+        for i in range(len(self.grade12_list)):
+            self.code_list.append(code_generator.get_new_code())
 
         # a dictionary? for tying certain checkboxes to students
         self.student_checkboxes = {}
@@ -727,7 +732,6 @@ class BaseTabs(GridLayout):
                           size_hint=(None, None), size=(800, 500))
             popup.open()
 
-
 class List(GridLayout):
     teacher_account = ObjectProperty()
     teacher_list = ListProperty()
@@ -744,6 +748,7 @@ class List(GridLayout):
 class Scanner(Screen):
     def __init__(self, **kwargs):
         super(Scanner, self).__init__(**kwargs)
+        # sets the refresh rate
         self.my_camera = KivyCamera(fps=12)
         self.add_widget(self.my_camera)
 
@@ -751,17 +756,25 @@ class Scanner(Screen):
 class KivyCamera(Image):
     def __init__(self, capture=None, fps=0, **kwargs):
         super(KivyCamera, self).__init__(**kwargs)
+        # start screen capture
         self.capture = cv2.VideoCapture(0)
+        # repeat screen capture // in order to constantly capture image and check for barcode/qrcode
         Clock.schedule_interval(self.update, 1.0 / fps)
 
     def decode(self, im):
+        # return list of values decoded
         decodedObjects = pyzbar.decode(im)
         for obj in decodedObjects:
             print('Type : ', obj.type)
             print('Data : ', obj.data, '\n')
+            id = str(obj.data).strip('b').strip('\'')
+            print('ID : ', id, '\n')
+            # ASSIGN USER WITH THIS ID, X POINTS
+
         return decodedObjects
 
     def display(self, im, decodedObjects):
+        # convex hull to get boundaries of barcode/qrcode
         for decodedObject in decodedObjects:
             points = decodedObject.polygon
             if len(points) > 4:
@@ -777,22 +790,30 @@ class KivyCamera(Image):
         cv2.destroyAllWindows()
 
     def update(self, filler):
-        #print(initCamera)
+        # start screen capture
         ret_val, img = self.capture.read()
         if ret_val:
+            # flip the image
             buf1 = cv2.flip(img, 0)
             buf = buf1.tostring()
             image_texture = Texture.create(size=(img.shape[1], img.shape[0]), colorfmt='bgr')
             image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+            # display image
             self.texture = image_texture
+            # if user is on scanner screen
             if initCamera:
+                # recapture image
                 ret_val, img = self.capture.read()
+                # save and reread image
                 cv2.imwrite("code.png", img)
                 im = cv2.imread("code.png", 0)
                 decodedObjects = self.decode(im)
                 self.texture = image_texture
+                # break if user clicks 'esc' or no barcode/qrcode found
                 if len(decodedObjects) != 0 or cv2.waitKey(1) == 27:
+                    # if code found, display
                     self.display(im, decodedObjects)
+                    #generateBarcode()
                     toggleCamera()
 
 class Login(Screen):
@@ -859,6 +880,7 @@ class Login(Screen):
                             background='atlas://data/images/defaulttheme/button_pressed',
                             size_hint=(None, None), size=(400, 150))
             userPop.open()
+
     def change_screen(self, page):
         if page == "Homepage" and screen_manager.current != "screen_one":
             screen_manager.transition.direction = "left"
@@ -958,6 +980,8 @@ class ClubTwoScreen(Screen):
         from RRTAA import db_test
 
         # Creates all the members
+
+        # CAN WE ASSIGN 12 DIGIT CODE TO EVERY PERSON? // add another dimension to the user
         student_list = []
         student_list.append(db_test.get_by_name(db_test.con, 'Yelix Fang')[0])
         student_list.append(db_test.get_by_name(db_test.con, 'Donnor Cong')[0])

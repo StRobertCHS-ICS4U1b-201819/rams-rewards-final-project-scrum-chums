@@ -3,16 +3,9 @@
 import random, cv2
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
-from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.adapters.simplelistadapter import SimpleListAdapter
 from kivy.uix.listview import ListView
-from kivy.animation import Animation
-from kivy.uix.stencilview import StencilView
-from kivy.metrics import dp
-from kivy.clock import Clock
-from kivy.properties import (ObjectProperty, NumericProperty, OptionProperty,
-                             BooleanProperty, StringProperty, ListProperty)
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
@@ -28,15 +21,13 @@ from kivy.uix.checkbox import CheckBox
 
 from kivy.core.window import Window
 from kivy.animation import Animation
-from kivy.uix.widget import Widget
 from kivy.uix.stencilview import StencilView
 from kivy.metrics import dp
 from kivy.clock import Clock
 from kivy.properties import (ObjectProperty, NumericProperty, OptionProperty,
-                             BooleanProperty, StringProperty)
+                             BooleanProperty, StringProperty, ListProperty)
 from kivy.lang import Builder
 from kivy.graphics.texture import Texture
-
 
 # Setting Screen Manager as a variable
 screen_manager = ScreenManager()
@@ -52,11 +43,9 @@ Builder.load_string("""
 
 <CustButton@Button>:
     font_size: 18
-    color: 0, 0, 0, 1 # In RBG then alpha
+    color: 1, 1, 1, 1 # In RBG then alpha
     size: 450, 25
-    background_normal: ''
-    background_down: 'why.png.png'
-    background_color: .88, .88, .88, 1
+    background_color: 21/ 255, 30/255, 11/ 255, 1.0
 
 <LoginInput@TextInput>: 
     size_hint_x: None
@@ -112,7 +101,7 @@ Builder.load_string("""
             pos_hint: {"center_x": 0.5, "center_y": .3}
             on_press: root.submit(username.text, password.text)
 
-<NavigationDrawer>:
+<SideBar>:
     size_hint: (1,1)
     _side_panel: sidepanel
     _main_panel: mainpanel
@@ -140,6 +129,7 @@ Builder.load_string("""
             Rectangle:
                 size: self.size
                 pos: self.pos
+                
     BoxLayout:
         id: mainpanel
         x: root.x + \
@@ -160,6 +150,7 @@ Builder.load_string("""
             Rectangle:
                 size: self.size
                 pos: self.pos
+                
     Image:
         id: joinimage
         opacity: min(sidepanel.opacity, 0 if root._anim_progress < 0.00001 \
@@ -185,26 +176,54 @@ Builder.load_string("""
         size_hint_x: 1
         Label:
             size_hint_y: None
-            height: 80
+            height: 40
             text: "WELCOME! WELCOME! WELCOME! WELCOME! WELCOME! WELCOME!"
             valign: 'middle'
             
+        Label:
+            size_hint_y: None
+            height: 40
+            text: "In this app, you will be able to reward points to students for achieving certain activities!"
+            valign: 'middle'
+            
         Image:
-            source: 'erin.jpg'
+            source: 'robbie.jpg'
             size: 400, 400
             pos: (400,400)
 
-# CHANGE LATER   
 <TeacherProfile>:
-    CustButton:
-        text: "Name: Eric Fabroa"
-        pos: 255, 530 
-
-    CustButton:
-        text: "Club Coordination: Coding Club, Robotics"
-        pos: 255, 490
-
-
+    orientation: "vertical"   
+    cols: 2
+    rows: 5
+    padding: 0
+    spacing: 0
+    
+    Image:
+        source: 'eric.jpg'
+        size: 300, 400
+    
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_x: 1
+        
+        CustButton:
+            text: " "
+            size_hint_y: None
+            height: 30
+            
+        CustButton:
+            text: '\\n'.join(("Welcome to your profile, Mr. Fabroa.", \
+            "----------------------------------------------------------", " ", " ", \
+            "Name: Eric Fabroa", " ", "User Id: eric", " ", "School: St. Robert Catholic High School", " ", \
+            "Courses: ICS4U1a, ICS4U1b", " ", "Club Coordination: Coding Club, Robotics", " ", \
+            "Bio: A teacher yo."))
+            height: 600
+            size_hint_y: 1.5
+       
+        CustButton:
+            text: " "
+            size_hint_y: 1
+            
 <BaseTabs>
     reward_list: rewards_list_view
     grade12s_list: grade12ss_list_view
@@ -225,57 +244,65 @@ Builder.load_string("""
                 tab_width: 180
                 TabbedPanelItem:
                     text: "Activities"
-                    ListView:
-                        id: rewards_list_view
-                        adapter:
-                            ListAdapter(data= root.rewardNames, cls= main.ListItemButton)
+                    GridLayout:     
+                        cols: 1
+                        rows: 2                  
+                        ListView:
+                            id: rewards_list_view
+                            adapter:
+                                ListAdapter(data= root.rewardNames, cls= main.ListItemButton)
+                        Button:
+                            background_color: (0, 0, 0, .6)
+                            text: "View Activity"
+                            size_hint_y: None
+                            size_hint_x: 1
+                            height: 50
+                            on_press: root.view_activity()
                 TabbedPanelItem:
                     text: "Student List"
-                    ListView:
-                        id: grade12ss_list_view
-                        adapter:
-                            ListAdapter(data= root.names, cls= main.ListItemButton)
-
-        BoxLayout:
-            size_hint_y: None
-            height: "40dp"
-            Button:
-                text: "View Activity"
-                size_hint_x: 10
-                on_press: root.view_activity()
-            Button:
-                text: "View Student"
-                size_hint_x: 10
-                on_press: root.view_student()
+                    GridLayout:
+                        cols: 1
+                        rows: 2
+                        ListView:
+                            id: grade12ss_list_view
+                            adapter:
+                                ListAdapter(data= root.names, cls= main.ListItemButton)
+                        Button:
+                            background_color: (0, 0, 0, .6)
+                            text: "View Student"
+                            size_hint_y: None
+                            size_hint_x: 1
+                            height: 50
+                            on_press: root.view_student()
 
 """)
 
 
 class Start(GridLayout):
     '''
-    For adding text to Homepage Screen
+    Adds pictures and messages to the Homepage Screen
     '''
 
     def __init__(self, **kwargs):
         super(Start, self).__init__(**kwargs)
 
 
-class TeacherProfile(Widget):
+class TeacherProfile(GridLayout):
     '''
-    For adding text to Teacher Profile Screen
-    '''
-
-    pass
-
-
-class NavigationDrawerException(Exception):
-    '''Raised when add_widget or remove_widget called incorrectly on a
-    NavigationDrawer.
-
+    Creates a Teacher Profile Screen for Mr. Fabroa
     '''
 
+    def __init__(self, **kwargs):
+        super(TeacherProfile, self).__init__(**kwargs)
 
-class NavigationDrawer(StencilView):
+
+class SideBarException(Exception):
+    '''
+    Raised when add_widget or remove_widget called incorrectly the SideBar
+    '''
+
+
+class SideBar(StencilView):
 
     # Internal references for side, main and image widgets
     _side_panel = ObjectProperty()
@@ -283,90 +310,38 @@ class NavigationDrawer(StencilView):
     _join_image = ObjectProperty()
 
     side_panel = ObjectProperty(None, allownone=True)
-    '''Automatically bound to whatever widget is added as the hidden panel.'''
     main_panel = ObjectProperty(None, allownone=True)
-    '''Automatically bound to whatever widget is added as the main panel.'''
 
     # Appearance properties
     side_panel_width = NumericProperty()
-    '''The width of the hidden side panel. Defaults to the minimum of
-    250dp or half the NavigationDrawer width.'''
-
     separator_image_width = NumericProperty(dp(1))
-    '''The width of the separator image. Defaults to 10dp'''
 
     # Touch properties
     touch_accept_width = NumericProperty('14dp')
-    '''Distance from the left of the NavigationDrawer in which to grab the
-    touch and allow revealing of the hidden panel.'''
-    _touch = ObjectProperty(None, allownone=True)  # The currently active touch
+    _touch = ObjectProperty(None, allownone=True)
 
     # Animation properties
     state = OptionProperty('open', options=('open', 'closed'))
-    '''Specifies the state of the widget. Must be one of 'open' or
-    'closed'. Setting its value automatically jumps to the relevant state,
-    or users may use the anim_to_state() method to animate the
-    transition.'''
     anim_time = NumericProperty(0.3)
-    '''The time taken for the panel to slide to the open/closed state when
-    released or manually animated with anim_to_state.'''
     min_dist_to_open = NumericProperty(0.7)
-    '''Must be between 0 and 1. Specifies the fraction of the hidden panel
-    width beyond which the NavigationDrawer will relax to open state when
-    released. Defaults to 0.7.'''
-    _anim_progress = NumericProperty(0)  # Internal state controlling
-                                         # widget positions
+    _anim_progress = NumericProperty(0)
     _anim_init_progress = NumericProperty(0)
 
     # Animation controls
     top_panel = OptionProperty('main', options=['main', 'side'])
-    '''Denotes which panel should be drawn on top of the other. Must be
-    one of 'main' or 'side'. Defaults to 'main'.'''
     _main_above = BooleanProperty(True)
-
     side_panel_init_offset = NumericProperty(0.5)
-    '''Intial offset (to the left of the widget) of the side panel, in
-    units of its total width. Opening the panel moves it smoothly to its
-    final position at the left of the screen.'''
-
     side_panel_darkness = NumericProperty(0.8)
-    '''Controls the fade-to-black of the side panel in its hidden
-    state. Must be between 0 (no fading) and 1 (fades to totally
-    black).'''
-
     side_panel_opacity = NumericProperty(1)
-    '''Controls the opacity of the side panel in its hidden state. Must be
-    between 0 (fade to transparent) and 1 (no transparency)'''
-
     main_panel_final_offset = NumericProperty(1)
-    '''Final offset (to the right of the normal position) of the main
-    panel, in units of the side panel width.'''
-
     main_panel_darkness = NumericProperty(0)
-    '''Controls the fade-to-black of the main panel when the side panel is
-    in its hidden state. Must be between 0 (no fading) and 1 (fades to
-    totally black).
-    '''
-
     opening_transition = StringProperty('out_cubic')
-    '''The name of the animation transition type to use when animating to
-    an open state. Defaults to 'out_cubic'.'''
-
     closing_transition = StringProperty('in_cubic')
-    '''The name of the animation transition type to use when animating to
-    a closed state. Defaults to 'out_cubic'.'''
-
     anim_type = OptionProperty('reveal_from_below',
                                options=['slide_above_anim'])
-    '''The default animation type to use. Several options are available,
-    modifying all possibly animation properties including darkness,
-    opacity, movement and draw height. Users may also (and are
-    encouaged to) edit these properties individually, for a vastly
-    larger range of possible animations. Defaults to reveal_below_anim.
-    '''
 
     def __init__(self, **kwargs):
-        super(NavigationDrawer, self).__init__(**kwargs)
+        super(SideBar, self).__init__(**kwargs)
         Clock.schedule_once(self.on__main_above, 0)
 
     def on_anim_type(self, *args):
@@ -399,13 +374,13 @@ class NavigationDrawer(StencilView):
 
     def add_widget(self, widget):
         if len(self.children) == 0:
-            super(NavigationDrawer, self).add_widget(widget)
+            super(SideBar, self).add_widget(widget)
             self._side_panel = widget
         elif len(self.children) == 1:
-            super(NavigationDrawer, self).add_widget(widget)
+            super(SideBar, self).add_widget(widget)
             self._main_panel = widget
         elif len(self.children) == 2:
-            super(NavigationDrawer, self).add_widget(widget)
+            super(SideBar, self).add_widget(widget)
             self._join_image = widget
         elif self.side_panel is None:
             self._side_panel.add_widget(widget)
@@ -414,16 +389,11 @@ class NavigationDrawer(StencilView):
             self._main_panel.add_widget(widget)
             self.main_panel = widget
         else:
-            raise NavigationDrawerException(
+            raise SideBarException(
                 'Can\'t add more than two widgets'
                 'directly to NavigationDrawer')
 
     def anim_to_state(self, state):
-        '''If not already in state `state`, animates smoothly to it, taking
-        the time given by self.anim_time. State may be either 'open'
-        or 'closed'.
-
-        '''
         if state == 'open':
             anim = Animation(_anim_progress=1,
                              duration=self.anim_time,
@@ -435,9 +405,8 @@ class NavigationDrawer(StencilView):
                              t=self.opening_transition)
             anim.start(self)
         else:
-            raise NavigationDrawerException(
+            raise SideBarException(
                 'Invalid state received, should be one of `open` or `closed`')
-
 
     def on_touch_down(self, touch):
         col_self = self.collide_point(*touch.pos)
@@ -488,7 +457,7 @@ class NavigationDrawer(StencilView):
             if self._anim_progress < 0.975:
                 touch.ud['panels_jiggled'] = True
         else:
-            super(NavigationDrawer, self).on_touch_move(touch)
+            super(SideBar, self).on_touch_move(touch)
             return
 
     def on_touch_up(self, touch):
@@ -505,14 +474,10 @@ class NavigationDrawer(StencilView):
             else:
                 self._anim_relax()
         else:
-            super(NavigationDrawer, self).on_touch_up(touch)
+            super(SideBar, self).on_touch_up(touch)
             return
 
     def _anim_relax(self):
-        '''Animates to the open or closed position, depending on whether the
-        current position is past self.min_dist_to_open.
-
-        '''
         if self._anim_progress > self.min_dist_to_open:
             self.anim_to_state('open')
         else:
@@ -536,7 +501,6 @@ class Code(object):
         return newCode
 
 
-# THIS TOO
 class Teacher(object):
     '''
     Constructor for Teacher
@@ -575,19 +539,12 @@ class Teacher(object):
 
 class BaseTabs(GridLayout):
     '''
-    Makes the tabs look good, distribute points with checkboxes; very bad and inefficient carson pls help
+    Makes the tabs look good, distribute points with checkboxes
     '''
 
-    # not in use, were for when i was inputting students in program
-    first_name_text_input = ObjectProperty()
-    last_name_text_input = ObjectProperty()
-
-    # I'm sure what these do but they are id's that refer to the tab
+    # I'm not quite sure what these do but they are id's that refer to the tab
     reward_list = ObjectProperty()
     grade12s_list = ObjectProperty()
-
-    # This was for use in one function, but that one doesn't work, so this is useless
-    peeps = ObjectProperty()
 
     # These are the actual lists still as properties so i can call their other methods
     grade12_list = ObjectProperty()
@@ -610,7 +567,6 @@ class BaseTabs(GridLayout):
         for j in self.rewarding_list:
             self.rewardNames.append(j[1])
 
-
         # a dictionary? for tying certain checkboxes to students
         self.student_checkboxes = {}
 
@@ -619,10 +575,6 @@ class BaseTabs(GridLayout):
         if self.reward_list.adapter.selection:
             # the selected item name
             selection = self.reward_list.adapter.selection[0].text
-
-            # for generating new code
-            code = Code()
-            rewardCode = code.get_new_code()
 
             # creating layout in the tab
             content = GridLayout(cols=2)
@@ -634,7 +586,6 @@ class BaseTabs(GridLayout):
                     col1.add_widget(Label(text="Activity Description: " + rewardObject[2]))
                     col1.add_widget(Label(text="Date Completed: " + rewardObject[3]))
                     col1.add_widget(Label(text="Amount of Points: " + str(rewardObject[4])))
-            col1.add_widget(Label(text="Rewards Code: " + str(rewardCode)))
 
             col2 = GridLayout(cols=2)
             for student in self.grade12_list:
@@ -648,7 +599,7 @@ class BaseTabs(GridLayout):
             givePoints.bind(on_press=self.get_active_boxes)
             col1.add_widget(givePoints)
 
-            # adds layout to popup to tab
+            # adds the layout to the popup tab
             content.add_widget(col1)
             content.add_widget(col2)
             popup = Popup(title=selection,
@@ -656,8 +607,8 @@ class BaseTabs(GridLayout):
                           size_hint=(None, None), size=(700, 500))
             popup.open()
 
+    # for distributing points
     def get_active_boxes(self, *args):
-        from RRTAA import db_test
         pts = 0
         selection = ""
 
@@ -667,6 +618,7 @@ class BaseTabs(GridLayout):
             for student in self.rewarding_list:
                 if student[1] == selection:
                     pts = student[4]
+
         # finding selected students and distributing points
         for member, boxes in self.student_checkboxes.items():
             from RRTAA import db_test
@@ -693,51 +645,42 @@ class BaseTabs(GridLayout):
             elif boxes.active:
                 print("Sorry, ", member[1], " has already \n recieved the points for this activity.")
 
+    # for viewing information on a certain student
     def view_student(self):
         if self.grade12s_list.adapter.selection:
             # getting selected item name
-
             selection = self.grade12s_list.adapter.selection[0].text
 
             # creating layout for tab
-            co = GridLayout(cols=2)
-            content = GridLayout(cols=1)
-            help = GridLayout(cols=1)
-            content.add_widget(Label(text="Student Name: " + selection))
+            content = GridLayout(cols=2)
+            col1 = GridLayout(cols=1)
+            col2 = GridLayout(cols=1)
+            col1.add_widget(Label(text="Student Name: " + selection))
             for i in self.grade12_list:
                 if i[1] == selection:
-                    content.add_widget(Label(text="Homeroom: " + i[2]))
-                    content.add_widget(Label(text="Student ID: " + str(i[4])))
-                    content.add_widget(Label(text="Accumulated Points: " + str(i[3])))
+                    col1.add_widget(Label(text="Homeroom: " + i[2]))
+                    col1.add_widget(Label(text="Student ID: " + str(i[4])))
+                    col1.add_widget(Label(text="Accumulated Points: " + str(i[3])))
                     simple_list_adapter = SimpleListAdapter(
-                        data=i[6].split('.')[1: ],
+                        data=i[6].split('.')[1:],
                         cls=Label)
-            help.add_widget(Label(text='Student Rewards History', size_hint_y=None, height=40))
-            theirRewardsList = ListView(adapter=simple_list_adapter)
-            help.add_widget(theirRewardsList)
-            co.add_widget(content)
-            co.add_widget(help)
+
+            col2.add_widget(Label(text='Student Rewards History', size_hint_y=None, height=40))
+            activity_history = ListView(adapter=simple_list_adapter)
+            col2.add_widget(activity_history)
+            content.add_widget(col1)
+            content.add_widget(col2)
             popup = Popup(title=selection,
-                          content=co,
+                          content=content,
                           size_hint=(None, None), size=(800, 500))
             popup.open()
 
 
-class List(GridLayout):
-    teacher_account = ObjectProperty()
-    teacher_list = ListProperty()
-
-    def __init__(self, teacherList: list, **kwargs):
-        super(List, self).__init__(**kwargs)
-        self.teacherList = teacherList
-        for teacher in self.teacherList:
-            self.teacher_list.append(teacher.get_firstName() + " " + teacher.get_lastName())
-
-    def login(self):
-        pass
-
-
 class KivyCamera(Image):
+    '''
+    Adding a camera
+    '''
+
     def __init__(self, capture=None, fps=0, **kwargs):
         super(KivyCamera, self).__init__(**kwargs)
         self.capture = cv2.VideoCapture("/sdcard2/python-apk/2.mp4")
@@ -759,6 +702,10 @@ class KivyCamera(Image):
 
 
 class Login(Screen):
+    '''
+    Creates login functionality for teachers or just Mr. Fabroa
+    '''
+
     username_text_input = ObjectProperty()
     password_text_input = ObjectProperty()
 
@@ -769,7 +716,7 @@ class Login(Screen):
             if userN == account.get_userName():
                 loggedon = True
                 if passW == account.get_password():
-                    navigationdrawer = NavigationDrawer()
+                    navigationdrawer = SideBar()
 
                     side_panel = BoxLayout(orientation='vertical')
                     side_panel.add_widget(
@@ -781,25 +728,24 @@ class Login(Screen):
                     teach = Button(text='Teacher Profile', background_color=(0, 1, 0.7, 1))
                     teach.bind(on_press=lambda x: self.change_screen('Profile'))
 
-                    gen = Button(text='General Activities', background_color=(0, 1, 0.7, 1))
-                    gen.bind(on_press=lambda x: self.change_screen('General'))
+                    general = Button(text='General Activities', background_color=(0, 1, 0.7, 1))
+                    general.bind(on_press=lambda x: self.change_screen('General'))
 
-                    cc = Button(text='Coding Club', background_color=(0, 1, 0.7, 1))
-                    cc.bind(on_press=lambda x: self.change_screen('Coding'))
+                    coding = Button(text='Coding Club', background_color=(0, 1, 0.7, 1))
+                    coding.bind(on_press=lambda x: self.change_screen('Coding'))
 
-                    ro = Button(text='Robotics', background_color=(0, 1, 0.7, 1))
-                    ro.bind(on_press=lambda x: self.change_screen('Robotics'))
+                    robotics = Button(text='Robotics', background_color=(0, 1, 0.7, 1))
+                    robotics.bind(on_press=lambda x: self.change_screen('Robotics'))
 
-                    scan = Button(text='Scanner', background_color=(0, 1, 0.7, 1))
-                    scan.bind(on_press=lambda x: self.change_screen('Scanner'))
-
+                    scanner = Button(text='Scanner', background_color=(0, 1, 0.7, 1))
+                    scanner.bind(on_press=lambda x: self.change_screen('Scanner'))
 
                     side_panel.add_widget(homepage)
                     side_panel.add_widget(teach)
-                    side_panel.add_widget(gen)
-                    side_panel.add_widget(cc)
-                    side_panel.add_widget(ro)
-                    side_panel.add_widget(scan)
+                    side_panel.add_widget(general)
+                    side_panel.add_widget(coding)
+                    side_panel.add_widget(robotics)
+                    side_panel.add_widget(scanner)
                     navigationdrawer.add_widget(side_panel)
 
                     main_panel = screen_manager
@@ -817,12 +763,15 @@ class Login(Screen):
                                      background='atlas://data/images/defaulttheme/button_pressed',
                                      size_hint=(None, None), size=(400, 150))
                     passwPop.open()
+
         if not loggedon:
             userPop = Popup(title="Login Error",
                             content=Label(text="Invalid username"),
                             background='atlas://data/images/defaulttheme/button_pressed',
                             size_hint=(None, None), size=(400, 150))
             userPop.open()
+
+    # for changing the current displayed screen
     def change_screen(self, page):
         if page == "Homepage" and screen_manager.current != "screen_one":
             screen_manager.transition.direction = "left"
@@ -851,6 +800,9 @@ class Login(Screen):
 
 
 class HomePageScreen(Screen):
+    '''
+    Creates the HomeScreen
+    '''
 
     def __init__(self, **kwargs):
         super(HomePageScreen, self).__init__(**kwargs)
@@ -858,6 +810,9 @@ class HomePageScreen(Screen):
 
 
 class ProfileScreen(Screen):
+    '''
+    Creates teacher profile page
+    '''
 
     def __init__(self, **kwargs):
         super(ProfileScreen, self).__init__(**kwargs)
@@ -865,11 +820,12 @@ class ProfileScreen(Screen):
 
 
 class GeneralScreen(Screen):
+    '''
+    The general screen for general school activities not specific to any club
+    '''
 
     def __init__(self, **kwargs):
         super(GeneralScreen, self).__init__(**kwargs)
-
-        # Creates all the members
         from RRTAA import db_test
 
         # Creates all the members
@@ -890,11 +846,12 @@ class GeneralScreen(Screen):
 
 
 class ClubOneScreen(Screen):
+    '''
+    Creates a reward page for coding club members
+    '''
 
     def __init__(self, **kwargs):
         super(ClubOneScreen, self).__init__(**kwargs)
-
-        # Creates all the members
         from RRTAA import db_test
 
         # Creates all the members
@@ -903,7 +860,6 @@ class ClubOneScreen(Screen):
         student_list.append(db_test.get_by_name(db_test.con, 'Tarson Cang')[0])
         student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
 
-        # Creates all the activities
         # Creates all the activities
         rewards = []
         for i in db_test.return_act(db_test.con):
@@ -915,6 +871,9 @@ class ClubOneScreen(Screen):
 
 
 class ClubTwoScreen(Screen):
+    '''
+    Creates a reward page for robotics members
+    '''
 
     def __init__(self, **kwargs):
         super(ClubTwoScreen, self).__init__(**kwargs)
@@ -927,7 +886,6 @@ class ClubTwoScreen(Screen):
         student_list.append(db_test.get_by_name(db_test.con, 'Tarson Cang')[0])
         student_list.append(db_test.get_by_name(db_test.con, 'Zhen Cheng Fang')[0])
 
-
         # Creates all the activities
         rewards = []
         for i in db_test.return_act(db_test.con):
@@ -939,6 +897,10 @@ class ClubTwoScreen(Screen):
 
 
 class Scanner(Screen):
+    '''
+    Adds a camera to a page that acts as a scanner
+    '''
+
     def __init__(self, **kwargs):
         super(Scanner, self).__init__(**kwargs)
         self.my_camera = KivyCamera(fps=12)
@@ -948,8 +910,7 @@ class Scanner(Screen):
 teachers = []
 teachers.append(Teacher("Eric F", 1234, "eric", "hiCarson"))
 teachers.append(Teacher("grace", 8884, "gg", "g"))
-empty_acc = Teacher("epty", None, "", "")
-
+empty_acc = Teacher("empty", None, "", "")
 current_user = empty_acc
 
 # Adding screens to the Screen Manager
@@ -961,14 +922,14 @@ screen_manager.add_widget(ClubTwoScreen(name="screen_five"))
 screen_manager.add_widget(Scanner(name="screen_six"))
 
 
+# Builds the App
 class TeacherApp(App):
 
     def build(self):
         Window.add_widget(Login())
 
+    # exits camera
     def on_stop(self):
-        # without this, app will not exit even if the window is closed
-        # self.capture.release()
         pass
 
     def on_pause(self):

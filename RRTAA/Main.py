@@ -701,9 +701,25 @@ class Scanner(Screen):
         self.add_widget(self.my_camera)
 
 
+def hashFunction(id: str)->int:
+    '''
+    Returns 12 digit id which corresponds to any id user provides
+    Theoretically no 2 string ids should give the same returned id
+    :param id: str, user id
+    :return: int, 12 digit id
+    '''
+    hash = 5381
+    mod = 998244353
+    for i in id:
+        hash = ((hash << 5)+hash) + ord(i)
+    hash %= mod
+    while len(str(hash)) != 12:
+        hash = int(str(hash)+"0")
+    return hash
+
 class KivyCamera(Image):
     '''
-    Adding a camera
+    Adding a camera, scans screen and returns code
     '''
 
     def __init__(self, capture=None, fps=0, **kwargs):

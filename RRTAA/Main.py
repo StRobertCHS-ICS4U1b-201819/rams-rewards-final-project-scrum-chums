@@ -621,6 +621,12 @@ class BaseTabs(GridLayout):
                     col1.add_widget(Label(text="Amount of Points: " + str(rewardObject[4])))
                     col1.add_widget(Label(text="Code: " + newCode))
                     db_test.update_codes(db_test.con, (rewardObject[5] + '.' + newCode, rewardObject[1]))
+                    col1.add_widget(Label(text="Activity Participants: "))
+                    simple_list_adapter = SimpleListAdapter(
+                        data=rewardObject[6].split('.')[1:],
+                        cls=Label)
+                    participants = ListView(adapter=simple_list_adapter)
+                    col1.add_widget(participants)
                     col1.add_widget(RstDocument(text="Activity Description: " + rewardObject[2]))
 
             col2 = GridLayout(cols=2)
@@ -666,6 +672,9 @@ class BaseTabs(GridLayout):
                 db_test.update_score(db_test.con, (member[3] + pts, member[1]))
                 if selection not in completed_activities:
                     db_test.update_history(db_test.con, (member[6] + '.' + selection, member[1]))
+                    activity = db_test.get_by_act(db_test.con, selection)[0]
+                    if member[1] not in activity[6].split('.')[1:]:
+                        db_test.update_attendants(db_test.con, (activity[6] + '.' + member[1], activity[1]))
             elif boxes.active:
                 print("Sorry, ", member[1], " has already \n recieved the points for this activity.")
 
@@ -704,8 +713,11 @@ class BaseTabs(GridLayout):
     def update_info(self):
         from RRTAA import db_test
         self.grade12_list = []
+        self.rewarding_list = []
         for m in self.names:
             self.grade12_list.append(db_test.get_by_name(db_test.con, m)[0])
+        for n in self.rewardNames:
+            self.rewarding_list.append(db_test.get_by_act(db_test.con, n)[0])
 
 
 class List(GridLayout):
@@ -749,7 +761,6 @@ def hashFunction(id: str)->int:
 
 def generate_barcode(userID):
     number = userID
-    print(number)
     EAN = barcode.get_barcode_class('ean13')
     ean = EAN(str(number), writer=ImageWriter())
     code = ean.save('barcode'+str(userID))
@@ -831,9 +842,7 @@ class KivyCamera(Image):
         from RRTAA import db_test
 
         for student in db_test.return_all(db_test.con): # does this even work
-            print(self.hashed_id[student[4]], rewardID, 'hi')
             if str(self.hashed_id[student[4]]) == str(rewardID)[:-1]: # idk
-                print('hello')
                 db_test.update_score(db_test.con, (student[3] + 8000, student [1])) # how do i give points here)
                 toggleCamera() # stops scanning after barcode found
 

@@ -29,6 +29,7 @@ from kivy.properties import (ObjectProperty, NumericProperty, OptionProperty,
                              BooleanProperty, StringProperty, ListProperty)
 from kivy.lang import Builder
 from kivy.graphics.texture import Texture
+from kivy.uix.rst import RstDocument
 
 # Setting Screen Manager as a variable
 screen_manager = ScreenManager()
@@ -184,7 +185,7 @@ Builder.load_string("""
         Label:
             size_hint_y: None
             height: 40
-            text: "In this app, you will be able to reward points to students for achieving certain activities!"
+            text: "In this app, you will be able to reward points to students for completing activities!"
             valign: 'middle'
             
         Image:
@@ -566,12 +567,9 @@ class BaseTabs(GridLayout):
         from RRTAA import db_test
 
         # members of the clubs as objects
-        self.hashed_id = {}
         self.grade12_list = []
         for p in studentList:
             self.grade12_list.append(db_test.get_by_id(db_test.con, p)[0])
-            self.hashed_id[p] = hashFunction(p)
-            generate_barcode(self.hashed_id[p])
 
         self.rewarding_list = rewardList
         # creating the list of just member names
@@ -579,6 +577,8 @@ class BaseTabs(GridLayout):
             self.names.append(i[1])
         for j in self.rewarding_list:
             self.rewardNames.append(j[1])
+
+        self.names = sorted(self.names)
 
         # a dictionary? for tying certain checkboxes to students
         self.student_checkboxes = {}
@@ -597,9 +597,9 @@ class BaseTabs(GridLayout):
             col1.add_widget(Label(text="Activity Name: " + selection))
             for rewardObject in self.rewarding_list:
                 if rewardObject[1] == selection:
-                    col1.add_widget(Label(text="Activity Description: " + rewardObject[2]))
                     col1.add_widget(Label(text="Date Completed: " + rewardObject[3]))
                     col1.add_widget(Label(text="Amount of Points: " + str(rewardObject[4])))
+                    col1.add_widget(RstDocument(text="Activity Description: " + rewardObject[2]))
 
             col2 = GridLayout(cols=2)
             for student in self.grade12_list:
@@ -618,11 +618,12 @@ class BaseTabs(GridLayout):
             content.add_widget(col2)
             popup = Popup(title=selection,
                           content=content,
-                          size_hint=(None, None), size=(700, 500))
+                          size_hint=(None, None), size=(800, 500))
             popup.open()
 
     # for distributing points
     def get_active_boxes(self, *args):
+        self.update_info()
         pts = 0
         selection = ""
 
@@ -637,10 +638,8 @@ class BaseTabs(GridLayout):
         for member, boxes in self.student_checkboxes.items():
             from RRTAA import db_test
             completed_activities = member[6].split('.')
-            if boxes.active and (selection not in completed_activities or selection in ["Club Attendance", "Winning Kahoots", "Ram of the Month"]):
+            if boxes.active and (selection not in completed_activities or selection in ['Mass', 'Club Attendance', 'Winning Kahoots', 'Ram of the Month']):
                 db_test.update_score(db_test.con, (member[3] + pts, member[1]))
-                print(member, member[1], db_test.get_by_name(db_test.con, 'Donnor Cong')[0])
-                self.update_info()
                 if selection not in completed_activities:
                     db_test.update_history(db_test.con, (member[6] + '.' + selection, member[1]))
             elif boxes.active:
@@ -660,7 +659,7 @@ class BaseTabs(GridLayout):
             col1.add_widget(Label(text="Student Name: " + selection))
             for i in self.grade12_list:
                 if i[1] == selection:
-                    col1.add_widget(Label(text="Homeroom: " + i[2]))
+                    col1.add_widget(Label(text="Grade: " + i[2]))
                     col1.add_widget(Label(text="Student ID: " + str(i[4])))
                     col1.add_widget(Label(text="Accumulated Points: " + str(i[3])))
                     simple_list_adapter = SimpleListAdapter(
@@ -683,21 +682,6 @@ class BaseTabs(GridLayout):
         for m in self.names:
             self.grade12_list.append(db_test.get_by_name(db_test.con, m)[0])
 
-    def reward_barcode_points(self, rewardID):
-        # * GETS CALLED FROM LINE 753 *
-        from RRTAA import db_test
-
-        for student in db_test.return_all(db_test.con): # does this even work
-            if self.hashed_id[student] == rewardID: # idk
-                db_test.update_score(db_test.con,) # how do i give points here)
-
-
-        # for student in student list
-            # if self.hashed_id[studentname] == rewardID
-                # give user points
-
-        self.update_info()
-
 
 class List(GridLayout):
     teacher_account = ObjectProperty()
@@ -711,6 +695,7 @@ class List(GridLayout):
 
     def login(self):
         pass
+
 
 class Scanner(Screen):
     def __init__(self, **kwargs):
@@ -749,11 +734,16 @@ class KivyCamera(Image):
     '''
 
     def __init__(self, capture=None, fps=0, **kwargs):
+        from RRTAA import db_test
         super(KivyCamera, self).__init__(**kwargs)
         # start screen capture
         self.capture = cv2.VideoCapture(0)
         # repeat screen capture // in order to constantly capture image and check for barcode/qrcode
         Clock.schedule_interval(self.update, 1.0 / fps)
+        self.hashed_id = {}
+        for i in db_test.return_id(db_test.con):
+            self.hashed_id[i[0]] = hashFunction(i[0])
+            generate_barcode(self.hashed_id[i[0]])
 
     def decode(self, im):
         # return list of values decoded
@@ -764,15 +754,7 @@ class KivyCamera(Image):
             id = str(obj.data).strip('b').strip('\'')
             print('ID : ', id, '\n')
             # ASSIGN USER WITH THIS ID, X POINTS
-            from RRTAA import db_test
-            students = []
-            rewards = []
-            for i in db_test.return_all(db_test.con):
-                students.append(db_test.get_by_name(db_test.con, i[1])[0]) # does this work?
-            for i in db_test.return_act(db_test.con):
-                rewards.append(db_test.get_by_act(db_test.con, i[1])[0])
-            updateTab = BaseTabs(students, rewards)
-            updateTab.reward_barcode_points(id)
+            self.reward_barcode_points(id)
             # reward_barcode_id(id) -- line 685
         return decodedObjects
 
@@ -817,6 +799,15 @@ class KivyCamera(Image):
                     # if code found, display
                     self.display(im, decodedObjects)
                     toggleCamera()
+
+    def reward_barcode_points(self, rewardID):
+        from RRTAA import db_test
+
+        for student in db_test.return_all(db_test.con): # does this even work
+            print(self.hashed_id[student[4]], rewardID, 'hi')
+            if str(self.hashed_id[student[4]]) == str(rewardID): # idk
+                print('hello')
+                db_test.update_score(db_test.con, (student[3] + 8000, student [1])) # how do i give points here)
 
 
 class Login(Screen):
@@ -953,7 +944,8 @@ class GeneralScreen(Screen):
         # Creates all the activities
         rewards = []
         for i in db_test.return_act(db_test.con):
-            rewards.append(db_test.get_by_act(db_test.con, i[1])[0])
+            if i[1] not in ['Club Attendance', 'Coding Competition 2019']:
+                rewards.append(db_test.get_by_act(db_test.con, i[1])[0])
 
         # Adds the members and activities to the tabs
         layout = BaseTabs(student_list, rewards)
@@ -974,8 +966,8 @@ class ClubOneScreen(Screen):
 
         # Creates all the activities
         rewards = []
-        for i in db_test.return_act(db_test.con):
-            rewards.append(db_test.get_by_act(db_test.con, i[1])[0])
+        rewards.append(db_test.get_by_act(db_test.con, 'Club Attendance')[0])
+        rewards.append(db_test.get_by_act(db_test.con, 'Coding Competition 2019')[0])
 
         # Adds the members and activities to the tabs
         layout = BaseTabs(student_list, rewards)
@@ -996,8 +988,7 @@ class ClubTwoScreen(Screen):
 
         # Creates all the activities
         rewards = []
-        for i in db_test.return_act(db_test.con):
-            rewards.append(db_test.get_by_act(db_test.con, i[1])[0])
+        rewards.append(db_test.get_by_act(db_test.con, 'Club Attendance')[0])
 
         # Adds the members and activities to the tabs
         layout = BaseTabs(student_list, rewards)

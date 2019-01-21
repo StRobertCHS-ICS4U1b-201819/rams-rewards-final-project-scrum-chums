@@ -1,51 +1,18 @@
-'''
-TabbedPanel
-============
-
-Test of the widget TabbedPanel.
-'''
-
 from kivy.app import App
-from kivy.uix.tabbedpanel import TabbedPanel
-from kivy.lang import Builder
+from kivy.uix.rst import RstDocument
 
-Builder.load_string("""
+class RstDocumentApp(App):
 
-<Test>:
-    size_hint: .5, .5
-    pos_hint: {'center_x': .5, 'center_y': .5}
-    do_default_tab: False
-
-    TabbedPanelItem:
-        text: 'first tab'
-        Label:
-            text: 'First tab content area'
-    TabbedPanelItem:
-        text: 'tab2'
-        BoxLayout:
-            Label:
-                text: 'Second tab content area'
-            Button:
-                text: 'Button that does nothing'
-    TabbedPanelItem:
-        text: 'tab3'
-        background_color: (0, 1, 0, .6) #50% translucent red
-        RstDocument:
-            text:
-                '\\n'.join(("Hello world", "-----------",
-                "You are in the third tab."))
-       
-""")
-
-
-class Test(TabbedPanel):
-    pass
-
-
-class TabbedPanelApp(App):
     def build(self):
-        return Test()
 
+        _long_text = """
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus odio nisi, pellentesque molestie adipiscing vitae, aliquam at tellus. Fusce quis est ornare erat pulvinar elementum ut sed felis. Donec vel neque mauris. In sit amet nunc sit amet diam dapibus lacinia. In sodales placerat mauris, ut euismod augue laoreet at. Integer in neque non odio fermentum volutpat nec nec nulla. Donec et risus non mi viverra posuere. Phasellus cursus augue purus, eget volutpat leo. Phasellus sed dui vitae ipsum mattis facilisis vehicula eu justo.
+
+        Quisque neque dolor, egestas sed venenatis eget, porta id ipsum. Ut faucibus, massa vitae imperdiet rutrum, sem dolor rhoncus magna, non lacinia nulla risus non dui. Nulla sit amet risus orci. Nunc libero justo, interdum eu pulvinar vel, pulvinar et lectus. Phasellus sed luctus diam. Pellentesque non feugiat dolor. Cras at dolor velit, gravida congue velit. Aliquam erat volutpat. Nullam eu nunc dui, quis sagittis dolor. Ut nec dui eget odio pulvinar placerat. Pellentesque mi metus, tristique et placerat ac, pulvinar vel quam. Nam blandit magna a urna imperdiet molestie. Nullam ut nisi eget enim laoreet sodales sit amet a felis.
+        """
+
+        reallyLongText = _long_text + _long_text + _long_text + _long_text +_long_text
+        return RstDocument(text = reallyLongText)
 
 if __name__ == '__main__':
-    TabbedPanelApp().run()
+    RstDocumentApp().run()

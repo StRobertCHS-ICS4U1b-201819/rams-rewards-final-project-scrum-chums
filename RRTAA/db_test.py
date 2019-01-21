@@ -25,6 +25,16 @@ def return_all(connection):
 
     return result  # returns list of tuples -> contains the fields of students
 
+def return_id(connection):
+
+    c = connection.cursor()
+    users = "SELECT student_id FROM students_student"  # select all
+    c.execute(users)
+    result = c.fetchall()
+
+
+    return result  # returns list of tuples -> contains the fields of students
+
 def return_act(connection):
 
     c = connection.cursor()
@@ -83,6 +93,7 @@ def update_history(connection, param):
 print(return_all(con))
 
 # for resetting data
+
 '''
 for student in return_all(con):
     update_history(con, ('', student[1]))
@@ -92,3 +103,5 @@ for student in return_all(con):
 '''
 
 
+for i in return_id(con):
+    print(i[0])

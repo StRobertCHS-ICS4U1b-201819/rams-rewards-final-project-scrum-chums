@@ -599,7 +599,10 @@ class BaseTabs(GridLayout):
                 if rewardObject[1] == selection:
                     col1.add_widget(Label(text="Date Completed: " + rewardObject[3]))
                     col1.add_widget(Label(text="Amount of Points: " + str(rewardObject[4])))
+                    if rewardObject[1] == "Club Attendance":
+                        col1.add_widget(Label(text="Promo Code: prom"))
                     col1.add_widget(RstDocument(text="Activity Description: " + rewardObject[2]))
+
 
             col2 = GridLayout(cols=2)
             for student in self.grade12_list:
@@ -717,7 +720,7 @@ def hashFunction(id: str)->int:
         hash = ((hash << 5)+hash) + ord(i)
     hash %= mod
     while len(str(hash)) != 12:
-        hash = int(str(hash)+"0")
+       hash = int(str(hash)+"0")
     return hash
 
 def generate_barcode(userID):

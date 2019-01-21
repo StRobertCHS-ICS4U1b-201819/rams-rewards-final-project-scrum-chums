@@ -686,6 +686,12 @@ class BaseTabs(GridLayout):
     def reward_barcode_points(self, rewardID):
         # * GETS CALLED FROM LINE 753 *
         from RRTAA import db_test
+
+        for student in db_test.return_all(db_test.con): # does this even work
+            if self.hashed_id[student] == rewardID: # idk
+                db_test.update_score(db_test.con,) # how do i give points here)
+
+
         # for student in student list
             # if self.hashed_id[studentname] == rewardID
                 # give user points
@@ -758,6 +764,15 @@ class KivyCamera(Image):
             id = str(obj.data).strip('b').strip('\'')
             print('ID : ', id, '\n')
             # ASSIGN USER WITH THIS ID, X POINTS
+            from RRTAA import db_test
+            students = []
+            rewards = []
+            for i in db_test.return_all(db_test.con):
+                students.append(db_test.get_by_name(db_test.con, i[1])[0]) # does this work?
+            for i in db_test.return_act(db_test.con):
+                rewards.append(db_test.get_by_act(db_test.con, i[1])[0])
+            updateTab = BaseTabs(students, rewards)
+            updateTab.reward_barcode_points(id)
             # reward_barcode_id(id) -- line 685
         return decodedObjects
 

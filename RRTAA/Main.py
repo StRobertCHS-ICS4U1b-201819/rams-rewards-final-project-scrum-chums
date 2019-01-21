@@ -523,7 +523,7 @@ class Code(object):
             newCode = random.randrange(0, 9999999)
             if newCode not in self.__usedCodes:
                 self.__usedCodes.append(newCode)
-        return newCode
+        return str(newCode)
 
 
 class Teacher(object):
@@ -582,6 +582,7 @@ class BaseTabs(GridLayout):
     def __init__(self, studentList, rewardList, **kwargs):
         super(BaseTabs, self).__init__(**kwargs)
         from RRTAA import db_test
+        self.codes = Code()
 
         # members of the clubs as objects
         self.grade12_list = []
@@ -612,11 +613,14 @@ class BaseTabs(GridLayout):
             col1 = GridLayout(cols=1)
             col1.add_widget(Label(text="Activity Name: " + selection))
             for rewardObject in self.rewarding_list:
+                from RRTAA import db_test
+                newCode = self.codes.get_new_code()
+
                 if rewardObject[1] == selection:
                     col1.add_widget(Label(text="Date Completed: " + rewardObject[3]))
                     col1.add_widget(Label(text="Amount of Points: " + str(rewardObject[4])))
-                    if rewardObject[1] == "Club Attendance":
-                        col1.add_widget(Label(text="Promo Code: prom"))
+                    col1.add_widget(Label(text="Code: " + newCode))
+                    db_test.update_codes(db_test.con, (rewardObject[5] + '.' + newCode, rewardObject[1]))
                     col1.add_widget(RstDocument(text="Activity Description: " + rewardObject[2]))
 
             col2 = GridLayout(cols=2)

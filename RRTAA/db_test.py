@@ -68,6 +68,13 @@ def get_by_act(connection, activitie_id):
     result = cur.fetchall()
     return result
 
+def get_codes(connection, activitie_id):
+    sql = "SELECT codes FROM activities_activitie WHERE title = ?"
+    cur = connection.cursor()
+    cur.execute(sql, (activitie_id,))
+    result = cur.fetchall()
+    return result
+
 def verify(connection, userid, password):
     sql = "SELECT * FROM students_student WHERE student_id = ? and student_pass = ?"
     cur = connection.cursor()
@@ -90,6 +97,19 @@ def update_history(connection, param):
         return False
     return True
 
+def update_codes(connection, param):
+    try:
+        sql = "UPDATE activities_activitie SET codes = ? WHERE title = ?"  # sets the student score
+        # question marks are filled in order with the values in param
+        # param must have the proper values or it will fail
+        # add addition fields to SET using comma as separator "SET score = ?, name = ?"
+        cur = connection.cursor()
+        cur.execute(sql, param)
+        connection.commit()  # commit changes
+    except NameError:
+        return False
+    return True
+
 print(return_all(con))
 
 # for resetting data
@@ -100,8 +120,9 @@ for student in return_all(con):
     update_score(con, (0, student[1]))
     print(get_by_name(con, student[1])[0])
     print(student[6].split('.'))
+
+
+for i in return_act(con):
+    # update_codes(con, ('', i[1]))
+    print(get_codes(con, i[1])[0])
 '''
-
-
-for i in return_id(con):
-    print(i[0])

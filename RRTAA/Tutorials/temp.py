@@ -27,7 +27,7 @@ class CustomWidgetApp(App):
         return CustomWidget()
 
 customWidget = CustomWidgetApp()
-customWidget.run()
+# customWidget.run()
 
 # test 3 - float layout
 class FloatingApp(App):
@@ -56,7 +56,7 @@ class BoxLayoutApp(App):
         return BoxLayout()
 
 blApp = BoxLayoutApp()
-#blApp.run()
+# blApp.run()
 
 # test 6 - stack layout
 
@@ -96,4 +96,4 @@ class CalculatorApp(App):
         return CalcGridLayout()
 
 calcApp = CalculatorApp()
-# calcApp.run()
+calcApp.run()

@@ -10,6 +10,11 @@ from kivy.uix.listview import ListItemButton # an adapter to select items
 class StudentListButton(ListItemButton):
     pass
 
+class SampBoxLayout(BoxLayout):
+
+    def spinner_clicked(self, value):
+        print("Spinner Value: " + value)
+
 class StudentDB(BoxLayout):
 
     first_name_text_input = ObjectProperty()
@@ -67,4 +72,3 @@ class StudentDBApp(App):
 
 dbApp = StudentDBApp()
 dbApp.run()
-

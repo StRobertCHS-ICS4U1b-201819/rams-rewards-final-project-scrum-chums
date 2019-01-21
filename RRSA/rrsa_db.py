@@ -1,5 +1,5 @@
 import sqlite3
-con = sqlite3.connect("db.sqlite3")
+con = sqlite3.connect("rrsa_db.sqlite3")
 # on return = [0] -> id, [1] -> name, [2] -> grade, [3] -> score, [4] -> id, [5] -> password
 
 
@@ -121,7 +121,7 @@ def update_codes(connection, param):
         return False
     return True
 
-# print(return_all(con))
+print(return_act(con))
 
 # for resetting data
 '''
@@ -131,8 +131,8 @@ for student in return_all(con):
     print(get_by_name(con, student[1])[0])
     print(student[6].split('.'))
 
-
+'''
 for i in return_act(con):
     # update_codes(con, ('', i[1]))
-    print(get_codes(con, i[1])[0])
-'''
+    print(i[5])
+

@@ -1,7 +1,7 @@
 # Importing the Kivy application, layouts, and buttons
 
-import random, cv2, pyzbar.pyzbar as pyzbar, numpy as np #, barcode
-# from barcode.writer import ImageWriter
+import random, cv2, pyzbar.pyzbar as pyzbar, numpy as np , barcode
+from barcode.writer import ImageWriter
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -566,9 +566,13 @@ class BaseTabs(GridLayout):
         from RRTAA import db_test
 
         # members of the clubs as objects
+        self.hashed_id = {}
         self.grade12_list = []
         for p in studentList:
             self.grade12_list.append(db_test.get_by_id(db_test.con, p)[0])
+            self.hashed_id[p] = hashFunction(p)
+            generate_barcode(self.hashed_id[p])
+
         self.rewarding_list = rewardList
         # creating the list of just member names
         for i in self.grade12_list:
@@ -679,6 +683,15 @@ class BaseTabs(GridLayout):
         for m in self.names:
             self.grade12_list.append(db_test.get_by_name(db_test.con, m)[0])
 
+    def reward_barcode_points(self, rewardID):
+        # * GETS CALLED FROM LINE 753 *
+        from RRTAA import db_test
+        # for student in student list
+            # if self.hashed_id[studentname] == rewardID
+                # give user points
+
+        self.update_info()
+
 
 class List(GridLayout):
     teacher_account = ObjectProperty()
@@ -700,7 +713,6 @@ class Scanner(Screen):
         self.my_camera = KivyCamera(fps=12)
         self.add_widget(self.my_camera)
 
-
 def hashFunction(id: str)->int:
     '''
     Returns 12 digit id which corresponds to any id user provides
@@ -716,6 +728,14 @@ def hashFunction(id: str)->int:
     while len(str(hash)) != 12:
         hash = int(str(hash)+"0")
     return hash
+
+def generate_barcode(userID):
+    number = userID
+    print(number)
+    EAN = barcode.get_barcode_class('ean13')
+    ean = EAN(str(number), writer=ImageWriter())
+    code = ean.save('barcode'+str(userID))
+
 
 class KivyCamera(Image):
     '''
@@ -738,7 +758,7 @@ class KivyCamera(Image):
             id = str(obj.data).strip('b').strip('\'')
             print('ID : ', id, '\n')
             # ASSIGN USER WITH THIS ID, X POINTS
-
+            # reward_barcode_id(id) -- line 685
         return decodedObjects
 
     def display(self, im, decodedObjects):
@@ -781,7 +801,6 @@ class KivyCamera(Image):
                 if len(decodedObjects) != 0 or cv2.waitKey(1) == 27:
                     # if code found, display
                     self.display(im, decodedObjects)
-                    #generateBarcode()
                     toggleCamera()
 
 

@@ -2,7 +2,6 @@
 import random, cv2
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
-from RRTAA import StudentClass
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.adapters.simplelistadapter import SimpleListAdapter

@@ -141,14 +141,17 @@ Builder.load_string("""
                 size_hint: .55, .1 
                 background_color: 0, 0, 0, 0.2
                 on_press: root.manager.current = 'login'
-                    
+             
                 
         FloatLayout:
-            CustButton: 
-                text: "Student ID"
-                pos_hint: {"x": -.1, "top": .5}
-                size_hint: 1.1, .4 
-                on_press: root.studentid()
+            Image:
+                source: "indbarcode.jpg"    
+                pos_hint: {"x": -.1, "top": .45}
+                size_hint: 1, .25
+            CustLabel: 
+                text: "Student ID: 2134785"
+                pos_hint: {"center_x": 0.4, "top": .65}
+                
             
 
     BoxLayout:
@@ -311,6 +314,7 @@ students.append(Student("Carson T", 8765, "carson", "pass"))
 students.append(Student("Chen Feng Z", 7878, "chenfeng", "pass"))
 admin = Student("admin", 1000, "1", "1")
 students.append(admin)
+admin.__barcode = Image(source="barcode1.jpg")
 empty_acc = Student("empty", None, "", "")
 current_user = empty_acc
 
@@ -352,6 +356,7 @@ class Login(Screen):
 class Profile(Screen):
     code_text_input = ObjectProperty()
     global current_user
+    curr_id = current_user.get_id()
 
     def info(self):
         '''
@@ -362,6 +367,7 @@ class Profile(Screen):
         info.add_widget(Label(text="Name: " + current_user.get_name()))
         info.add_widget(Label(text="Student ID: " + current_user.get_id()))
         info.add_widget(Label(text="Homeroom: " + current_user.get_hmrm()))
+
 
         profilePop = Popup(title="Profile Information",
                      content = info,
@@ -418,9 +424,9 @@ class Profile(Screen):
         Opens popup that displays image of barcode and student ID
         :return: None
         '''
-
+        barcode = current_user.get_barcode()
         id_content = GridLayout(cols=1)
-        id_content.add_widget(current_user.get_barcode())
+        id_content.add_widget(barcode)
         id_content.add_widget(Label(text=current_user.get_id()))
 
         aPop = Popup(title="Student ID",

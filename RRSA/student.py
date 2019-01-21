@@ -250,7 +250,7 @@ class Student(object):
         :param reward: Object
         :return: None
         '''
-        self.__history.append(reward[1] + ": " + str(reward[4]) + " points")
+        self.__history.append(reward[3] + ": " + reward[1] + " (" + str(reward[4]) + " points)")
 
     def add_reward(self, reward):
         '''
@@ -316,6 +316,9 @@ class Login(Screen):
             userPop.open()
 
 class Profile(Screen):
+    '''
+    Profile screen displays student user's profile
+    '''
     code_text_input = ObjectProperty()
     global current_user
     curr_id = current_user.get_id()
@@ -352,7 +355,7 @@ class Profile(Screen):
         historyPop = Popup(title = "Points History",
                      content = con,
                      size_hint=(None, None),
-                     size=(400, 300))
+                     size=(500, 300))
         historyPop.open()
 
     def add_activity(self):
@@ -373,14 +376,14 @@ class Profile(Screen):
                 activityPop = Popup(title="Reward Verification",
                                    content= Label(text="Added " + activity[1] + ": " + str(activity[4]) + " points"),
                                    size_hint=(None, None),
-                                   size=(400, 150))
+                                   size=(500, 150))
                 activityPop.open()
 
         if not added:
             verfPop = Popup(title="Reward Verification",
                          content=Label(text="Sorry, that was not a valid code. Please try again."),
                          size_hint=(None, None),
-                         size=(400, 150))
+                         size=(500, 150))
             verfPop.open()
 
     def studentid(self):

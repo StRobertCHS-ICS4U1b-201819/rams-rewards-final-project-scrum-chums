@@ -976,7 +976,7 @@ class GeneralScreen(Screen):
         from RRTAA import db_test
 
         # Creates all the members
-        student_list = ["userid", "mathg0d", "ballsDPcoder", "chenfengzhang", "chingchangchong", "wingwangwong", "minecraftman1022"]
+        student_list = ["userid", "mathg0d", "ballsDPcoder", "chenfengzhang", "chingchangchong", "wingwangwong", "minecraftman1022", "imgrace", "thelaw"]
 
         # Creates all the activities
         rewards = []

@@ -24,73 +24,64 @@
 .right {
 	position: absolute;
 	right: 0px;
-	padding: 30px;
+	padding: 70px;
+}
+
+.header {
+	background-color: #17013f;
+	padding: 40px;
+	text-align: center;
 }
 </style>
 
 <body class="body" style="background-color:#ffffff">
 	<div class="container-fluid" style="min-height:95%; ">
 		<div class="row">
-			  <div>
-				  <br>
-				  <center>
-				  	<!--add image or something here-->
-				  </center>
-			  </div>
-			  <div class="col-sm-12">
-				  <br>
-				  <center>
-				  <h1 style="color:#17013f">RR Web Administration</h1>
-				  <h5 style="color:#345501">~ SCRUM CHUMS ~</h4>
-				  <!--<h3><span class="glyphicon glyphicon-ok"></span></h3>-->
-				  </center>
-				  <div class = "right">
-				  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-				  	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<div class="header">
+				<p style="color:#ffffff; font-size: 45px">RR Web Administration<p>
+				<h5 style="color:#ffffff">~ SCRUM CHUMS ~</h4>
+				<!--<h3><span class="glyphicon glyphicon-ok"></span></h3>-->
+			</div>
+			  
+			<div class = "right">
+				<nav class="navbar navbar-expand-lg navbar-light bg-light">
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 						<form class="form-inline my-2 my-lg-0">
-					    	<input class="form-control mr-sm-2" type="search" placeholder= "Search" aria-label="Search">
-					      	<button class="btn btn-outline-success my-2 my-sm-0" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-					    </form>
+						    <input class="form-control mr-sm-2" type="search" placeholder= "Useless search bar" aria-label="Search">
+						    <button class="btn btn-primary my-2 my-sm-0" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+						</form>
 					</div>
-				  </nav>
-				  </div>
-				  
-			  </div>
+				</nav>
+			</div>
+			<div>
+				<nav class="navbar fixed-top" style="background-color: #e3f2fd;">
+					<div class="collapse navbar-collapse" id="navbarSupportedContent"></div>
+				</nav>
+			</div>
 		</div><hr>
 
 		<div class="row">
 		  <div class="col-sm-2">
 		  <br>
-
-		  <br>
-		   <!-- Great, til you resize. -->
-			<!--<div class="well bs-sidebar affix" id="sidebar" style="background-color:#fff">-->
 			<div class="well bs-sidebar" id="sidebar" style="background-color:#f4f4f4">
 			  <ul class="nav nav-pills nav-stacked">
-				<li><a href='/'>Home</a></li>
-				<li><a href='/activities/'>Activities</a></li>
-				<li><a href='/students/'>Students</a></li>
-				<li><a href='/contact/'>Contact</a></li>
-				<button type="button" class="btn btn-info">Info</button>
+				<li><a href='/' style ="font-size: 18px">Home</a></li>
+				<li><a href='/activities/' style ="font-size: 18px">Activities</a></li>
+				<li><a href='/students/' style ="font-size: 18px">Students</a></li>
+				<li><a href='/contact/' style ="font-size: 18px">Contact</a></li>
 			  </ul>
 			</div> <!--well bs-sidebar affix-->
 		  </div> <!--col-sm-2-->
 		  <div class="col-sm-10">
 		  
 			<div class='container-fluid'>
-			<br><br>
+			<br>
 			   {% block content %}
 			   {% endblock %}	
 			</div>
 		  </div>
 		</div> 
 	</div>
-	<!--<footer>-->
-	<!--	<div class="container-fluid" style='margin-left:15px'>-->
-	<!--		<p><a href="#" target="blank">Contact</a> | <a href="#" target="blank">LinkedIn</a> | <a href="#" target="blank">Twitter</a> | <a href="#" target="blank">Google+</a></p>-->
-	<!--	</div>-->
-	<!--</footer>	-->
-
 
 <nav class="navbar fixed-top" style="background-color: #e3f2fd;">
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -99,15 +90,17 @@
 
 <style>
 .footer {
-  background-color: #17013f;
-  padding: 45px;
-  text-align: center;
+	background-color: #17013f;
+    padding: 45px;
+    text-align: center;
 }
 </style>
 <div class="footer">
-  <h4 style="color:#ffffff"><a href="#" target="blank">Facebook</a> | <a href="#" target="blank">LinkedIn</a> | <a href="#" target="blank">Twitter</a> | <a href="#" target="blank">Google+</a></h4>
-  <h3 style="color:#ffffff">Follow Us on Social Media!</h3>
+    <h4 style="color:#ffffff"><a href="#" target="blank">Facebook</a> | <a href="#" target="blank">LinkedIn</a> | <a href="#" target="blank">Twitter</a> | <a href="#" target="blank">Google+</a></h4>
+    <h3 style="color:#ffffff">Follow Us on Social Media!</h3>
+    <h3 style="color:#ffffff">. . . . . . . . . .</h3>
 </div>
+
 
 
 </body>

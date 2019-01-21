@@ -15,18 +15,15 @@ font-weight: bold;
 	{% for student in object_list %}
 		{% if student.student_score > 100 %}
 			<h5><p class='name'>{{ student.student_name }}</p><p> - Grade {{ student.student_grade }}</p><pre> {{ student.student_score }} Points   <span style="color:#3333DF" class="glyphicon glyphicon-thumbs-up"></span></pre></h5>
+			<br>
 		{% elif student.student_score == 1 %}
 			<!-- lol try harder next time buddy -->
 			<h5><p class='name'>{{ student.student_name }}</p><p> - Grade {{ student.student_grade }}</p><pre> {{ student.student_score }} Point   <span style="color:#9E9E9E" class="glyphicon glyphicon-trash"></span></pre></h5>
+			<br>
 		{% else %}
 			<h5><p class='name'>{{ student.student_name }}</p><p> - Grade {{ student.student_grade }}</p><pre> {{ student.student_score }} Points   <span style="color:#F21818" class="glyphicon glyphicon-thumbs-down"></span></pre></h5>
+			<br>
 		{% endif %}
 	{% endfor %}
+	<br><br>
 {% endblock %}
-
-<!-- hey chenfeng just wanted to say i did some sketchy stuff here and 
-added <pre></pre> stuff around ur student score and idk what it does but 
-it made boxes surround them or something which looks kind of cool
-i messed around with other stuff too as im sure u can tell :')
-
-pls feel free to delete all that or change it or something lol --> 

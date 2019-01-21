@@ -163,44 +163,6 @@ Builder.load_string("""
 
 screen_manager = ScreenManager()
 
-class Rewards(object):
-    '''
-    A class representing the rewarded points gotten from activities
-    '''
-
-    def __init__(self, activity, points, code):
-        self.__act = activity
-        self.__points = points
-        self.__code = code
-
-    def get_actName(self):
-        '''
-        get the name of an activity
-        :return: self.__act: str
-        '''
-        return self.__act
-
-    def get_points(self):
-        '''
-        get the value of points of an activity
-        :return: self.__points: int
-        '''
-        return self.__points
-
-    def get_code(self):
-        '''
-        get the code of an activity
-        :return: self.__code: str
-        '''
-        return self.__code
-
-
-rewards = []
-rewards.append(Rewards("Attendance", 2, "att"))
-rewards.append(Rewards("Paint", 5, "paint"))
-rewards.append(Rewards("Prom", 10, "prom"))
-rewards.append(Rewards("Cafeteria activity", 1, "caf"))
-rewards.append(Rewards("Ram of the Month", 20, "ram"))
 
 class Student(object):
     '''
@@ -280,7 +242,7 @@ class Student(object):
         :param reward: Object
         :return: None
         '''
-        self.__points += reward.get_points()
+        self.__points += reward[4]
 
     def __add_history(self, reward):
         '''
@@ -288,7 +250,7 @@ class Student(object):
         :param reward: Object
         :return: None
         '''
-        self.__history.append(reward.get_actName() + ": " + str(reward.get_points()) + " points")
+        self.__history.append(reward[1] + ": " + str(reward[4]) + " points")
 
     def add_reward(self, reward):
         '''
@@ -399,15 +361,17 @@ class Profile(Screen):
         :return: None
         '''
         added = False
+        from RRSA import rrsa_db
+        rewards = rrsa_db.return_act(rrsa_db.con)
 
         for activity in rewards:
-            if self.code_text_input.text == activity.get_code():
+            if self.code_text_input.text in activity[5].split('.') and self.code_text_input.text != '':
                 added = True
                 current_user.add_reward(activity)
                 self.code_text_input.text = ""
 
                 activityPop = Popup(title="Reward Verification",
-                                   content= Label(text="Added " + activity.get_actName() + ": " + str(activity.get_points()) + " points"),
+                                   content= Label(text="Added " + activity[1] + ": " + str(activity[4]) + " points"),
                                    size_hint=(None, None),
                                    size=(400, 150))
                 activityPop.open()

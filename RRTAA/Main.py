@@ -718,6 +718,7 @@ def hashFunction(id: str)->int:
     hash %= mod
     while len(str(hash)) != 12:
         hash = int(str(hash)+"0")
+    print(hash)
     return hash
 
 def generate_barcode(userID):
@@ -726,7 +727,6 @@ def generate_barcode(userID):
     EAN = barcode.get_barcode_class('ean13')
     ean = EAN(str(number), writer=ImageWriter())
     code = ean.save('barcode'+str(userID))
-
 
 class KivyCamera(Image):
     '''
@@ -798,16 +798,17 @@ class KivyCamera(Image):
                 if len(decodedObjects) != 0 or cv2.waitKey(1) == 27:
                     # if code found, display
                     self.display(im, decodedObjects)
-                    toggleCamera()
+                    #toggleCamera() -> to stop scanning after barcode found
 
     def reward_barcode_points(self, rewardID):
         from RRTAA import db_test
 
         for student in db_test.return_all(db_test.con): # does this even work
             print(self.hashed_id[student[4]], rewardID, 'hi')
-            if str(self.hashed_id[student[4]]) == str(rewardID): # idk
+            if str(self.hashed_id[student[4]]) == str(rewardID)[:-1]: # idk
                 print('hello')
                 db_test.update_score(db_test.con, (student[3] + 8000, student [1])) # how do i give points here)
+                toggleCamera() # stops scanning after barcode found
 
 
 class Login(Screen):

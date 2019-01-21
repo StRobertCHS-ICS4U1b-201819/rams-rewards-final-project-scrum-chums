@@ -1,6 +1,6 @@
 # Importing the Kivy application, layouts, and buttons
 
-import random, cv2, pyzbar.pyzbar as pyzbar, numpy as np , barcode
+import random, cv2, pyzbar.pyzbar as pyzbar, numpy as np, barcode
 from barcode.writer import ImageWriter
 from kivy.app import App
 from RRTAA.BarcodeScanner import Scanner
@@ -30,6 +30,18 @@ from kivy.properties import (ObjectProperty, NumericProperty, OptionProperty,
 from kivy.lang import Builder
 from kivy.graphics.texture import Texture
 from kivy.uix.rst import RstDocument
+
+"""
+--------------------------------------------------------------------------------------------
+Name:		Main.py
+Purpose:		
+An app that allows teachers to view activities and students, award points, and scan barcodes.
+
+Author:		Leung G.  Tang C. 
+
+Created:		15.12.2018
+--------------------------------------------------------------------------------------------
+"""
 
 # Setting Screen Manager as a variable
 screen_manager = ScreenManager()
@@ -281,10 +293,12 @@ Builder.load_string("""
 
 initCamera = False
 
+
 def toggleCamera():
     global initCamera
     if initCamera: initCamera = False
     else: initCamera = True
+
 
 class Start(GridLayout):
     '''
@@ -311,6 +325,9 @@ class SideBarException(Exception):
 
 
 class SideBar(StencilView):
+    '''
+    Creates sidebar and its animation
+    '''
 
     # Internal references for side, main and image widgets
     _side_panel = ObjectProperty()
@@ -570,14 +587,13 @@ class BaseTabs(GridLayout):
         self.grade12_list = []
         for p in studentList:
             self.grade12_list.append(db_test.get_by_id(db_test.con, p)[0])
-
         self.rewarding_list = rewardList
+
         # creating the list of just member names
         for i in self.grade12_list:
             self.names.append(i[1])
         for j in self.rewarding_list:
             self.rewardNames.append(j[1])
-
         self.names = sorted(self.names)
 
         # a dictionary? for tying certain checkboxes to students
@@ -603,13 +619,14 @@ class BaseTabs(GridLayout):
                         col1.add_widget(Label(text="Promo Code: prom"))
                     col1.add_widget(RstDocument(text="Activity Description: " + rewardObject[2]))
 
-
             col2 = GridLayout(cols=2)
             for student in self.grade12_list:
                 col2.add_widget(Label(text=student[1]))
                 box = CheckBox()
                 self.student_checkboxes[student] = box
                 col2.add_widget(box)
+
+            # Reward Points Button
             givePoints = Button(text='Reward Points',
                                 size_hint_y=None,
                                 height=40)
@@ -679,6 +696,7 @@ class BaseTabs(GridLayout):
                           size_hint=(None, None), size=(800, 500))
             popup.open()
 
+    # Updates the student lists by re-pulling from the database
     def update_info(self):
         from RRTAA import db_test
         self.grade12_list = []
@@ -707,6 +725,7 @@ class Scanner(Screen):
         self.my_camera = KivyCamera(fps=12)
         self.add_widget(self.my_camera)
 
+
 def hashFunction(id: str)->int:
     '''
     Returns 12 digit id which corresponds to any id user provides
@@ -722,6 +741,7 @@ def hashFunction(id: str)->int:
     while len(str(hash)) != 12:
        hash = int(str(hash)+"0")
     return hash
+
 
 def generate_barcode(userID):
     number = userID
@@ -801,16 +821,17 @@ class KivyCamera(Image):
                 if len(decodedObjects) != 0 or cv2.waitKey(1) == 27:
                     # if code found, display
                     self.display(im, decodedObjects)
-                    toggleCamera()
+                    #toggleCamera() -> to stop scanning after barcode found
 
     def reward_barcode_points(self, rewardID):
         from RRTAA import db_test
 
         for student in db_test.return_all(db_test.con): # does this even work
             print(self.hashed_id[student[4]], rewardID, 'hi')
-            if str(self.hashed_id[student[4]]) == str(rewardID): # idk
+            if str(self.hashed_id[student[4]]) == str(rewardID)[:-1]: # idk
                 print('hello')
                 db_test.update_score(db_test.con, (student[3] + 8000, student [1])) # how do i give points here)
+                toggleCamera() # stops scanning after barcode found
 
 
 class Login(Screen):
@@ -820,6 +841,7 @@ class Login(Screen):
 
     username_text_input = ObjectProperty()
     password_text_input = ObjectProperty()
+
     def submit(self, userN, passW):
         global current_user
         loggedon = False
@@ -881,7 +903,6 @@ class Login(Screen):
                             background='atlas://data/images/defaulttheme/button_pressed',
                             size_hint=(None, None), size=(400, 150))
             userPop.open()
-
 
     # for changing the current displayed screen
     def change_screen(self, page):

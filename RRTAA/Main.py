@@ -755,12 +755,8 @@ def hashFunction(id: str)->int:
         hash = ((hash << 5)+hash) + ord(i)
     hash %= mod
     while len(str(hash)) != 12:
-<<<<<<< HEAD
         hash = int(str(hash)+"0")
-    print(id,hash)
-=======
-       hash = int(str(hash)+"0")
->>>>>>> 649be102e8b301f10b88e29d02f07c1f52d1dfd3
+    print(id, hash)
     return hash
 
 

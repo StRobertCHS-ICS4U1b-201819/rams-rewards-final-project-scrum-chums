@@ -94,13 +94,13 @@ Builder.load_string("""
             height: 50
             pos_hint: {"center_x": 0.5, "center_y": .3}
             on_press: root.submit()  
+            
 
 
 <Profile>:  
     code_text_input: code
-    
-    PageLayout:    
         
+    PageLayout:    
         FloatLayout:      
             CustButton:
                 text: "Profile Information"
@@ -144,16 +144,18 @@ Builder.load_string("""
              
                 
         FloatLayout:
+            CustButton:
+                text: "Student ID"
+                pos_hint: {"x": -.1, "top": .5}
+                size_hint: 1.1, .4
+                on_press: root.studentid()
+                
             Image:
-                source: "indbarcode.jpg"    
+                source: root.curr_barcode
                 pos_hint: {"x": -.1, "top": .45}
                 size_hint: 1, .25
-            CustLabel: 
-                text: "Student ID: 2134785"
-                pos_hint: {"center_x": 0.4, "top": .65}
-                
-            
 
+            
     BoxLayout:
         orientation: "vertical"
         
@@ -171,7 +173,7 @@ class Student(object):
     def __init__(self, name, studentID, user, password):
         self.__name =  name
         self.__id = studentID
-        self.__barcode = Image(source='indbarcode.jpg')
+        self.__barcode = 'indbarcode.jpg'
         self.__user = user
         self.__password = password
         self.__points = 0
@@ -199,6 +201,14 @@ class Student(object):
         :return: self.__barcode: Image
         '''
         return self.__barcode
+
+    def set_barcode(self, newBarcode):
+        '''
+        set new barcode for a student
+        :param: str New barcode picture name
+        :return: None
+        '''
+        self.__barcode = newBarcode
 
     def get_hmrm(self):
         '''
@@ -276,7 +286,7 @@ students.append(Student("Carson T", 8765, "carson", "pass"))
 students.append(Student("Chen Feng Z", 7878, "chenfeng", "pass"))
 admin = Student("admin", 1000, "1", "1")
 students.append(admin)
-admin.__barcode = Image(source="barcode1.jpg")
+admin.set_barcode('barcode1.jpg')
 empty_acc = Student("empty", None, "", "")
 current_user = empty_acc
 
@@ -321,7 +331,20 @@ class Profile(Screen):
     '''
     code_text_input = ObjectProperty()
     global current_user
-    curr_id = current_user.get_id()
+    curr_id = str(current_user.get_id())
+    curr_barcode = current_user.get_barcode()
+
+
+    def on_pre_enter(self, *args):
+        self.curr_id = str(current_user.get_id())
+        self.curr_barcode = current_user.get_barcode()
+        print(self.curr_id)
+
+
+    def update(self):
+        pass
+
+
 
     def info(self):
         '''
@@ -391,7 +414,7 @@ class Profile(Screen):
         Opens popup that displays image of barcode and student ID
         :return: None
         '''
-        barcode = current_user.get_barcode()
+        barcode = Image(source=current_user.get_barcode())
         id_content = GridLayout(cols=1)
         id_content.add_widget(barcode)
         id_content.add_widget(Label(text=current_user.get_id()))
@@ -405,6 +428,8 @@ class Profile(Screen):
 
 screen_manager.add_widget(Login(name = "login"))
 screen_manager.add_widget(Profile(name = "profile"))
+
+
 
 
 class LoginApp(App):

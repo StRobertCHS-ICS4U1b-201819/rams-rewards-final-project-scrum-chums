@@ -1,5 +1,5 @@
 import sqlite3
-con = sqlite3.connect("db.sqlite3")
+con = sqlite3.connect("rrsa_db.sqlite3")
 # on return = [0] -> id, [1] -> name, [2] -> grade, [3] -> score, [4] -> id, [5] -> password
 
 
@@ -76,6 +76,14 @@ def get_by_act(connection, activitie_id):
     return result
 
 
+def get_codes(connection, activitie_id):
+    sql = "SELECT codes FROM activities_activitie WHERE title = ?"
+    cur = connection.cursor()
+    cur.execute(sql, (activitie_id,))
+    result = cur.fetchall()
+    return result
+
+
 def verify(connection, userid, password):
     sql = "SELECT * FROM students_student WHERE student_id = ? and student_pass = ?"
     cur = connection.cursor()
@@ -113,21 +121,7 @@ def update_codes(connection, param):
         return False
     return True
 
-
-def update_attendants(connection, param):
-    try:
-        sql = "UPDATE activities_activitie SET participate = ? WHERE title = ?"  # sets the student score
-        # question marks are filled in order with the values in param
-        # param must have the proper values or it will fail
-        # add addition fields to SET using comma as separator "SET score = ?, name = ?"
-        cur = connection.cursor()
-        cur.execute(sql, param)
-        connection.commit()  # commit changes
-    except NameError:
-        return False
-    return True
-
-# print(return_all(con))
+print(return_act(con))
 
 # for resetting data
 '''
@@ -137,7 +131,8 @@ for student in return_all(con):
     print(get_by_name(con, student[1])[0])
     print(student[6].split('.'))
 
-for i in return_act(con):
-    update_attendants(con, ('', i[1]))
 '''
+for i in return_act(con):
+    # update_codes(con, ('', i[1]))
+    print(i[5])
 

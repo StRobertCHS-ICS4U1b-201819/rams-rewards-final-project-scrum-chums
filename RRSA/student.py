@@ -94,13 +94,13 @@ Builder.load_string("""
             height: 50
             pos_hint: {"center_x": 0.5, "center_y": .3}
             on_press: root.submit()  
+            
 
 
 <Profile>:  
     code_text_input: code
-    
-    PageLayout:    
         
+    PageLayout:    
         FloatLayout:      
             CustButton:
                 text: "Profile Information"
@@ -141,16 +141,21 @@ Builder.load_string("""
                 size_hint: .55, .1 
                 background_color: 0, 0, 0, 0.2
                 on_press: root.manager.current = 'login'
-                    
-                
+             
+        
         FloatLayout:
-            CustButton: 
+            CustButton:
                 text: "Student ID"
                 pos_hint: {"x": -.1, "top": .5}
-                size_hint: 1.1, .4 
+                size_hint: 1.1, .4
                 on_press: root.studentid()
-            
+                
+            Image:
+                source: root.curr_barcode
+                pos_hint: {"x": -.1, "top": .45}
+                size_hint: 1, .25
 
+            
     BoxLayout:
         orientation: "vertical"
         
@@ -160,44 +165,6 @@ Builder.load_string("""
 
 screen_manager = ScreenManager()
 
-class Rewards(object):
-    '''
-    A class representing the rewarded points gotten from activities
-    '''
-
-    def __init__(self, activity, points, code):
-        self.__act = activity
-        self.__points = points
-        self.__code = code
-
-    def get_actName(self):
-        '''
-        get the name of an activity
-        :return: self.__act: str
-        '''
-        return self.__act
-
-    def get_points(self):
-        '''
-        get the value of points of an activity
-        :return: self.__points: int
-        '''
-        return self.__points
-
-    def get_code(self):
-        '''
-        get the code of an activity
-        :return: self.__code: str
-        '''
-        return self.__code
-
-
-rewards = []
-rewards.append(Rewards("Attendance", 2, "att"))
-rewards.append(Rewards("Paint", 5, "paint"))
-rewards.append(Rewards("Prom", 10, "prom"))
-rewards.append(Rewards("Cafeteria activity", 1, "caf"))
-rewards.append(Rewards("Ram of the Month", 20, "ram"))
 
 class Student(object):
     '''
@@ -206,7 +173,7 @@ class Student(object):
     def __init__(self, name, studentID, user, password):
         self.__name =  name
         self.__id = studentID
-        self.__barcode = Image(source='indbarcode.jpg')
+        self.__barcode = 'indbarcode.jpg'
         self.__user = user
         self.__password = password
         self.__points = 0
@@ -234,6 +201,14 @@ class Student(object):
         :return: self.__barcode: Image
         '''
         return self.__barcode
+
+    def set_barcode(self, newBarcode):
+        '''
+        set new barcode for a student
+        :param: str New barcode picture name
+        :return: None
+        '''
+        self.__barcode = newBarcode
 
     def get_hmrm(self):
         '''
@@ -277,7 +252,7 @@ class Student(object):
         :param reward: Object
         :return: None
         '''
-        self.__points += reward.get_points()
+        self.__points += reward[4]
 
     def __add_history(self, reward):
         '''
@@ -285,7 +260,7 @@ class Student(object):
         :param reward: Object
         :return: None
         '''
-        self.__history.append(reward.get_actName() + ": " + str(reward.get_points()) + " points")
+        self.__history.append(reward[3] + ": " + reward[1] + " (" + str(reward[4]) + " points)")
 
     def add_reward(self, reward):
         '''
@@ -311,6 +286,7 @@ students.append(Student("Carson T", 8765, "carson", "pass"))
 students.append(Student("Chen Feng Z", 7878, "chenfeng", "pass"))
 admin = Student("admin", 1000, "1", "1")
 students.append(admin)
+admin.set_barcode('barcode1.jpg')
 empty_acc = Student("empty", None, "", "")
 current_user = empty_acc
 
@@ -326,10 +302,13 @@ class Login(Screen):
         '''
         global current_user
         loggedon = False
+        # loop through student list to check for matching username
         for account in students:
             if self.username_text_input.text == account.get_user():
                 loggedon = True
+                # check if password input is correct with given username
                 if self.password_text_input.text == account.get_pass():
+                    # change account, clear user input and change screen to profile
                     current_user = account
                     self.username_text_input.text = ""
                     self.password_text_input.text = ""
@@ -350,14 +329,25 @@ class Login(Screen):
             userPop.open()
 
 class Profile(Screen):
+    '''
+    Profile screen displays student user's profile
+    '''
     code_text_input = ObjectProperty()
     global current_user
+    curr_id = str(current_user.get_id())
+    curr_barcode = current_user.get_barcode()
+
+    def on_pre_enter(self, *args):
+        self.curr_id = str(current_user.get_id())
+        self.curr_barcode = current_user.get_barcode()
+        print(self.curr_id)
 
     def info(self):
         '''
         Opens popup that displays student name, id and homeroom
         :return:
         '''
+
         info = GridLayout(cols=1)
         info.add_widget(Label(text="Name: " + current_user.get_name()))
         info.add_widget(Label(text="Student ID: " + current_user.get_id()))
@@ -366,7 +356,7 @@ class Profile(Screen):
         profilePop = Popup(title="Profile Information",
                      content = info,
                      size_hint=(None, None),
-                     size=(400, 200))
+                     size=(500, 200))
         profilePop.open()
 
     def history(self):
@@ -374,6 +364,7 @@ class Profile(Screen):
         Opens popup that displays a list of a student's history
         :return: None
         '''
+        # adds number of points and point history to history popup
         con = GridLayout(cols=1)
         con.add_widget(Label(text="Points: " + str(current_user.get_points()), size_hint_y=None, height=40))
         self.reward_list = current_user.get_history()
@@ -384,7 +375,7 @@ class Profile(Screen):
         historyPop = Popup(title = "Points History",
                      content = con,
                      size_hint=(None, None),
-                     size=(400, 300))
+                     size=(500, 300))
         historyPop.open()
 
     def add_activity(self):
@@ -393,24 +384,28 @@ class Profile(Screen):
         :return: None
         '''
         added = False
+        from RRSA import rrsa_db
+        rewards = rrsa_db.return_act(rrsa_db.con)
 
+        # loops through reward codes and validates it against the code input
         for activity in rewards:
-            if self.code_text_input.text == activity.get_code():
+            if self.code_text_input.text in activity[5].split('.') and self.code_text_input.text != '':
                 added = True
+                # adds corresponding activity to user's points and activity history
                 current_user.add_reward(activity)
                 self.code_text_input.text = ""
 
                 activityPop = Popup(title="Reward Verification",
-                                   content= Label(text="Added " + activity.get_actName() + ": " + str(activity.get_points()) + " points"),
+                                   content= Label(text="Added " + activity[1] + ": " + str(activity[4]) + " points"),
                                    size_hint=(None, None),
-                                   size=(400, 150))
+                                   size=(500, 150))
                 activityPop.open()
 
         if not added:
             verfPop = Popup(title="Reward Verification",
                          content=Label(text="Sorry, that was not a valid code. Please try again."),
                          size_hint=(None, None),
-                         size=(400, 150))
+                         size=(500, 150))
             verfPop.open()
 
     def studentid(self):
@@ -418,9 +413,10 @@ class Profile(Screen):
         Opens popup that displays image of barcode and student ID
         :return: None
         '''
-
+        # adds barcode and student ID to popup
+        barcode = Image(source=current_user.get_barcode())
         id_content = GridLayout(cols=1)
-        id_content.add_widget(current_user.get_barcode())
+        id_content.add_widget(barcode)
         id_content.add_widget(Label(text=current_user.get_id()))
 
         aPop = Popup(title="Student ID",
@@ -432,6 +428,8 @@ class Profile(Screen):
 
 screen_manager.add_widget(Login(name = "login"))
 screen_manager.add_widget(Profile(name = "profile"))
+
+
 
 
 class LoginApp(App):

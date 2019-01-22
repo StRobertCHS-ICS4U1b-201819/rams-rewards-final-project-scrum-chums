@@ -718,7 +718,7 @@ def hashFunction(id: str)->int:
     hash %= mod
     while len(str(hash)) != 12:
         hash = int(str(hash)+"0")
-    print(hash)
+    print(id,hash)
     return hash
 
 def generate_barcode(userID):

@@ -11,4 +11,5 @@ def contact(request):
     return render(request, 'Radmins/basic.html', {'content':["Email: robbie4lyfe@ycdsbk69.ca",
                                                              "Address: 8101 Leslie St, Thornhill, ON L3T 7P4",
                                                              "Phone: (905) 889-4982",
+                                                             "Website: https://www.ycdsb.ca/stro/",
                                                              "Principal: Joseph Servidio"]})

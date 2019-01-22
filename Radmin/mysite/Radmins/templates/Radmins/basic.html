@@ -17,7 +17,10 @@
 {% extends "Radmins/header.html" %}
 
 {% block content %}
+    <h3>Contact <span class="glyphicon glyphicon-earphone" style="font-size: 25px"></span></h3>
+    <br>
     {% for c in content %}
-        <p>{{c}}</p>
+        <p><big>{{c}}</big></p>
+        <br>
     {% endfor %}
 {% endblock %}

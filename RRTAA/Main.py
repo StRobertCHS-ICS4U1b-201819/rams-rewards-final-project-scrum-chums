@@ -230,7 +230,7 @@ Builder.load_string("""
             "----------------------------------------------------------", " ", " ", \
             "Name: Eric Fabroa", " ", "User Id: eric", " ", "School: St. Robert Catholic High School", " ", \
             "Courses: ICS4U1a, ICS4U1b", " ", "Club Coordination: Coding Club, Robotics", " ", \
-            "Bio: A teacher yo."))
+            "Bio: A teacher"))
             height: 600
             size_hint_y: 1.5
        

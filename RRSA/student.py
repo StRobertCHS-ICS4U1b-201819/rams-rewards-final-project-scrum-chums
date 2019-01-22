@@ -443,7 +443,7 @@ class Profile(Screen):
         barcode = Image(source=current_user.get_barcode())
         id_content = GridLayout(cols=1)
         id_content.add_widget(barcode)
-        id_content.add_widget(Label(text=current_user.get_id()))
+        # id_content.add_widget(Label(text=current_user.get_id()))
 
         aPop = Popup(title="Student ID",
                      content=id_content,

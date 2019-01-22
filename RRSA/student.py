@@ -142,7 +142,7 @@ Builder.load_string("""
                 background_color: 0, 0, 0, 0.2
                 on_press: root.manager.current = 'login'
              
-                
+        
         FloatLayout:
             CustButton:
                 text: "Student ID"
@@ -302,10 +302,13 @@ class Login(Screen):
         '''
         global current_user
         loggedon = False
+        # loop through student list to check for matching username
         for account in students:
             if self.username_text_input.text == account.get_user():
                 loggedon = True
+                # check if password input is correct with given username
                 if self.password_text_input.text == account.get_pass():
+                    # change account, clear user input and change screen to profile
                     current_user = account
                     self.username_text_input.text = ""
                     self.password_text_input.text = ""
@@ -334,33 +337,26 @@ class Profile(Screen):
     curr_id = str(current_user.get_id())
     curr_barcode = current_user.get_barcode()
 
-
     def on_pre_enter(self, *args):
         self.curr_id = str(current_user.get_id())
         self.curr_barcode = current_user.get_barcode()
         print(self.curr_id)
-
-
-    def update(self):
-        pass
-
-
 
     def info(self):
         '''
         Opens popup that displays student name, id and homeroom
         :return:
         '''
+
         info = GridLayout(cols=1)
         info.add_widget(Label(text="Name: " + current_user.get_name()))
         info.add_widget(Label(text="Student ID: " + current_user.get_id()))
         info.add_widget(Label(text="Homeroom: " + current_user.get_hmrm()))
 
-
         profilePop = Popup(title="Profile Information",
                      content = info,
                      size_hint=(None, None),
-                     size=(400, 200))
+                     size=(500, 200))
         profilePop.open()
 
     def history(self):
@@ -368,6 +364,7 @@ class Profile(Screen):
         Opens popup that displays a list of a student's history
         :return: None
         '''
+        # adds number of points and point history to history popup
         con = GridLayout(cols=1)
         con.add_widget(Label(text="Points: " + str(current_user.get_points()), size_hint_y=None, height=40))
         self.reward_list = current_user.get_history()
@@ -390,9 +387,11 @@ class Profile(Screen):
         from RRSA import rrsa_db
         rewards = rrsa_db.return_act(rrsa_db.con)
 
+        # loops through reward codes and validates it against the code input
         for activity in rewards:
             if self.code_text_input.text in activity[5].split('.') and self.code_text_input.text != '':
                 added = True
+                # adds corresponding activity to user's points and activity history
                 current_user.add_reward(activity)
                 self.code_text_input.text = ""
 
@@ -414,6 +413,7 @@ class Profile(Screen):
         Opens popup that displays image of barcode and student ID
         :return: None
         '''
+        # adds barcode and student ID to popup
         barcode = Image(source=current_user.get_barcode())
         id_content = GridLayout(cols=1)
         id_content.add_widget(barcode)

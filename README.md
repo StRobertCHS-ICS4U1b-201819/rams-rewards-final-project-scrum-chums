@@ -30,5 +30,5 @@ Website for Rams Rewards administrators.  RR Admins will be able to:
 * View charts of rewards activity (by date, by activity)
 ###### Good Meme
 ![Django Daikazoku](https://media.discordapp.net/attachments/509538412877971468/512448005807276032/nagisa_django.gif)
-
+![Meme]
 (https://i.redd.it/caj6sw1atya21.jpg)

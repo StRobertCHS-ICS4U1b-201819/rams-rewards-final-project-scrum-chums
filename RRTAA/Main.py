@@ -230,7 +230,7 @@ Builder.load_string("""
             "----------------------------------------------------------", " ", " ", \
             "Name: Eric Fabroa", " ", "User Id: eric", " ", "School: St. Robert Catholic High School", " ", \
             "Courses: ICS4U1a, ICS4U1b", " ", "Club Coordination: Coding Club, Robotics", " ", \
-            "Bio: A teacher yo."))
+            "Bio: A teacher"))
             height: 600
             size_hint_y: 1.5
        
@@ -676,6 +676,7 @@ class BaseTabs(GridLayout):
                     activity = db_test.get_by_act(db_test.con, selection)[0]
                     if member[1] not in activity[6].split('.')[1:]:
                         db_test.update_attendants(db_test.con, (activity[6] + '.' + member[1], activity[1]))
+                boxes.active = False
             elif boxes.active:
                 print("Sorry, ", member[1], " has already \n recieved the points for this activity.")
 
@@ -915,8 +916,10 @@ class Login(Screen):
                     navigationdrawer.anim_to_state('open')
 
                     Window.add_widget(navigationdrawer)
+                    Window.remove_widget(firstScreen)
 
                     current_user = account
+
                 else:
                     passwPop = Popup(title="Login Error",
                                      content=Label(text="Wrong password"),
@@ -995,7 +998,7 @@ class GeneralScreen(Screen):
         # Creates all the activities
         rewards = []
         for i in db_test.return_act(db_test.con):
-            if i[1] not in ['Club Attendance', 'Coding Competition 2019', "Attend Christmas Concert 2018", "Attend Expresso Self 2018"]:
+            if i[1] not in ['Club Attendance', 'Coding Competition 2019']:
                 rewards.append(db_test.get_by_act(db_test.con, i[1])[0])
 
         # Adds the members and activities to the tabs
@@ -1025,6 +1028,7 @@ class ClubOneScreen(Screen):
         self.add_widget(layout)
 
 
+
 class ClubTwoScreen(Screen):
     '''
     Creates a reward page for robotics members
@@ -1045,6 +1049,8 @@ class ClubTwoScreen(Screen):
         layout = BaseTabs(student_list, rewards)
         self.add_widget(layout)
 
+# makes login page
+firstScreen = Login()
 
 # Adding Teachers
 teachers = []
@@ -1066,7 +1072,7 @@ screen_manager.add_widget(Scanner(name="screen_six"))
 class TeacherApp(App):
 
     def build(self):
-        Window.add_widget(Login())
+        Window.add_widget(firstScreen)
 
     # exits camera
     def on_stop(self):

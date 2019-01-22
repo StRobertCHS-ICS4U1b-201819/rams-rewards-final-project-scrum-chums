@@ -511,7 +511,8 @@ class SideBar(StencilView):
 
 class Code(object):
     '''
-    For generating random code numbers
+    Generates a random, unique number for rewards code
+    :return: str, random number
     '''
 
     def __init__(self):
@@ -571,7 +572,7 @@ class BaseTabs(GridLayout):
     reward_list = ObjectProperty()
     grade12s_list = ObjectProperty()
 
-    # These are the actual lists still as properties so i can call their other methods
+    # These are the actual lists still as properties so I can call their other methods
     grade12_list = ObjectProperty()
     rewarding_list = ObjectProperty()
 
@@ -597,7 +598,7 @@ class BaseTabs(GridLayout):
             self.rewardNames.append(j[1])
         self.names = sorted(self.names)
 
-        # a dictionary? for tying certain checkboxes to students
+        # A dictionary for tying certain checkboxes to students
         self.student_checkboxes = {}
 
     # for viewing information about certain activities
@@ -664,7 +665,7 @@ class BaseTabs(GridLayout):
                 if student[1] == selection:
                     pts = student[4]
 
-        # finding selected students and distributing points
+        # finding selected students, distributing the points, and updates student and activity history
         for member, boxes in self.student_checkboxes.items():
             from RRTAA import db_test
             completed_activities = member[6].split('.')
@@ -709,7 +710,7 @@ class BaseTabs(GridLayout):
                           size_hint=(None, None), size=(800, 500))
             popup.open()
 
-    # Updates the student lists by re-pulling from the database
+    # Updates the student and rewards object lists by re-pulling from the database
     def update_info(self):
         from RRTAA import db_test
         self.grade12_list = []
@@ -721,6 +722,10 @@ class BaseTabs(GridLayout):
 
 
 class List(GridLayout):
+    '''
+    A list of teachers
+    '''
+
     teacher_account = ObjectProperty()
     teacher_list = ListProperty()
 
@@ -735,6 +740,10 @@ class List(GridLayout):
 
 
 class Scanner(Screen):
+    '''
+    Displays a camera to take pitures of barcodes
+    '''
+
     def __init__(self, **kwargs):
         super(Scanner, self).__init__(**kwargs)
         # sets the refresh rate
@@ -749,6 +758,7 @@ def hashFunction(id: str)->int:
     :param id: str, user id
     :return: int, 12 digit id
     '''
+
     hash = 5381
     mod = 998244353
     for i in id:
@@ -856,6 +866,7 @@ class Login(Screen):
     username_text_input = ObjectProperty()
     password_text_input = ObjectProperty()
 
+    # Allows user to sign into account
     def submit(self, userN, passW):
         global current_user
         loggedon = False
@@ -887,6 +898,7 @@ class Login(Screen):
                     scanner = Button(text='Scanner', background_color=(0, 1, 0.7, 1))
                     scanner.bind(on_press=lambda x: self.change_screen('Scanner'))
 
+                    # Adds all buttons to the sidebar for changing screens
                     side_panel.add_widget(homepage)
                     side_panel.add_widget(teach)
                     side_panel.add_widget(general)
@@ -895,6 +907,7 @@ class Login(Screen):
                     side_panel.add_widget(scanner)
                     navigationdrawer.add_widget(side_panel)
 
+                    # Displays the current screen
                     main_panel = screen_manager
                     navigationdrawer.add_widget(main_panel)
 
@@ -982,7 +995,7 @@ class GeneralScreen(Screen):
         # Creates all the activities
         rewards = []
         for i in db_test.return_act(db_test.con):
-            if i[1] not in ['Club Attendance', 'Coding Competition 2019']:
+            if i[1] not in ['Club Attendance', 'Coding Competition 2019', "Attend Christmas Concert 2018", "Attend Expresso Self 2018"]:
                 rewards.append(db_test.get_by_act(db_test.con, i[1])[0])
 
         # Adds the members and activities to the tabs

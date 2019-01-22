@@ -12,7 +12,8 @@ from kivy.uix.label import Label
 from kivy.uix.listview import ListView
 from kivy.adapters.simplelistadapter import SimpleListAdapter
 from kivy.uix.image import Image
-
+from barcode.writer import ImageWriter
+import barcode
 
 """
 -------------------------------------------------------------------------------
@@ -173,13 +174,38 @@ class Student(object):
     def __init__(self, name, studentID, user, password):
         self.__name =  name
         self.__id = studentID
-        self.__barcode = 'indbarcode.jpg'
+        #self.__barcode = 'indbarcode.jpg'
         self.__user = user
         self.__password = password
+        self.__hashedID = self.hashFunction(self.__user)
+        self.generate_barcode(self.__hashedID)
+        self.__barcode = "barcode"+str(self.__hashedID)+".png"
         self.__points = 0
         self.__hmrm = "12A"
         self.__history = []
-       
+
+    def generate_barcode(self, userID):
+        number = userID
+        EAN = barcode.get_barcode_class('ean13')
+        ean = EAN(str(number), writer=ImageWriter())
+        code = ean.save('barcode' + str(userID))
+
+    def hashFunction(self, id: str) -> int:
+        '''
+        Returns 12 digit id which corresponds to any id user provides
+        Theoretically no 2 string ids should give the same returned id
+        :param id: str, user id
+        :return: int, 12 digit id
+        '''
+        hash = 5381
+        mod = 998244353
+        for i in id:
+            hash = ((hash << 5) + hash) + ord(i)
+        hash %= mod
+        while len(str(hash)) != 12:
+            hash = int(str(hash) + "0")
+        print(id, hash)
+        return hash
 
     def get_name(self):
         '''

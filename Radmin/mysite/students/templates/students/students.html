@@ -10,18 +10,22 @@ font-weight: bold;
 
 {% extends "Radmins/header.html" %}
 {% block content %}
-	<h3>Students <span class="glyphicon glyphicon-user"></span></h3>
+	<h3>Students <span class="glyphicon glyphicon-user"></h3>
 	<br/> 
 	{% for student in object_list %}
+	    <!-- Student gets a thumbs up if they have over 100 points -->
 		{% if student.student_score > 100 %}
-			<h5><p class='name'>{{ student.student_name }}</p><p> - Grade {{ student.student_grade }}</p><pre> {{ student.student_score }} Points   <span style="color:#3333DF" class="glyphicon glyphicon-thumbs-up"></span></pre></h5>
+			<h5><p class='name'>{{ student.student_name }}</p><p> - Grade {{ student.student_grade }}</p><pre> {{ student.student_score }} Points   <span style="color:#3333DF" class="glyphicon glyphicon-thumbs-up"></pre></h5>
 			<br>
+			
+		<!-- Student gets a trash can icon if they have 1 point -->
 		{% elif student.student_score == 1 %}
-			<!-- lol try harder next time buddy -->
-			<h5><p class='name'>{{ student.student_name }}</p><p> - Grade {{ student.student_grade }}</p><pre> {{ student.student_score }} Point   <span style="color:#9E9E9E" class="glyphicon glyphicon-trash"></span></pre></h5>
+			<h5><p class='name'>{{ student.student_name }}</p><p> - Grade {{ student.student_grade }}</p><pre> {{ student.student_score }} Point   <span style="color:#9E9E9E" class="glyphicon glyphicon-trash"></pre></h5>
 			<br>
+		
+		<!-- Student gets a thumbs down if they have less than 100 points -->
 		{% else %}
-			<h5><p class='name'>{{ student.student_name }}</p><p> - Grade {{ student.student_grade }}</p><pre> {{ student.student_score }} Points   <span style="color:#F21818" class="glyphicon glyphicon-thumbs-down"></span></pre></h5>
+			<h5><p class='name'>{{ student.student_name }}</p><p> - Grade {{ student.student_grade }}</p><pre> {{ student.student_score }} Points   <span style="color:#F21818" class="glyphicon glyphicon-thumbs-down"></pre></h5>
 			<br>
 		{% endif %}
 	{% endfor %}

@@ -772,6 +772,9 @@ def hashFunction(id: str)->int:
 
 
 def generate_barcode(userID):
+    '''
+    Generates barcode from given int, userID and saves the image
+    '''
     number = userID
     EAN = barcode.get_barcode_class('ean13')
     ean = EAN(str(number), writer=ImageWriter())

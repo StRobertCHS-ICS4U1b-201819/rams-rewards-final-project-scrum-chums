@@ -293,7 +293,6 @@ Builder.load_string("""
 
 initCamera = False
 
-
 def toggleCamera():
     global initCamera
     if initCamera: initCamera = False
@@ -808,7 +807,6 @@ class KivyCamera(Image):
             print('ID : ', id, '\n')
             # ASSIGN USER WITH THIS ID, X POINTS
             self.reward_barcode_points(id)
-            # reward_barcode_id(id) -- line 685
         return decodedObjects
 
     def display(self, im, decodedObjects):
@@ -856,9 +854,9 @@ class KivyCamera(Image):
     def reward_barcode_points(self, rewardID):
         from RRTAA import db_test
 
-        for student in db_test.return_all(db_test.con): # does this even work
-            if str(self.hashed_id[student[4]]) == str(rewardID)[:-1]: # idk
-                db_test.update_score(db_test.con, (student[3] + 8000, student [1])) # how do i give points here)
+        for student in db_test.return_all(db_test.con):
+            if str(self.hashed_id[student[4]]) == str(rewardID)[:-1]:
+                db_test.update_score(db_test.con, (student[3] + 8000, student [1]))
                 toggleCamera() # stops scanning after barcode found
 
 
